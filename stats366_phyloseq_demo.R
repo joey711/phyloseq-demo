@@ -121,11 +121,15 @@ pushViewport(viewport(layout = grid.layout(2, 1)))
 print(p1, vp=viewport(layout.pos.row = 1, layout.pos.col = 1))
 print(p2, vp=viewport(layout.pos.row = 2, layout.pos.col = 1))
 
-# # # # # That's interesting. Now how would we filter the taxa with variance smaller than 0.001?
+# # # # # That's interesting. 
+# # # # # Now how would we filter the taxa with variance smaller than 0.001?
 gpac_filt <- prune_species(specvar > 0.001, gpac)
 plot_heatmap(gpac_filt, "NMDS", "bray", "SampleType", "Family")
 #
-# # # # # # For normalization, Susan says to look at the edgeR package.
+# # # # # Note that this is not an endorsement of this particular threshold (0.001)
+# # # # # Just a demonstration
+#
+# # # # # For normalization, Susan says to look at the edgeR package.
 #
 # # # # # Also for standardization, decostand() function in vegan-package
 
@@ -135,6 +139,112 @@ plot_heatmap(gpac_filt, "NMDS", "bray", "SampleType", "Family")
 #
 ###################################################
 ###################################################
-# heatmap
+
+# # # # # Abundance values graphical inspection ("ground-truthing")
+###################################################
+# plot_taxa_bar
+###################################################
+# Subset further to top 5 phyla
+top5ph <- sort(tapply(speciesSums(GP), taxTab(GP)[, "Phylum"], sum), decreasing=TRUE)[1:5]
+GP1    <- subset_species(GP, Phylum %in% names(top5ph))
+plot_taxa_bar(GP1, "Phylum", NULL, threshold=0.9, "human", "SampleType") 
+plot_taxa_bar(GP1, "Phylum", NULL, threshold=0.9, "human", "SampleType", 
+							facet_formula= TaxaGroup ~ .) 
+
+
+###################################################
+# distance function
+###################################################
+?distance
+data(esophagus)
+distance(esophagus) # Unweighted UniFrac
+distance(esophagus, weighted=TRUE) # weighted UniFrac
+distance(esophagus, "jaccard") # vegdist jaccard
+distance(esophagus, "bray")    # vegdist bray-curtis
+distance(esophagus, "gower")   # vegdist option "gower"
+distance(esophagus, "g") # designdist method option "g"
+distance(esophagus, "minkowski") # invokes a method from the base dist() function.
+distance(esophagus, "(A+B-2*J)/(A+B)") # designdist custom distance
+distance("help")
+distance("list")
+help("distance") # Same as "?distance"
+
+
+# # # # # # plot_sample_network
+ig <- make_sample_network(GP, "bray", 0.9)
+(p3  <- plot_sample_network(ig, GP, color="SampleType", shape="human", line_weight=0.4, label=NULL))
+
+
+# Try enterotype example
+data(enterotype)
+ig <- make_sample_network(enterotype, max.dist=0.3)
+(p  <- plot_sample_network(ig, enterotype, color="SeqTech",
+    shape="Enterotype", line_weight=0.4, label=NULL))
+
+
+###################################################
+# ordinate function
+###################################################
+GP.NMDS <- ordinate(GP, "NMDS", "bray") # perform NMDS on bray-curtis distance
+# GP.NMDS.UF.ord   <- ordinate(GP, "NMDS") # UniFrac. Takes a while.
+# GP.NMDS.wUF.ord  <- ordinate(GP, "NMDS", "unifrac", weighted=TRUE) # weighted-UniFrac
+GP.NMDS.gower <- ordinate(GP, "NMDS", "gower")
+
+
+###################################################
+# plot_ordination function
+###################################################
+(p1 <- plot_ordination(GP, GP.NMDS, "samples", color="SampleType") +
+  geom_line() + geom_point(size=5) )
+
+?plot_ordination # Example "1-liners" are at bottom.
+
+
+# Get the names of the most-abundant
+top.TaxaGroup <- sort(
+	tapply(speciesSums(GP), taxTab(GP)[, "Phylum"], sum, na.rm = TRUE),
+	decreasing = TRUE)
+top.TaxaGroup <- top.TaxaGroup[top.TaxaGroup > 1*10^6]
+# Now prune further, to just the most-abundant phyla
+GP2 <- subset_species(GP, Phylum %in% names(top.TaxaGroup))
+topsp <- names(sort(speciesSums(GP2), TRUE)[1:200])
+GP2   <- prune_species(topsp, GP2)
+GP.dpcoa <- ordinate(GP2, "DPCoA")
+plot_ordination(GP2, GP.dpcoa, type="taxa", color="Phylum")
+# Customize with ggplot2 layers added directly to output
+library("ggplot2")
+plot_ordination(GP2, GP.dpcoa, type="samples", color="SampleType") + geom_line() + geom_point(size=5)
+p <- plot_ordination(GP2, GP.dpcoa, type="samples", color="SampleType", shape=human)
+print(p)
+p + geom_line() + geom_point(size=5)
+plot_ordination(GP2, GP.dpcoa, type="species", color="Phylum") + geom_line() + geom_point(size=5)
+plot_ordination(GP2, GP.dpcoa, type="biplot", shape="Phylum", label="SampleType")
+plot_ordination(GP2, GP.dpcoa, type="biplot", shape="Phylum")
+plot_ordination(GP2, GP.dpcoa, type="biplot", color="Phylum")
+plot_ordination(GP2, GP.dpcoa, type="biplot", label="Phylum")
+plot_ordination(GP2, GP.dpcoa, type="split", color="Phylum", label="SampleType")
+plot_ordination(GP2, GP.dpcoa, type="split", color="SampleType", shape="Phylum", label="SampleType")
+
+# # # # # dpcoa kinda ugly. Let's try DCA in one-liner syntax
+# Try one-liner
+plot_ordination(GP2, ordinate(GP2, "DCA"), type="samples", color="SampleType") + geom_point(size=4)
+plot_ordination(GP2, ordinate(GP2, "DCA"), type="species", color="Phylum") + geom_point(size=4)
+plot_ordination(GP2, ordinate(GP2, "DCA"), type="split")
+plot_ordination(GP2, ordinate(GP2, "DCA"), type="split", color="SampleType")
+plot_ordination(GP2, ordinate(GP2, "DCA"), type="biplot", shape="Phylum")
+plot_ordination(GP2, ordinate(GP2, "DCA"), type="split", color="Phylum", label="SampleType")
+plot_ordination(GP2, ordinate(GP2, "DCA"), type="split", color="SampleType",
+	shape="Phylum", label="SampleType")
+
+
+# # # # # Describe NeatMap approach, then show examples.
+###################################################
+# plot_heatmap function
+###################################################
+plot_heatmap(GP2, "NMDS", "bray", "SampleType", "Family")
+plot_heatmap(GP2, "NMDS", "jaccard", "SampleType", "Family")
+
+# plot_heatmap transformations.
+plot_heatmap(gpac_filt, "NMDS", "bray", "SampleType", "Family", trans=log_trans(10))
 plot_heatmap(gpac_filt, "NMDS", "bray", "SampleType", "Family", trans=identity_trans())
 plot_heatmap(gpac_filt, "NMDS", "bray", "SampleType", "Family", trans=boxcox_trans(0.15))
