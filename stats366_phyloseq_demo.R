@@ -248,3 +248,58 @@ plot_heatmap(GP2, "NMDS", "jaccard", "SampleType", "Family")
 plot_heatmap(gpac_filt, "NMDS", "bray", "SampleType", "Family", trans=log_trans(10))
 plot_heatmap(gpac_filt, "NMDS", "bray", "SampleType", "Family", trans=identity_trans())
 plot_heatmap(gpac_filt, "NMDS", "bray", "SampleType", "Family", trans=boxcox_trans(0.15))
+
+
+###################################################
+# Validation
+###################################################
+# Do testing on fractional abundance to remove 
+# effect of differences in total sequencing across samples for same taxa
+# Recall that:
+# # # # GP2 <- subset_species(GP, Phylum %in% names(top.TaxaGroup))
+# # # # topsp <- names(sort(speciesSums(GP2), TRUE)[1:200])
+# # # # GP2   <- prune_species(topsp, GP2)
+topsp <- names(sort(speciesSums(GP), TRUE)[1:200])
+GP3f  <- transformSampleCounts(GP, function(x){x/sum(x)})
+# GP3f <- subset_species(GP3f, Phylum %in% names(top.TaxaGroup))
+GP3f  <- prune_species(topsp, GP3f)
+head(otuTable(GP))
+head(otuTable(GP2))
+head(otuTable(GP3))
+
+# # # # # Example: through multiple testing
+?mt
+
+# Calculate the multiple-inference-adjusted P-values
+GP.fwer.table <- mt(GP3f, "human")
+# getTaxa(GP3f, "Family")
+jranks <- c("Phylum", "Family", "Genus")
+GP.fwer.table <- data.frame(GP.fwer.table, taxTab(GP3f)[rownames(GP.fwer.table), jranks])
+subset(GP.fwer.table, adjp < 0.05)
+
+
+# # # # # What if we want FDR?
+library("multtest")
+mtm   <- mt(GP3f, "human")
+# Re-order to original, and use raw p-values for adjustment via mt.rawp2adjp()
+procedure <- c("Bonferroni", "Hochberg", "BH")
+p.mtm <- mt.rawp2adjp(mtm[order(mtm[,"index"]), "rawp"], procedure) 
+# Re-order so that you can return original table
+# (ordered p-value table)
+p.adjp.ord <- p.mtm$adjp[order(p.mtm$index), ]
+# Give it the original row names from m
+rownames(p.adjp.ord) <- species.names(GP3f)
+# Return the table of adjusted p-values for each hypothesis.
+GP3f.mt.table <- data.frame(p.adjp.ord, taxTab(GP3f)[rownames(p.adjp.ord), jranks])
+# Re-rorder based on BH
+GP3f.mt.table <- GP3f.mt.table[order(GP3f.mt.table[, "BH"]), ]
+subset(GP3f.mt.table, BH < 0.05)
+
+
+
+# # # # # ALTERNATIVES: "qvalue" package, "multcomp" package
+
+
+# Susan likes the hypergeometric:
+?fisher.test
+
