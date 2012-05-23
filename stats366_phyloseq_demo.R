@@ -1,7 +1,7 @@
 ###################################################
 # Load packages
 ###################################################
-library("phyloseq"); library("ggplot2"); library("scales")
+library("phyloseq"); library("ggplot2"); library("scales"); library("grid")
 
 ###################################################
 # Examples for looking at package-level documentation
@@ -79,11 +79,11 @@ sum(wh1)
 ex2 <- prune_species(wh1, GP)
 
 
-
+# # # # # Variance-based filtering
 ###################################################
 # Subset just the Crenarchaeota from all samples:
 ###################################################
-gpac <- subset_species(GlobalPatterns, Phylum=="Crenarchaeota")
+gpac <- subset_species(GP, Phylum=="Crenarchaeota")
 #
 #
 specvar <- sapply(species.names(gpac), function(i, physeq){
@@ -94,36 +94,36 @@ p1 <- qplot(x=log10(variance), data=data.frame(variance=specvar),
 		)
 # # # # # But:		
 # # # # # The value of the variance is highly-dependent on the sequencing effort
+# # # # # of each sample
 # # # # # (the total number ofreads sequenced from a particular sample)
-# # # # # Segway
-
+# # # # # Segway to transformations (e.g. fractional abundance prior to filtering)
 ###################################################
 ###################################################
 # Transformations
 # Useful for:
-# Standardization / Normalization 
+# Standardization / Normalization / Smoothing / Shrinking
 ###################################################
 ###################################################
 # # # # # second-order function:
 # # # # # transformSampleCounts()
 # Should normalize to sample fraction before estimating variance for filtering.
-gpacf <- transformSampleCounts(gpac, function(x){x/sum(x)})
-specvar <- sapply(species.names(gpacf), function(i, physeq){
-	var(getSamples(physeq, i))
-}, gpacf)
-
+gpacf   <- transformSampleCounts(gpac, function(x){x/sum(x)})
+specvar <- sapply(species.names(gpacf), function(i, physeq){var(getSamples(physeq, i))}, gpacf)
 qplot(x=log10(variance), data=data.frame(variance=specvar))
 
-# ggplot(data.frame(variance=specvar)) + geom_histogram(aes(x=log10(variance)), binwidth=15) + scale_x_continuous(trans=log_trans(10))
 p2 <- qplot(x=log10(variance), data=data.frame(variance=specvar),
 	binwidth=abs(do.call("-", as.list(range(log10(specvar))))/20)
 	)
 
 
-grid.newpage()pushViewport(viewport(layout = grid.layout(2, 1)))print(p1, vp=viewport(layout.pos.row = 1, layout.pos.col = 1))
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(2, 1)))
+print(p1, vp=viewport(layout.pos.row = 1, layout.pos.col = 1))
 print(p2, vp=viewport(layout.pos.row = 2, layout.pos.col = 1))
 
-
+# # # # # That's interesting. Now how would we filter the taxa with variance smaller than 0.001?
+gpac_filt <- prune_species(specvar > 0.001, gpac)
+plot_heatmap(gpac_filt, "NMDS", "bray", "SampleType", "Family")
 #
 # # # # # # For normalization, Susan says to look at the edgeR package.
 #
@@ -131,8 +131,10 @@ print(p2, vp=viewport(layout.pos.row = 2, layout.pos.col = 1))
 
 ###################################################
 ###################################################
-# Exploration
-
+# Graphical Exploration of data
+#
 ###################################################
 ###################################################
-
+# heatmap
+plot_heatmap(gpac_filt, "NMDS", "bray", "SampleType", "Family", trans=identity_trans())
+plot_heatmap(gpac_filt, "NMDS", "bray", "SampleType", "Family", trans=boxcox_trans(0.15))
