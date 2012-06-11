@@ -12,8 +12,8 @@ library("phyloseq"); library("ggplot2"); library("scales"); library("grid")
 ###################################################
 ### code chunk number 9: phyloseq_basics.Rnw:234-236
 ###################################################
-  data(GlobalPatterns)
-  GlobalPatterns
+data(GlobalPatterns)
+GlobalPatterns
   
 
 ###################################################
