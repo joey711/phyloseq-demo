@@ -100,7 +100,7 @@ bmsd <- import_qiime_sampleData(map_file)
 Bushman <- merge_phyloseq(biom_otu_tax, bmsd)
 # Remove the temperorary file and directory where you unpacked the zip files
 unlink(temp)
-unlink(tmpdir, TRUE)
+unlink(tmpdir)
 ```
 
 # Section: Basic interaction with phyloseq data

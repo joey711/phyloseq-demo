@@ -5,6 +5,7 @@
 # install the newest "bleeding edge" version of the phyloseq package
 # onto your system, including dependencies.
 # Further instructions are available at [the installation wiki](https://github.com/joey711/phyloseq/wiki/Installation)
+# need Rtools-package for windows
 source("http://bioconductor.org/biocLite.R")
 biocLite("multtest")
 biocLite("genefilter")
@@ -51,12 +52,12 @@ map_file <- file.path(tmpdir, list.files(tmpdir, pattern="mapping"))
 # Now import the .biom-formatted otuTable/taxonomyTable file.
 biom_otu_tax <- import_biom(biom_file, "greengenes")
 # Add sample data to the dataset using merge
-bmsd <- import_qiime_sampleData(map_file)
+bmsd <- phyloseq:::import_qiime_sampleData(map_file)
 Bushman <- merge_phyloseq(biom_otu_tax, bmsd)
 
-# Remove the temperorary file and directory where you unpacked the zip files
+# Remove the temporary file and directory where you unpacked the zip files
 unlink(temp)
-unlink(tmpdir, TRUE)
+unlink(tmpdir)
 
 
 ## Section: Basic interaction with phyloseq data
@@ -137,12 +138,12 @@ plot_taxa_bar(ent10, "Genus", x="SeqTech", fill="TaxaGroup") + facet_wrap(~Enter
 # Examples preprocessing (filtering, trimming, subsetting, etc) phyloseq data.
 # Let's start by Resetting the example data and adding a human category.
 data(GlobalPatterns)
-GlobalPatterns
 # prune OTUs that are not present in at least one sample
 GP <- prune_species(speciesSums(GlobalPatterns) > 0, GlobalPatterns)
 # Define a human-associated versus non-human categorical variable:
-sampleData(GP)$human <- factor(getVariable(GP, "SampleType") %in% c("Feces", "Mock", "Skin", "Tongue"))
-
+sampleData(GP)$human <- 
+	factor(getVariable(GP, "SampleType") %in% c("Feces", "Mock", "Skin", "Tongue"))
+human <- factor(getVariable(GP, "SampleType") %in% c("Feces", "Mock", "Skin", "Tongue"))
 
 ### Subsection: rarefy abundances to even depth
 # Although of perhaps dubious necessity, it is common for OTU abundance tables
@@ -292,8 +293,8 @@ distance("list")
 
 
 ### Subsection: plot_sample_network
-ig <- make_sample_network(GP, "bray", 0.9)
-(p3  <- plot_sample_network(ig, GP, color="SampleType", shape="human", line_weight=0.4, label=NULL))
+ig <- make_network(GP, type="samples", distance="bray", max.dist=0.9)
+(p3  <- plot_network(ig, GP, color="SampleType", shape="human", line_weight=0.4, label=NULL))
 
 # Try enterotype example for network
 data(enterotype)
@@ -301,9 +302,12 @@ ig <- make_sample_network(enterotype, max.dist=0.3)
 (p  <- plot_sample_network(ig, enterotype, color="SeqTech",
     shape="Enterotype", line_weight=0.4, label=NULL))
 
+# Add OTU network...
+
 
 ### Subsection: ordinate function
 GP.NMDS <- ordinate(GP, "NMDS", "bray") # perform NMDS on bray-curtis distance
+GP.MDS <- ordinate(GP, "MDS", "bray") # perform NMDS on bray-curtis distance
 # GP.NMDS.UF.ord   <- ordinate(GP, "NMDS") # UniFrac. Takes a while.
 # GP.NMDS.wUF.ord  <- ordinate(GP, "NMDS", "unifrac", weighted=TRUE) # weighted-UniFrac
 GP.NMDS.gower <- ordinate(GP, "NMDS", "gower")
@@ -486,7 +490,7 @@ plot_ordination(enterotype, ent.dca, color="SeqTech")
 pam1 <- function(x,k) list(cluster = pam(x,k, cluster.only=TRUE))
 x <- scores(ent.dca)
 # gskmn <- clusGap(x[, 1:2], FUN=kmeans, nstart=20, K.max = 6, B = 500)
-gskmn <- clusGap(x[, 1:2], FUN=pam1, K.max = 6, B = 500)
+gskmn <- clusGap(x[, 1:2], FUN=pam1, K.max = 6, B = 100)
 plot(gskmn, main = "Gap statistic for the 'Enterotypes' data")
 mtext("k = 2 is best ... but  k = 3  pretty close")
 
