@@ -1,0 +1,43 @@
+ Demo: phyloseq – A Bioconductor package for handling and analysis of high-throughput phylogenetic sequence data 
+====================================================================================================================
+
+ Paul J. McMurdie and Susan Holmes
+    Statistics Department, Stanford University,
+    Stanford, CA 94305, USA
+    
+    E-mail: mcmurdie@stanford.edu
+    https://github.com/joey711/phyloseq
+    susan@stat.stanford.edu\
+    http://www-stat.stanford.edu/~susan/
+
+Summary
+---------
+
+This is a demonstration manual for the phyloseq package. It is a Sweave
+source-file with example code-chunks that can be reused if you have
+phyloseq installed.
+
+phyloseq Documentation
+-------------------
+
+Vignettes are included in phyloseq. A quick way to load them from within `R` is:
+
+```{r, eval=FALSE}
+vignette("phyloseqbasics")
+vignette("phyloseqanalysis")
+```
+
+This demonstration document supports a live demonstration of tools in
+phyloseq, and supplements other documentation resources
+available for [the phyloseq package](https://github.com/joey711/phyloseq) (e.g. wiki, vignettes, publications, function-level documentation, etc.).
+
+There is also package-level documentation available. Note the following difference:
+```{r, eval=FALSE}
+?"phyloseq-package"
+?phyloseq # this is a function
+```
+
+Importing Data
+-------------------
+
+
