@@ -1,0 +1,10 @@
+By default open-access materials contained in this directory are copyright protected.
+
+Open-Source Exemption:
+The only exception to this copyright is the source-code (computer-interpretable code), but not textual explanations of the source code, some of which may already be included in past, pending or future publications by the authors and should be considered copyrighted. To be clear, most of the exempted source code material is present in Sweave (.Rnw), R-markdown (.Rmd), markdown (.md), and R-script (.R) files, and is hereby open-licensed according to AGPL-3 for free use and re-use for any purpose, with no guarantee of valid or useful performance by the authors (although we are trying very hard). Any LaTeX, or any other code primarily intended to produce text documents, is not exempted and should be considered copyright protected.
+
+Intent of authors:
+We intend this copyright to allow for free-of-charge open-access to the included materials, but not republication or redistribution without explicit permission from the authors. 
+
+This work is copyright protected.
+Copyright © 2012 Paul J. McMurdie II, Susan Holmes at Stanford University.
