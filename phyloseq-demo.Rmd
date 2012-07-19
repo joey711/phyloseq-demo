@@ -1,4 +1,4 @@
- Demo: phyloseq – A Bioconductor package for handling and analysis of high-throughput phylogenetic sequence data 
+Demo: phyloseq – A Bioconductor package for handling and analysis of high-throughput phylogenetic sequence data 
 ========================================================
 
 Paul J. McMurdie and Susan Holmes
@@ -30,7 +30,7 @@ phyloseq, and supplements other documentation resources
 available for [the phyloseq package](https://github.com/joey711/phyloseq) (e.g. wiki, vignettes, publications, function-level documentation, etc.).
 
 
-# Section: Installation
+# Installation
 For the foreseeable near future, phyloseq is under active development.
 Users are encouraged to consistently update their version from 
 the development website on GitHub. The following code should
@@ -49,10 +49,10 @@ Build and install phyloseq
 install_github("phyloseq", "joey711")
 ```
 
-# Section: Load phyloseq, and import data.
+#  Load phyloseq, and import data.
 Of course we need to start this tutorial by loading the phyloseq package
 (assuming that it is installed.)
-```{r}
+```{r, message=FALSE}
 library("phyloseq")
 ```
 
@@ -64,21 +64,95 @@ There is package-level documentation available. Note the following difference:
 The latter loads instead the documentation for the constructor function named `phyloseq()`
 
 
-## More complicated import example: Bushman et al., combined enterotypes dataset
-Here is an example in which we download a zip file with both biom- and qiime-formatted
-data, unzip it in a temporary directory from with in R,
-import the relavant files using phyloseq importers, and then delete the temporary files.
-This code *should* be platform independent, but occasionally there are finicky 
-Windows issues that arise. 
+## Basic Data Import
 
-The "genus and phylum" abundance tables are provided online (ftp). The `import_direct` variable in this example determines whether to look locally or at the ftp for the files
+
+### Importing the Output from [QIIME](http://qiime.org/)
 ```{r}
-import_direct <- FALSE
+otufile <- system.file("extdata", "GP_otu_table_rand_short.txt.gz", package="phyloseq")
+mapfile <- system.file("extdata", "master_map.txt", package="phyloseq")
+trefile <- system.file("extdata", "GP_tree_rand_short.newick.gz", package="phyloseq")
+qiimex <- import_qiime(otufile, mapfile, trefile, showProgress=FALSE)
+print(qiimex)
 ```
-Now try importing.
+
+
+### Importing the Output from [mothur](http://www.mothur.org/)
+Example: Manually re-import [the "esophagus dataset"](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC384727), which is already inclduded in the phyloseq package.
 ```{r}
-if(import_direct){
-  zipftp <- "ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip" 
+mothlist  <- system.file("extdata", "esophagus.fn.list.gz", package="phyloseq")
+mothgroup <- system.file("extdata", "esophagus.good.groups.gz", package="phyloseq")
+mothtree  <- system.file("extdata", "esophagus.tree.gz", package="phyloseq")
+cutoff    <- "0.10"
+esophman  <- import_mothur(mothlist, mothgroup, mothtree, cutoff)
+print(esophman)
+```
+
+Let's test if they are identical as expected
+```{r}
+identical(esophagus, esophman)
+```
+
+
+### Importing [biom-format](http://biom-format.org/) files
+The biom-format is intended to be a complete representation of the OTU-clustering results, and so import can be performed with just one connection/file path.
+
+```{r}
+rich_sparse_biom <- system.file("extdata", "rich_sparse_otu_table.biom", package="phyloseq")
+rich_sparse <- import_biom(rich_sparse_biom, taxaPrefix="greengenes")
+print(rich_sparse)
+```
+
+Note: the current biom-format definition lacks an phylogenetic tree. I am working with the biom-format team on including a phylogenetic tree in the next version of the format, and have contributed a [preliminary R package for biom-format I/O support](https://github.com/biom-format/biom-format/pull/27) as a pull-request to [the biom-format development page on GitHub](https://github.com/biom-format/biom-format). 
+
+The biom-format definition allows for both sparse and dense representations of the abundance data, and is also flexible enough to allow a "minimal" (abundance table onle) and "rich" forms (includes sample and taxonomy data). *All of these forms are supported and automatically recognized/interpreted in phyloseq* through the `import_biom` function.
+
+```{r}
+# Define file path to all four format combinations
+rich_dense_biom  <- system.file("extdata", "rich_dense_otu_table.biom",  package="phyloseq")
+rich_sparse_biom <- system.file("extdata", "rich_sparse_otu_table.biom", package="phyloseq")
+min_dense_biom   <- system.file("extdata", "min_dense_otu_table.biom",   package="phyloseq")
+min_sparse_biom  <- system.file("extdata", "min_sparse_otu_table.biom",  package="phyloseq")
+# Each import is only one line, we will import four different example "datasets"
+rich_dense  <- import_biom(rich_dense_biom,  taxaPrefix="greengenes")
+rich_sparse <- import_biom(rich_sparse_biom, taxaPrefix="greengenes")
+min_dense   <- import_biom(min_dense_biom,   taxaPrefix="greengenes")
+min_sparse  <- import_biom(min_sparse_biom,  taxaPrefix="greengenes")
+# print summary if phyloseq, the component class otherwise.
+biom_ex_print <- function(i){
+	if(class(i)!="phyloseq"){
+		class(i)
+	} else {
+		i
+	}
+}
+sapply(list(rich_dense, rich_sparse, min_dense, min_sparse), biom_ex_print)
+```
+
+## A More Complicated Import Example
+One of the example datasets included in the phyloseq package is derived from [the study first describing human microbiome "Enterotypes"](http://www.nature.com/nature/journal/v473/n7346/full/nature09944.html), and that dataset is called simply `enterotype`. It will be called in later examples using the `data` command.
+
+A more recent study investigating human microbiome "Enterotypes" is titled [Linking Long-Term Dietary Patterns with Gut Microbial Enterotypes](http://www.sciencemag.org/content/334/6052/105.short) by Wu et al., Science, 334 (6052), 105–108. One of the three corresponding authors has the last name "Bushman", which also happens to be the title of the QIIME-processed version of this dataset at [the microbio.me/qiime database](http://www.microbio.me/qiime/).
+
+We will import this data to illustrate a more complicated situation in which we need to import 3 different data components from two different file types (one is [biom-format](http://biom-format.org/), the other is  [sample data contained in a tab-delimited "Mapping File" format produced by QIIME](http://qiime.org/tutorials/tutorial.html).
+
+For convenience and stability, these "Bushman" data files have been saved onto the AMI for the conference, and will be imported from their local system location. An even more complicated "direct import" example is provided in the next subsection, but produces the same result and is not run by the embedded code.
+
+```{r BushmanLocal}
+  biom_file <- "/R-pkgs/BioC_phyloseq_materials/Bushman/study_1011_closed_reference_otu_table.biom"
+  map_file  <- "/R-pkgs/BioC_phyloseq_materials/Bushman/study_1011_mapping_file.txt"
+  # Now import the .biom-formatted otuTable-taxonomyTable file.
+  biom_otu_tax <- import_biom(biom_file, "greengenes")
+  # Add sample data to the dataset using merge
+  bmsd <- import_qiime_sampleData(map_file)
+	class(bmsd); dim(bmsd)
+```
+
+## Direct ftp download, unzip, and import
+The `.biom` and sample data files are also [provided online (ftp)](ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip), and a useful way to download and import into phyloseq directly from the ftp address in the following example code. This is an example in which we download a zip file with both biom- and qiime-formatted data, unzip it in a temporary directory from with in R, import the relavant files using phyloseq importers, and then delete the temporary files. This code *should* be platform independent, but occasionally there are finicky Windows issues that arise.
+```{r BushmanFTP, eval=FALSE}
+# This is not actually run
+zipftp <- "ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip" 
 # First create a temporary directory in which to store the unpacked file(s) from the .zip
 tmpdir <- tempdir()
 # Second create a temp file where you will put the .zip-file itself
@@ -97,39 +171,38 @@ bmsd <- import_qiime_sampleData(map_file)
 # Remove the temperorary file and directory where you unpacked the zip files
 unlink(temp)
 unlink(tmpdir)
-} else {
-  # import locally:
-  biom_file <- "~/Downloads/study_1011_split_library_seqs_and_mapping/study_1011_closed_reference_otu_table.biom"
-  map_file <- "~/Downloads/study_1011_split_library_seqs_and_mapping/study_1011_mapping_file.txt"
-  # Now import the .biom-formatted otuTable-taxonomyTable file.
-  biom_otu_tax <- import_biom(biom_file, "greengenes")
-  # Add sample data to the dataset using merge
-  bmsd <- import_qiime_sampleData(map_file)
-}
 ```
 
-Now the two data objects, containing the otuTabe-taxonomyTable and sampleData components, respectively. Note that if we had three objects that were all components (think single tables, or a tree), then we would use the constructor function, `phyloseq`. Because the `.biom` file contained two tables (including an otuTable), the `import_biom` function returned a `"phyloseq-class"` instance. Whenever adding/merging data for one (or more) phyloseq-class objects, use the merging function, `merge_phyloseq`, rather than the constructor (`phyloseq`).
+## Merging datasets or components
+We need to merge these two separate Bushman dataset objects into one "phyloseq" object.
+Presently, the two data objects contain the `otuTable`, `taxonomyTable`, and `sampleData` components, respectively. If we had three objects that were all components (think single tables, or a tree), then we would use the constructor function, `phyloseq`. However, because the `.biom` file contained two tables (including an `otuTable`), the `import_biom` function returned a valid `"phyloseq-class"` instance instead that contained both components. Whenever you need to add or merge data componentes from one (or more) phyloseq-class objects, the merging function, `merge_phyloseq`, is recommended, rather than the constructor (`phyloseq`).
 ```{r}
 Bushman <- merge_phyloseq(biom_otu_tax, bmsd)
 ```
 
-# Section: Basic interaction with phyloseq data
+
+#  Basic interaction with phyloseq data
 
 Let's look at some basic print and accessor functions/methods provided in phyloseq.
-Print method
+
+
+## Print method
 ```{r}
 Bushman
 ```
 
-Convenience accessors
+
+## Convenience accessors
 ```{r}
 nspecies(Bushman)
-nspecies(Bushman)
+nsamples(Bushman)
 sample.names(Bushman)[1:10]
 species.names(Bushman)[1:10]
 ```
 
-Interacting with the sample variables (useful later in plotting)
+
+## Interacting with the sample variables
+This is useful later in plotting
 ```{r}
 sample.variables(Bushman)[1:10]
 length(sample.variables(Bushman))
@@ -137,7 +210,9 @@ length(sample.variables(Bushman))
 getVariable(Bushman, sample.variables(Bushman)[5])
 ```
 
-Interacting with the taxonomic ranks (useful later in plotting)
+
+## Interacting with the taxonomic ranks
+This is useful later in plotting
 ```{r}
 rank.names(Bushman)
 getTaxa(Bushman, "ta1")
@@ -150,7 +225,8 @@ getTaxa(Bushman, "Kingdom")
 getTaxa(Bushman, "Phylum")
 ```
 
-## Subsection: Abundance Accessors
+
+## Abundance Accessors
 The purposes of the `sampleSums` and `speciesSums` function are pretty straightforward, but the `getSamples` and `getSpecies` functions can bet a bit confusing.
 ```{r}
 sampleSums(Bushman)[1:10]
@@ -159,16 +235,16 @@ getSpecies(Bushman, sample.names(Bushman)[5])[1:10]
 getSamples(Bushman, species.names(Bushman)[5])[1:10]
 ```
 
-Note how a *sample name* is required by `getSpecies`, and vice versa. 
+Note how a *sample name* is required by `getSpecies`, and vice versa. This might seem confusing at first, but `getSpecies` is returning all the OTU abundances from *one* sample, while `getSamples` is returning the abundances from all samples for *one* OTU.
 
 
-# Section: Simple Summary Graphics
+# Simple Summary Graphics
 Load additional graphics-related packages
 ```{r}
 library("ggplot2"); library("scales"); library("grid")
 ```
 
-## Subsection: Some examples for plotting richness estimates from un-trimmed data.
+##  Some examples for plotting richness estimates from un-trimmed data.
 ```{r}
 plot_richness_estimates(Bushman)#, "sample.names", "SampleType")
 ```
@@ -178,25 +254,23 @@ plot_richness_estimates(Bushman)#, "sample.names", "SampleType")
 ```{r}
 p + geom_boxplot(data=p$data, aes(x=SEX, y=value, color=NULL), alpha=0.1)
 ```
-```{r}
+Some others you might try (not run in demo)
+```{r, eval=FALSE}
 plot_richness_estimates(Bushman, x="INSOLUBLE_DIETARY_FIBER_G_AVE")
-# plot_richness_estimates(Bushman, x="AGE_IN_YEARS")
-# plot_richness_estimates(Bushman, x="VEGETABLE_PROTEIN_G_AVE")
+plot_richness_estimates(Bushman, x="AGE_IN_YEARS")
+plot_richness_estimates(Bushman, x="VEGETABLE_PROTEIN_G_AVE")
 ```
 
-## Subsection: Some examples plotting an annotated tree
-Trying to plot too many taxa (tree tips) at once obscures any meaning.
-Let's look at just the Chlamydiae phylum in the GlobalPatterns dataset
-(This also requires subsetting the GlobalPatterns dataset using `subset_species`)
+
+## Plotting an Annotated Phylogenetic Tree
+Trying to plot too many taxa (tree tips) at once obscures meaning. Let's look at just the Chlamydiae phylum in the incldued `GlobalPatterns` dataset. Note that this also requires subsetting the `GlobalPatterns` dataset using the `subset_species` function, part of the "preprocessing" tools described in the following section.
 ```{r}
 data(GlobalPatterns)
 GlobalPatterns
 GP.chl <- subset_species(GlobalPatterns, Phylum=="Chlamydiae")
 ```
-Map the sample environment ("SampleType") to point color,
-and taxonomic Family to point shape. 
-Additionally, label the tips with the Genus name
-and scale the point size by abundance
+
+Map the sample environment ("SampleType") to point color, and taxonomic Family to point shape. Additionally, label the tips with the Genus name and scale the point size by abundance
 ```{r}
 plot_tree(GP.chl, color="SampleType", shape="Family", label.tips="Genus", size="abundance")
 ```
@@ -205,7 +279,9 @@ Not as informative :)
 plot_tree(GP.chl, "treeonly")
 ```
 
-## Subsection: Abundance bar plots for direct observation/comparison of abundances
+
+## Abundance bar plots
+For direct quantitative observation/comparison of abundances.
 ```{r}
 data(enterotype)
 TopNOTUs <- names(sort(speciesSums(enterotype), TRUE)[1:10])
@@ -216,15 +292,14 @@ plot_taxa_bar(ent10, "Genus", x="SeqTech", fill="TaxaGroup")
 plot_taxa_bar(ent10, "Genus", x="SeqTech", fill="TaxaGroup") + facet_wrap(~Enterotype)
 ```
 
-This one takes a little while to calculate...
-```{r}
+This one takes a little while to calculate (not run).
+```{r, eval=FALSE}
 plot_taxa_bar(Bushman, "Phylum", NULL, 0.9, "SEX", "INSOLUBLE_DIETARY_FIBER_G_AVE") 
 ```
 
 
-# Section:  Preprocessing Abundance Data 
-Examples preprocessing (filtering, trimming, subsetting, etc) phyloseq data.
-Let's start by Resetting the example data and adding a human category.
+# Preprocessing Abundance Data 
+This section includes examples preprocessing (filtering, trimming, subsetting, etc) phyloseq data. Let's start by resetting the `GlobalPatterns` example data and adding a human category.
 ```{r}
 data(GlobalPatterns)
 GlobalPatterns
@@ -234,7 +309,8 @@ GP <- prune_species(speciesSums(GlobalPatterns) > 0, GlobalPatterns)
 sampleData(GP)$human <- factor(getVariable(GP, "SampleType") %in% c("Feces", "Mock", "Skin", "Tongue"))
 ```
 
-## Subsection: rarefy abundances to even depth
+
+## rarefy abundances to even depth
 Although of perhaps dubious necessity, it is common for OTU abundance tables
 to be randomly subsampled to even sequencing depth prior various analyses, especially UniFrac.
 Here is an example comparing the UniFrac-PCoA results with and without
@@ -244,7 +320,7 @@ Test with esophagus dataset
 ```{r}
 data(esophagus)
 eso <- rarefy_even_depth(esophagus)
-plot(as(otuTable(eso), "vector"), as(otuTable(esophagus), "vector"))
+# plot(as(otuTable(eso), "vector"), as(otuTable(esophagus), "vector"))
 ```
 ```{r}
 UniFrac(eso); UniFrac(esophagus)
@@ -258,9 +334,10 @@ GP.chl <- subset_species(GlobalPatterns, Phylum=="Chlamydiae")
 GP.chl <- prune_samples(names(which(sampleSums(GP.chl)>=20)), GP.chl)
 # (p <- plot_tree(GP.chl, color="SampleType", shape="Family", label.tips="Genus", size="abundance"))
 GP.chl.r <- rarefy_even_depth(GP.chl)
-plot(as(otuTable(GP.chl.r), "vector"), as(otuTable(GP.chl), "vector"))
+# plot(as(otuTable(GP.chl.r), "vector"), as(otuTable(GP.chl), "vector"))
 ```
-Try ordination of GP.chl and GP.chl.r (default distance is unweighted UniFrac)
+
+To compare MDS of unweighted-UniFrac for GP.chl and GP.chl.r (default distance is unweighted UniFrac) 
 ```{r}
 plot_ordination(GP.chl, ordinate(GP.chl, "MDS"), color="SampleType") + geom_point(size=5)
 ```
@@ -268,47 +345,57 @@ plot_ordination(GP.chl, ordinate(GP.chl, "MDS"), color="SampleType") + geom_poin
 plot_ordination(GP.chl.r, ordinate(GP.chl.r, "MDS"), color="SampleType") + geom_point(size=5)
 ```
 
-How does rarefying affect larger datasets?
-```{r}
+How does rarefying affect the larger untrimmed dataset? (not run)
+```{r, eval=FALSE}
 GP.r <- rarefy_even_depth(GP)
 plot_ordination(GP, ordinate(GP), color="SampleType") + geom_point(size=5)
 ```
-```{r}
+```{r, eval=FALSE}
 plot_ordination(GP.r, ordinate(GP.r), color="SampleType") + geom_point(size=5)
 ```
 
-## Subsection: prune_species() VERSUS subset_species()
-Using plot_tree to show the results, we'll try two different 
-methods for subsetting OTUs in a dataset.
+
+## `prune_species` vs. `subset_species`
+These are two very different methods for subsetting OTUs in a dataset.
 
 ```{r}
 topN <- 20
 most_abundant_taxa <- sort(speciesSums(GP), TRUE)[1:topN]
 print(most_abundant_taxa)
-ex2 <- prune_species(names(most_abundant_taxa), GP)
+GP20 <- prune_species(names(most_abundant_taxa), GP)
 # Exploratory tree #1 (Note, too ma)
-plot_tree(ex2, color="SampleType", label.tips="Family", size="abundance")
+# plot_tree(ex2, color="SampleType", label.tips="Family", size="abundance")
+nspecies(GP20)
+length(getTaxa(GP20, "Phylum"))
 ```
 
 That was `prune_species`, when we know the OTU-IDs of the ones we want, or a logical from a test
-Alternatively, you can subset based on taxonomic rank, using subset_species() and an expression.
+Alternatively, you can subset based on taxonomic rank, using `subset_species` and an expression.
 ```{r}
 GP.chl <- subset_species(GP, Phylum=="Chlamydiae")
 # Exploratory tree #2
-plot_tree(GP.chl, color="SampleType", shape="Family", label.tips="Genus", size="abundance")
+# plot_tree(GP.chl, color="SampleType", shape="Family", label.tips="Genus", size="abundance")
+nspecies(GP.chl)
+length(getTaxa(GP.chl, "Phylum"))
 ```
 
-## Subsection: `filterfunSample` and `genefilterSample`
+
+## `filterfunSample` and `genefilterSample`
+This tool takes after the `genefilter` function from the genefilter package, but emphasizes within-microbiome conditions. The following code illustrates . The function `topp` is a filter function that returns the most abundant `p` fraction of taxa. The `filterfunSample` function takes one or or more functions like `topp` and binds them in order to define a filtering protocol function, in this case called: `f1`. This function, `f1`, is then passed to `genefilterSample` along with the dataset that is going to be pruned as well as a value for `A`, the number of samples in which an OTU must pass the filtering conditions.
 ```{r}
+topp(0.1)
 f1  <- filterfunSample(topp(0.1))
 print(f1)
 wh1 <- genefilterSample(GP, f1, A=round(0.5*nsamples(GP)))
 sum(wh1)
 ex2 <- prune_species(wh1, GP)
+print(GP)
+print(ex2)
 ```
 
-## (Optional) Subsection: Variance-based filtering
-Start by subsetting just the *Crenarchaeota* from all samples:
+
+### Filtering low-variance OTUs
+Suppose we wanted to use the variance of OTUs across samples as a condition for filtering. For example, to remove OTUs that do not change much across all (or most) samples. We start this example by subsetting just the *Crenarchaeota* from all samples:
 ```{r}
 gpac <- subset_species(GP, Phylum=="Crenarchaeota")
 ```
@@ -321,19 +408,16 @@ specvar <- sapply(species.names(gpac), function(i, physeq){
 p1 <- qplot(x=log10(variance), data=data.frame(variance=specvar),
 				binwidth=abs(do.call("-", as.list(range(log10(specvar))))/20)
 			)
+print(p1)
 ```
 
-However:		
-The value of the variance is highly-dependent on the sequencing effort
-of each sample (the total number of reads sequenced from a particular sample).
-Thus we segway to transformations (e.g. convert to fractional abundance prior to filtering)
+However, the value of the variance is highly-dependent on the sequencing effort of each sample (the total number of reads sequenced from a particular sample). Thus we segway to transformations (e.g. convert to fractional abundance prior to filtering)
 
 
-# Section: Transformations
-Useful for: Standardization / Normalization / Smoothing / Shrinking.
-Second-order function: `transformSampleCounts`.
+## Transformations
+Useful for: Standardization / Normalization / Smoothing / Shrinking. Second-order function: `transformSampleCounts`.
 
-Should normalize to sample fraction before estimating variance for filtering.
+Example normalizing to sample fraction before estimating variance for filtering.
 ```{r}
 gpacf   <- transformSampleCounts(gpac, function(x){x/sum(x)})
 specvar <- sapply(species.names(gpacf), function(i, physeq){var(getSamples(physeq, i))}, gpacf)
@@ -363,24 +447,22 @@ just a demonstration for how you might remove OTUs/taxa/species that do not chan
 For normalization, also consider features in the "edgeR" package, and for standardization the `decostand` function in vegan-package
 
 
-# Section: Graphical Exploration of data
+# Graphics for Inference and Exploration
 In the following section(s) we will illustrate using graphical tools provided
 by the phyloseq package. These are meant to be flexible ways to explore and summarize
 the data.
 
-## Subsection: Abundance values graphical inspection ("ground-truthing")
-Use `plot_taxa_bar`
-
-For sake of time of calculation/rendering in this tutorial, let's subset the data further to most abundant 5 phyla
+For sake of time of calculation/rendering in this section, let's subset the data further to most abundant 5 phyla.
 ```{r}
+data(GlobalPatterns) # Reload GlobalPatterns
+GP <- prune_species(speciesSums(GlobalPatterns)>0, GlobalPatterns)
+sampleData(GP)$human <- factor(getVariable(GP, "SampleType") %in% c("Feces", "Mock", "Skin", "Tongue"))
 top5ph <- sort(tapply(speciesSums(GP), taxTab(GP)[, "Phylum"], sum), decreasing=TRUE)[1:5]
 GP1    <- subset_species(GP, Phylum %in% names(top5ph))
-plot_taxa_bar(GP1, "Phylum", NULL, threshold=0.9, "human", "SampleType") 
-plot_taxa_bar(GP1, "Phylum", NULL, threshold=0.9, "human", "SampleType", facet_formula= TaxaGroup ~ .) 
 ```
 
-## Subsection: distance functions
-For ordinations, network plots
+##  Distance Functions
+Before we get to network plots, let's discuss distances. Many tools use distances to perform their calculations. In phyloseq, ordinations, heatmap organization, and network plots all use the `distance` function internally for calculating OTU or Sample distance matrices (actually represented as a "dist" object).
 
 ```{r, eval=FALSE}
 help("distance") # Same as "?distance"
@@ -404,8 +486,10 @@ distance("help")
 distance("list")
 ```
 
-## Subsection: `plot_network`
+## `plot_network`
 The following code illustrates use the `make_network` and `plot_network` commands from phyloseq. The `GP` variable is an only-slightly-modified version of the `GlobalPatterns` dataset. The threshold was determined empirically to show something interesting for demonstration. In practice, this value has a huge effect on the resulting network, and its usefulness, and it is highly recommended that you investigate the results from multiple values.
+
+Also it is recommended that you take a look at [the plot_network wiki page](https://github.com/joey711/phyloseq/wiki/plot_network) 
 
 ```{r plotnetwork-GPsamples}
 ig <- make_network(GP,"samples", "bray", threshold=0.9)
@@ -429,13 +513,13 @@ plot_network(jg, GP100, "species", color="Phylum", line_weight=0.4, label=NULL)
 ```
 
 
-## Subsection: ordinate function
-Using `GP100` from the previous section, let's calculate the unweighted-UniFrac distance for each sample pair in the dataset, and then perform Multidimensional Scaling (aka Principle Coordinates Analysis) on the resulting distance.
+## The `ordinate` function
+Using `GP100` from the previous section, let's calculate the unweighted-UniFrac distance for each sample pair in the dataset, and then perform Multidimensional Scaling (aka Principle Coordinates Analysis) on the resulting distance. For details about calculating the UniFrac distance on larger datasets using parallel-computing options in supported by phyloseq, see [the wiki page on Fast Parallel UniFrac in phyloseq](https://github.com/joey711/phyloseq/wiki/Fast-Parallel-UniFrac)
 ```{r}
 GP.MDS <- ordinate(GP100, "MDS", "unifrac")
 ```
 Here are just a few examples of other supported combinations.
-```{r}
+```{r, eval=FALSE}
 GP.NMDS <- ordinate(GP, "NMDS", "gower")
 GP.NMDS <- ordinate(GP, "NMDS", "bray") # perform NMDS on bray-curtis distance
 GP.NMDS.UF.ord   <- ordinate(GP, "NMDS") # UniFrac. Takes a while.
@@ -444,12 +528,13 @@ GP.NMDS.gower <- ordinate(GP, "NMDS", "gower")
 ```
 
 
-## Subsection: plot_ordination function
+## `plot_ordination` function
+The `plot_ordination` function has many options, and supports many combinations of ordinations, and sample or OTU co-variables mapped to color and shape. Many additional examples (with results) are included on [the plot_ordination wiki page](https://github.com/joey711/phyloseq/wiki/plot_ordination). For quicker reference, some example "1-liners" are also included at bottom of this section.
 
+This combination of MDS/PCoA ordination of the UniFrac distance is recently very popular in microbiome analyses. 
 ```{r}
 plot_ordination(GP100, GP.MDS, "samples", color="SampleType") + geom_line() + geom_point(size=5)
 ```
-?plot_ordination # Example "1-liners" are at bottom.
 
 Get the names of the most-abundant phyla, and use for subsetting.
 ```{r}
@@ -457,7 +542,7 @@ top.TaxaGroup <- sort(
 	tapply(speciesSums(GP), taxTab(GP)[, "Phylum"], sum, na.rm = TRUE),
 	decreasing = TRUE)
 top.TaxaGroup <- top.TaxaGroup[top.TaxaGroup > 1*10^6]
-Now prune further, to just the most-abundant phyla
+# Now prune further, to just the most-abundant phyla
 GP2 <- subset_species(GP, Phylum %in% names(top.TaxaGroup))
 topsp <- names(sort(speciesSums(GP2), TRUE)[1:200])
 GP2   <- prune_species(topsp, GP2)
@@ -477,16 +562,20 @@ plot_ordination(GP2, ordinate(GP2, "DCA"), type="split", color="SampleType",
 	shape="Phylum", label="SampleType")
 ```
 
-## Subsection:  Mapping continuous variables to color (can't do it to shape)
+
+##   Mapping continuous variables to color (can't do it to shape)
 ```{r}
-Bushman.ord <- ordinate(Bushman, "DCA")
+Bushman.ord <- ordinate(Bushman, "CCA")
 plot_ordination(Bushman, Bushman.ord, "samples", color="OMEGA3_FATTY_ACIDS_G_AVE")
-plot_ordination(Bushman, Bushman.ord, "samples", color="VIT_B6_MG_AVE")
+# plot_ordination(Bushman, Bushman.ord, "samples", color="VIT_B6_MG_AVE")
 ```
 
 
-## Subsection: plot_heatmap function
-Describe NeatMap approach, then show examples.
+##  `plot_heatmap` Function
+In a [2010 article in BMC Genomics](http://www.biomedcentral.com/1471-2105/11/45), Rajaram and Oono describe an approach to creating a heatmap using ordination methods (namely, NMDS and PCA) to organize the rows and columns instead of (hierarchical) cluster analysis. In many cases the ordination-based ordering does a much better job than h-clustering at providing an order of elements that is easily interpretable. The authors provided an immediately useful example of their approach as [the NeatMap package for R](http://cran.r-project.org/web/packages/NeatMap/index.html). The NeatMap package can be used directly on the abundance table (`"otuTable"`-class) of phylogenetic-sequencing data, but the NMDS or PCA ordination options that it supports are not based on ecological distances. To fill this void, and because phyloseq already provides support for a large number of [ecological distances](https://github.com/joey711/phyloseq/wiki/distance) and [ordination methods](https://github.com/joey711/phyloseq/wiki/ordinate), phyloseq now includes the `plot_heatmap()` function: an ecology-oriented variant of the NeatMap approach to organizing a heatmap and build it using ggplot2 graphics tools. The [distance](https://github.com/joey711/phyloseq/wiki/distance) and [method](https://github.com/joey711/phyloseq/wiki/ordinate) arguments are the same as for the [plot_ordination](https://github.com/joey711/phyloseq/wiki/plot_ordination) function, and support large number of distances and ordination methods, respectively, with a strong leaning toward ecology. This function also provides the options to re-label the OTU and sample axis-ticks with a taxonomic name and/or sample variable, respectively, in the hope that this might hasten your interpretation of the patterns (See the documentation for the `sample.label` and `species.label` arguments, and the examples below). Note that this function makes no attempt to overlay dendrograms from hierarchical clustering next to the axes, as hierarchical clustering is not used to organize these plots. Also note that each re-ordered axis repeats at the edge, and so apparent clusters at the far right/left or top/bottom of the heat-map may actually be the same. For now, the placement of this edge can be considered arbitrary, so beware of this artifact of the graphic and visually check if there are two "mergeable" clusters at the edges of a particular axis. If you benefit from this phyloseq-specific implementation of [the NeatMap approach](http://cran.r-project.org/web/packages/NeatMap/index.html), please cite [the NeatMap article](http://www.biomedcentral.com/1471-2105/11/45), as well as phyloseq.
+
+Further examples are provided at [the plot_heatmap wiki page](https://github.com/joey711/phyloseq/wiki/plot_heatmap)
+
 ```{r}
 plot_heatmap(GP2, "MDS", "bray", "SampleType", "Family")
 ```
@@ -499,17 +588,13 @@ plot_heatmap(gpac_filt, "NMDS", "bray", "SampleType", "Family", trans=boxcox_tra
 ```
 
 
-# Section: Validation
+#  Validation
 In this section, we will look at examples for using R to validate/test hypotheses
 we may have generated through some of the previous exploration.
 
 
-## Subsection: multiple multiple testing
-Do testing on fractional abundance to remove 
-effect of differences in total sequencing across samples for same taxa.
-First, for the sake of time, let's subset our testing to the first 200 
-most abundant OTUs, and transform these counts to their relative abundance
-in their source sample.
+##  Multiple Testing
+In this example we will perform testing on fractional abundances to remove effect of differences in total sequencing across samples for same taxa. For the sake of time, let's subset our testing to the first 200 most abundant OTUs, and transform these counts to their relative abundance in their source sample (note that this introduce bias in real-life scenarios).
 
 ```{r}
 topsp <- names(sort(speciesSums(GP), TRUE)[1:200])
@@ -517,10 +602,7 @@ GP3f  <- transformSampleCounts(GP, function(x){x/sum(x)})
 GP3f  <- prune_species(topsp, GP3f)
 ```
 
-We are going to use the multtest wrapper included in phyloseq, `mt`.
-Try `?mt` for help on this function.
-To use this wrapper to calculate the multiple-inference-adjusted P-values,
-using the "human" sample variable:
+We are going to use the multtest wrapper included in phyloseq, `mt`. Try `?mt` for help on this function. To use this wrapper to calculate the multiple-inference-adjusted P-values, using the "human" sample variable:
 ```{r}
 GP.fwer.table <- mt(GP3f, "human")
 ```
@@ -532,7 +614,7 @@ GP.fwer.table <- data.frame(GP.fwer.table, taxTab(GP3f)[rownames(GP.fwer.table),
 subset(GP.fwer.table, adjp < 0.05)
 ```
 
-## Subsection: What if we want FDR instead of FWER?
+##  What if we want FDR instead of FWER?
 Or to use other tools in multtest-package?
 ```{r}
 library("multtest")
@@ -555,24 +637,17 @@ GP3f.mt.table <- GP3f.mt.table[order(GP3f.mt.table[, "BH"]), ]
 subset(GP3f.mt.table, BH < 0.05)
 ```
 
-Some Alternative packages for multiple inference correction:
-"qvalue" package, "multcomp" package
+Some Alternative packages for multiple inference correction: "qvalue" package, "multcomp" package
 
 
-# Section: Getting phyloseq data into other R tools
+#  Getting phyloseq data into other R tools
 
-A big concern for many users is how they can easily get phyloseq-formatted
-data into other R tools. The following examples are meant to illustrate
-doing that with some commonly-requested tasks.
+A big concern for many users is how they can easily get phyloseq-formatted data into other R tools. The following examples are meant to illustrate doing that with some commonly-requested tasks.
 
-## Subsection: Porting data to vegan functions
 
-For OTU abundance tables, vegan expects samples as rows, and OTUs/species/taxa as columns
-(so does the picante package).
-The following is an example function, called `veganotu`, for 
-extracting the OTU table from a phyloseq data object, 
-and converting it to a properly oriented standard matrix recognized by 
-the vegan package.
+##  Porting Data to vegan Functions
+
+For OTU abundance tables, vegan expects samples as rows, and OTUs/species/taxa as columns (so does the picante package). The following is an example function, called `veganotu`, for extracting the OTU table from a phyloseq data object, and converting it to a properly oriented standard matrix recognized by the vegan package.
 
 ```{r veganotu}
 veganotu <- function(physeq){
@@ -617,7 +692,7 @@ names(bushsd)[1:10]
 bioenv(veganotu(Bushman) ~ DEPTH + AGE + TOTAL_FAT_G_AVE + INSOLUBLE_DIETARY_FIBER_G_AVE, bushsd)
 ```
 
-## Subsection: Ordination Example on the Gap Statistic
+##  Ordination Example on the Gap Statistic
 Here is an example performing the gap statistic on ordination results
 calculated using phyloseq tools, followed by an example of how a 
 ggplot-based wrapper for this example might be included in the phyloseq
