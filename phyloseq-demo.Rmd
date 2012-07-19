@@ -1,24 +1,22 @@
  Demo: phyloseq – A Bioconductor package for handling and analysis of high-throughput phylogenetic sequence data 
-====================================================================================================================
+========================================================
 
- Paul J. McMurdie and Susan Holmes
-    Statistics Department, Stanford University,
-    Stanford, CA 94305, USA
+Paul J. McMurdie and Susan Holmes
+Statistics Department, Stanford University,
+Stanford, CA 94305, USA
     
-    E-mail: mcmurdie@stanford.edu
-    https://github.com/joey711/phyloseq
-    susan@stat.stanford.edu\
-    http://www-stat.stanford.edu/~susan/
+E-mail: mcmurdie@stanford.edu
+https://github.com/joey711/phyloseq
+susan@stat.stanford.edu\
+http://www-stat.stanford.edu/~susan/
 
-Summary
----------
+# Summary
 
-This is a demonstration manual for the phyloseq package. It is a Sweave
+This is a demonstration manual for the phyloseq package. It is an R-markdown
 source-file with example code-chunks that can be reused if you have
 phyloseq installed.
 
-phyloseq Documentation
--------------------
+# phyloseq Documentation
 
 Vignettes are included in phyloseq. A quick way to load them from within `R` is:
 
