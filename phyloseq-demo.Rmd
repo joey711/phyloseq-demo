@@ -22,7 +22,7 @@ phyloseq Documentation
 
 Vignettes are included in phyloseq. A quick way to load them from within `R` is:
 
-```{r, eval=FALSE}
+```{r vignettes, eval=FALSE}
 vignette("phyloseqbasics")
 vignette("phyloseqanalysis")
 ```
@@ -30,12 +30,6 @@ vignette("phyloseqanalysis")
 This demonstration document supports a live demonstration of tools in
 phyloseq, and supplements other documentation resources
 available for [the phyloseq package](https://github.com/joey711/phyloseq) (e.g. wiki, vignettes, publications, function-level documentation, etc.).
-
-There is also package-level documentation available. Note the following difference:
-```{r, eval=FALSE}
-?"phyloseq-package"
-?phyloseq # this is a function
-```
 
 
 # Section: Installation
@@ -45,7 +39,7 @@ the development website on GitHub. The following code should
 install the newest "bleeding edge" version of the phyloseq package
 onto your system, including dependencies.
 Further instructions are available at [the installation wiki](https://github.com/joey711/phyloseq/wiki/Installation)
-```{r}
+```{r installation, eval=FALSE}
 source("http://bioconductor.org/biocLite.R")
 biocLite("multtest")
 biocLite("genefilter")
@@ -63,11 +57,14 @@ Of course we need to start this tutorial by loading the phyloseq package
 ```{r}
 library("phyloseq")
 ```
-For looking at package-level documentation, try 
-`?"phyloseq-package"`
-which is distinct from
-`?phyloseq`
-which is actually a function in the phyloseq-package.
+
+There is package-level documentation available. Note the following difference:
+```{r, eval=FALSE}
+?"phyloseq-package"
+?phyloseq # this is a function
+```
+The latter loads instead the documentation for the constructor function named `phyloseq()`
+
 
 ## More complicated import example: Bushman et al., combined enterotypes dataset
 Here is an example in which we download a zip file with both biom- and qiime-formatted
@@ -76,12 +73,14 @@ import the relavant files using phyloseq importers, and then delete the temporar
 This code *should* be platform independent, but occasionally there are finicky 
 Windows issues that arise. 
 
-The "genus and phylum" abundance tables are provided online (ftp) here:
+The "genus and phylum" abundance tables are provided online (ftp). The `import_direct` variable in this example determines whether to look locally or at the ftp for the files
 ```{r}
-zipftp <- "ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip"
+import_direct <- FALSE
 ```
-
+Now try importing.
 ```{r}
+if(import_direct){
+  zipftp <- "ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip" 
 # First create a temporary directory in which to store the unpacked file(s) from the .zip
 tmpdir <- tempdir()
 # Second create a temp file where you will put the .zip-file itself
@@ -97,10 +96,23 @@ map_file <- file.path(tmpdir, list.files(tmpdir, pattern="mapping"))
 biom_otu_tax <- import_biom(biom_file, "greengenes")
 # Add sample data to the dataset using merge
 bmsd <- import_qiime_sampleData(map_file)
-Bushman <- merge_phyloseq(biom_otu_tax, bmsd)
 # Remove the temperorary file and directory where you unpacked the zip files
 unlink(temp)
 unlink(tmpdir)
+} else {
+  # import locally:
+  biom_file <- "~/Downloads/study_1011_split_library_seqs_and_mapping/study_1011_closed_reference_otu_table.biom"
+  map_file <- "~/Downloads/study_1011_split_library_seqs_and_mapping/study_1011_mapping_file.txt"
+  # Now import the .biom-formatted otuTable-taxonomyTable file.
+  biom_otu_tax <- import_biom(biom_file, "greengenes")
+  # Add sample data to the dataset using merge
+  bmsd <- import_qiime_sampleData(map_file)
+}
+```
+
+Now the two data objects, containing the otuTabe-taxonomyTable and sampleData components, respectively. Note that if we had three objects that were all components (think single tables, or a tree), then we would use the constructor function, `phyloseq`. Because the `.biom` file contained two tables (including an otuTable), the `import_biom` function returned a `"phyloseq-class"` instance. Whenever adding/merging data for one (or more) phyloseq-class objects, use the merging function, `merge_phyloseq`, rather than the constructor (`phyloseq`).
+```{r}
+Bushman <- merge_phyloseq(biom_otu_tax, bmsd)
 ```
 
 # Section: Basic interaction with phyloseq data
@@ -131,16 +143,17 @@ Interacting with the taxonomic ranks (useful later in plotting)
 ```{r}
 rank.names(Bushman)
 getTaxa(Bushman, "ta1")
-```{r}
+```
 
-Lets assign more meaningful taxonomic rank names to Bushman
+The `rank.names` returned in the previous chunk are a little weird. Let's assign more meaningful taxonomic rank names to the Bushman dataset, since we know (in this case) that the "greengenes" taxonomy tools were used for the assignment we actually then know the names of the seven taxonomic ranks used.
 ```{r}
 colnames(taxTab(Bushman)) <- c(k="Kingdom", p="Phylum", c="Class", o="Order", f="Family", g="Genus", s="Species")
 getTaxa(Bushman, "Kingdom")
 getTaxa(Bushman, "Phylum")
 ```
 
-Abundance Sums, accessors
+## Subsection: Abundance Accessors
+The purposes of the `sampleSums` and `speciesSums` function are pretty straightforward, but the `getSamples` and `getSpecies` functions can bet a bit confusing.
 ```{r}
 sampleSums(Bushman)[1:10]
 speciesSums(Bushman)[1:10]
@@ -148,7 +161,10 @@ getSpecies(Bushman, sample.names(Bushman)[5])[1:10]
 getSamples(Bushman, species.names(Bushman)[5])[1:10]
 ```
 
-# Section: simple summary graphics
+Note how a *sample name* is required by `getSpecies`, and vice versa. 
+
+
+# Section: Simple Summary Graphics
 Load additional graphics-related packages
 ```{r}
 library("ggplot2"); library("scales"); library("grid")
