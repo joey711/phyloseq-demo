@@ -1,3 +1,10 @@
+<link href="http://kevinburke.bitbucket.org/markdowncss/markdown.css" rel="stylesheet"></link>
+
+```{r header, echo=FALSE}
+opts_knit$set(aliases=c(h='fig.height', w='fig.width',
+                cap='fig.cap', scap='fig.scap'))
+```
+
 Demo: phyloseq – A Bioconductor package for handling and analysis of high-throughput phylogenetic sequence data 
 ========================================================
 
@@ -12,9 +19,7 @@ http://www-stat.stanford.edu/~susan/
 
 # Summary
 
-This is a demonstration manual for the phyloseq package. It is an R-markdown
-source-file with example code-chunks that can be reused if you have
-phyloseq installed.
+This is a demonstration manual for the phyloseq package. It is an R-markdown source-file with example code-chunks that can be reused if you have phyloseq installed.
 
 # phyloseq Documentation
 
@@ -25,18 +30,11 @@ vignette("phyloseqbasics")
 vignette("phyloseqanalysis")
 ```
 
-This demonstration document supports a live demonstration of tools in
-phyloseq, and supplements other documentation resources
-available for [the phyloseq package](https://github.com/joey711/phyloseq) (e.g. wiki, vignettes, publications, function-level documentation, etc.).
+This demonstration document supports a live demonstration of tools in phyloseq, and supplements other documentation resources available for [the phyloseq package](https://github.com/joey711/phyloseq) (e.g. wiki, vignettes, publications, function-level documentation, etc.).
 
 
 # Installation
-For the foreseeable near future, phyloseq is under active development.
-Users are encouraged to consistently update their version from 
-the development website on GitHub. The following code should
-install the newest "bleeding edge" version of the phyloseq package
-onto your system, including dependencies.
-Further instructions are available at [the installation wiki](https://github.com/joey711/phyloseq/wiki/Installation)
+For the foreseeable near future, phyloseq is under active development. Users are encouraged to consistently update their version from the development website on GitHub. The following code should install the newest "bleeding edge" version of the phyloseq package onto your system, including dependencies. Further instructions are available at [the installation wiki](https://github.com/joey711/phyloseq/wiki/Installation)
 ```{r installation, eval=FALSE}
 source("http://bioconductor.org/biocLite.R")
 biocLite("multtest")
@@ -139,8 +137,10 @@ We will import this data to illustrate a more complicated situation in which we 
 For convenience and stability, these "Bushman" data files have been saved onto the AMI for the conference, and will be imported from their local system location. An even more complicated "direct import" example is provided in the next subsection, but produces the same result and is not run by the embedded code.
 
 ```{r BushmanLocal}
-  biom_file <- "/R-pkgs/BioC_phyloseq_materials/Bushman/study_1011_closed_reference_otu_table.biom"
-  map_file  <- "/R-pkgs/BioC_phyloseq_materials/Bushman/study_1011_mapping_file.txt"
+# biom_file <- "/R-pkgs/BioC_phyloseq_materials/Bushman/study_1011_closed_reference_otu_table.biom"
+  biom_file <- "/R-pkgs/data/study_1011_closed_reference_otu_table.biom.gz"
+# map_file  <- "/R-pkgs/BioC_phyloseq_materials/Bushman/study_1011_mapping_file.txt.gz"
+  map_file  <- "/R-pkgs/data/study_1011_mapping_file.txt.gz"
   # Now import the .biom-formatted otuTable-taxonomyTable file.
   biom_otu_tax <- import_biom(biom_file, "greengenes")
   # Add sample data to the dataset using merge
@@ -174,8 +174,7 @@ unlink(tmpdir)
 ```
 
 ## Merging datasets or components
-We need to merge these two separate Bushman dataset objects into one "phyloseq" object.
-Presently, the two data objects contain the `otuTable`, `taxonomyTable`, and `sampleData` components, respectively. If we had three objects that were all components (think single tables, or a tree), then we would use the constructor function, `phyloseq`. However, because the `.biom` file contained two tables (including an `otuTable`), the `import_biom` function returned a valid `"phyloseq-class"` instance instead that contained both components. Whenever you need to add or merge data componentes from one (or more) phyloseq-class objects, the merging function, `merge_phyloseq`, is recommended, rather than the constructor (`phyloseq`).
+We need to merge these two separate Bushman dataset objects into one "phyloseq" object. Presently, the two data objects contain the `otuTable`, `taxonomyTable`, and `sampleData` components, respectively. If we had three objects that were all components (think single tables, or a tree), then we would use the constructor function, `phyloseq`. However, because the `.biom` file contained two tables (including an `otuTable`), the `import_biom` function returned a valid `"phyloseq-class"` instance instead that contained both components. Whenever you need to add or merge data componentes from one (or more) phyloseq-class objects, the merging function, `merge_phyloseq`, is recommended, rather than the constructor (`phyloseq`).
 ```{r}
 Bushman <- merge_phyloseq(biom_otu_tax, bmsd)
 ```
@@ -263,21 +262,26 @@ plot_richness_estimates(Bushman, x="VEGETABLE_PROTEIN_G_AVE")
 
 
 ## Plotting an Annotated Phylogenetic Tree
-Trying to plot too many taxa (tree tips) at once obscures meaning. Let's look at just the Chlamydiae phylum in the incldued `GlobalPatterns` dataset. Note that this also requires subsetting the `GlobalPatterns` dataset using the `subset_species` function, part of the "preprocessing" tools described in the following section.
+A useful display on a phylogenetic tree is to add points next to tips/leaves/OTUs to represent samples in which the OTU was observed. This is facillitated in the phyloseq package through the `plot_tree` function, which produces a ggplot2-based phylogenetic tree, and also allows several options for mapping color, shape, and size of these sample points to variables in the dataset. These point aesthetics can be mapped to sample data or to taxonomic data, depending on needs and which information needs to be reinforced in your graphic.
+
+Caution: Trying to plot too many taxa (tree tips) at once obscures meaning. Let's look at just the Chlamydiae phylum in the incldued `GlobalPatterns` dataset. Note that this also requires subsetting the `GlobalPatterns` dataset using the `subset_species` function, part of the "preprocessing" tools described in the following section.
 ```{r}
 data(GlobalPatterns)
 GlobalPatterns
 GP.chl <- subset_species(GlobalPatterns, Phylum=="Chlamydiae")
 ```
 
-Map the sample environment ("SampleType") to point color, and taxonomic Family to point shape. Additionally, label the tips with the Genus name and scale the point size by abundance
+Map the sample environment (`"SampleType"`) to point color, and taxonomic family to point shape. Additionally, label the tips with the Genus name and scale the point size by abundance
 ```{r}
 plot_tree(GP.chl, color="SampleType", shape="Family", label.tips="Genus", size="abundance")
 ```
-Not as informative :)
+###### The graphic produced by the `plot_tree` function in phyloseq. In this case the data is a subset of the `GlobalPatterns` dataset in which only OTUs from the phylum *Chlamydiae* are included. Additionally, the tree has been annotated with genus labels at each tree tip. The points next to tips represent samples in which the OTU was observed, and are shaped according to taxonomic rank of Fammily, and shaded according to the sample type (sample source environment).
+
+
 ```{r}
 plot_tree(GP.chl, "treeonly")
 ```
+###### Here is the result of plotting the "bare" tree with no options directing the mapping of a variable to the tree, and `"treeonly"` as the argument to `method`. Not as informative as the previous tree.
 
 
 ## Abundance bar plots
@@ -310,11 +314,8 @@ sampleData(GP)$human <- factor(getVariable(GP, "SampleType") %in% c("Feces", "Mo
 ```
 
 
-## rarefy abundances to even depth
-Although of perhaps dubious necessity, it is common for OTU abundance tables
-to be randomly subsampled to even sequencing depth prior various analyses, especially UniFrac.
-Here is an example comparing the UniFrac-PCoA results with and without
-"rarefying" the abundances (Requires phyloseq v1.1.28+)
+## "Rarefy" Abundances to Even Depth
+Although of perhaps dubious necessity, it is common for OTU abundance tables to be randomly subsampled to even sequencing depth prior various analyses, especially UniFrac. Here is an example comparing the UniFrac-PCoA results with and without "rarefying" the abundances (Requires phyloseq v1.1.28+)
 
 Test with esophagus dataset
 ```{r}
@@ -368,9 +369,9 @@ GP20 <- prune_species(names(most_abundant_taxa), GP)
 nspecies(GP20)
 length(getTaxa(GP20, "Phylum"))
 ```
+That was `prune_species`, applicable when we know (or can provide) the OTU IDs of the OTUs we want to retain in the dataset, or a logical vector with the same length as `nspecies` reseulting from a test (useful for `genefilter` or``genefilterSample` results (see next section)).
 
-That was `prune_species`, when we know the OTU-IDs of the ones we want, or a logical from a test
-Alternatively, you can subset based on taxonomic rank, using `subset_species` and an expression.
+Alternatively, you can subset based on taxonomy expressions, using `subset_species`.
 ```{r}
 GP.chl <- subset_species(GP, Phylum=="Chlamydiae")
 # Exploratory tree #2
