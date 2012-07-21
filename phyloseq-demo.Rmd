@@ -1,10 +1,5 @@
 <link href="http://kevinburke.bitbucket.org/markdowncss/markdown.css" rel="stylesheet"></link>
 
-```{r header, echo=FALSE}
-opts_knit$set(aliases=c(h='fig.height', w='fig.width',
-                cap='fig.cap', scap='fig.scap'))
-```
-
 Demo: phyloseq – A Bioconductor package for handling and analysis of high-throughput phylogenetic sequence data 
 ========================================================
 
@@ -19,7 +14,7 @@ http://www-stat.stanford.edu/~susan/
 
 # Summary
 
-This is a demonstration manual for the phyloseq package. It is an R-markdown source-file with example code-chunks that can be reused if you have phyloseq installed.
+This is a demonstration manual for [the phyloseq package](http://joey711.github.com/phyloseq/). It is an R-markdown source-file with example code-chunks that can be reused if you have phyloseq installed.
 
 # phyloseq Documentation
 
@@ -34,7 +29,7 @@ This demonstration document supports a live demonstration of tools in phyloseq, 
 
 
 # Installation
-For the foreseeable near future, phyloseq is under active development. Users are encouraged to consistently update their version from the development website on GitHub. The following code should install the newest "bleeding edge" version of the phyloseq package onto your system, including dependencies. Further instructions are available at [the installation wiki](https://github.com/joey711/phyloseq/wiki/Installation)
+For the foreseeable near future, phyloseq is under active development. Users are encouraged to consistently update their version from [the phyloseq development website on GitHub](http://joey711.github.com/phyloseq/). The following code should install the newest "bleeding edge" version of [the phyloseq package](http://joey711.github.com/phyloseq/) onto your system, including dependencies. Further instructions are available at [the installation wiki](https://github.com/joey711/phyloseq/wiki/Installation)
 ```{r installation, eval=FALSE}
 source("http://bioconductor.org/biocLite.R")
 biocLite("multtest")
@@ -48,7 +43,7 @@ install_github("phyloseq", "joey711")
 ```
 
 #  Load phyloseq, and import data.
-Of course we need to start this tutorial by loading the phyloseq package
+Of course we need to start this tutorial by loading [the phyloseq package](http://joey711.github.com/phyloseq/)
 (assuming that it is installed.)
 ```{r, message=FALSE}
 library("phyloseq")
@@ -76,7 +71,7 @@ print(qiimex)
 
 
 ### Importing the Output from [mothur](http://www.mothur.org/)
-Example: Manually re-import [the "esophagus dataset"](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC384727), which is already inclduded in the phyloseq package.
+Example: Manually re-import [the "esophagus dataset"](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC384727), which is already inclduded in [the phyloseq package](http://joey711.github.com/phyloseq/). Note that the esophagus dataset is a simple dataset consisting of just 3 samples and a relatively small richness, described with just a tree and OTU table. It is most useful for showing quick examples, such as computing the UniFrac distance, but for not much else. If interested, further details can be found by entering `?esophagus`.
 ```{r}
 mothlist  <- system.file("extdata", "esophagus.fn.list.gz", package="phyloseq")
 mothgroup <- system.file("extdata", "esophagus.good.groups.gz", package="phyloseq")
@@ -84,10 +79,12 @@ mothtree  <- system.file("extdata", "esophagus.tree.gz", package="phyloseq")
 cutoff    <- "0.10"
 esophman  <- import_mothur(mothlist, mothgroup, mothtree, cutoff)
 print(esophman)
+nspecies(esophman)
 ```
 
 Let's test if they are identical as expected
 ```{r}
+data(esophagus)
 identical(esophagus, esophman)
 ```
 
@@ -128,7 +125,7 @@ sapply(list(rich_dense, rich_sparse, min_dense, min_sparse), biom_ex_print)
 ```
 
 ## A More Complicated Import Example
-One of the example datasets included in the phyloseq package is derived from [the study first describing human microbiome "Enterotypes"](http://www.nature.com/nature/journal/v473/n7346/full/nature09944.html), and that dataset is called simply `enterotype`. It will be called in later examples using the `data` command.
+One of the example datasets included in [the phyloseq package](http://joey711.github.com/phyloseq/) is derived from [the study first describing human microbiome "Enterotypes"](http://www.nature.com/nature/journal/v473/n7346/full/nature09944.html), and that dataset is called simply `enterotype`. It will be called in later examples using the `data` command.
 
 A more recent study investigating human microbiome "Enterotypes" is titled [Linking Long-Term Dietary Patterns with Gut Microbial Enterotypes](http://www.sciencemag.org/content/334/6052/105.short) by Wu et al., Science, 334 (6052), 105–108. One of the three corresponding authors has the last name "Bushman", which also happens to be the title of the QIIME-processed version of this dataset at [the microbio.me/qiime database](http://www.microbio.me/qiime/).
 
@@ -244,17 +241,13 @@ library("ggplot2"); library("scales"); library("grid")
 ```
 
 ##  Some examples for plotting richness estimates from un-trimmed data.
-```{r}
+```{r plot-richness-1}
 plot_richness_estimates(Bushman)#, "sample.names", "SampleType")
-```
-```{r}
 (p <- plot_richness_estimates(Bushman, x="SEX"))
-```
-```{r}
 p + geom_boxplot(data=p$data, aes(x=SEX, y=value, color=NULL), alpha=0.1)
 ```
 Some others you might try (not run in demo)
-```{r, eval=FALSE}
+```{r plot-richness-2, eval=FALSE}
 plot_richness_estimates(Bushman, x="INSOLUBLE_DIETARY_FIBER_G_AVE")
 plot_richness_estimates(Bushman, x="AGE_IN_YEARS")
 plot_richness_estimates(Bushman, x="VEGETABLE_PROTEIN_G_AVE")
@@ -262,7 +255,7 @@ plot_richness_estimates(Bushman, x="VEGETABLE_PROTEIN_G_AVE")
 
 
 ## Plotting an Annotated Phylogenetic Tree
-A useful display on a phylogenetic tree is to add points next to tips/leaves/OTUs to represent samples in which the OTU was observed. This is facillitated in the phyloseq package through the `plot_tree` function, which produces a ggplot2-based phylogenetic tree, and also allows several options for mapping color, shape, and size of these sample points to variables in the dataset. These point aesthetics can be mapped to sample data or to taxonomic data, depending on needs and which information needs to be reinforced in your graphic.
+A useful display on a phylogenetic tree is to add points next to tips/leaves/OTUs to represent samples in which the OTU was observed. This is facillitated in [the phyloseq package](http://joey711.github.com/phyloseq/) through the `plot_tree` function, which produces a [ggplot](http://had.co.nz/ggplot2/)-based phylogenetic tree, and also allows several options for mapping color, shape, and size of these sample points to variables in the dataset. These point aesthetics can be mapped to sample data or to taxonomic data, depending on needs and which information needs to be reinforced in your graphic.
 
 Caution: Trying to plot too many taxa (tree tips) at once obscures meaning. Let's look at just the Chlamydiae phylum in the incldued `GlobalPatterns` dataset. Note that this also requires subsetting the `GlobalPatterns` dataset using the `subset_species` function, part of the "preprocessing" tools described in the following section.
 ```{r}
@@ -442,16 +435,13 @@ Show results with a heatmp
 ```{r}
 plot_heatmap(gpac_filt, "NMDS", "bray", "SampleType", "Family")
 ```
-Note that the code in this section is not an endorsement of this particular threshold (0.001),
-just a demonstration for how you might remove OTUs/taxa/species that do not change much across the samples in your experiment.
+Note that the code in this section is not an endorsement of this particular threshold (0.001), just a demonstration for how you might remove OTUs/taxa/species that do not change much across the samples in your experiment.
 
 For normalization, also consider features in the "edgeR" package, and for standardization the `decostand` function in vegan-package
 
 
 # Graphics for Inference and Exploration
-In the following section(s) we will illustrate using graphical tools provided
-by the phyloseq package. These are meant to be flexible ways to explore and summarize
-the data.
+In the following section(s) we will illustrate using graphical tools provided by [the phyloseq package](http://joey711.github.com/phyloseq/). These are meant to be flexible ways to explore and summarize the data.
 
 For sake of time of calculation/rendering in this section, let's subset the data further to most abundant 5 phyla.
 ```{r}
@@ -564,7 +554,7 @@ plot_ordination(GP2, ordinate(GP2, "DCA"), type="split", color="SampleType",
 ```
 
 
-##   Mapping continuous variables to color (can't do it to shape)
+## Mapping continuous variables to color (can't do it to shape)
 ```{r}
 Bushman.ord <- ordinate(Bushman, "CCA")
 plot_ordination(Bushman, Bushman.ord, "samples", color="OMEGA3_FATTY_ACIDS_G_AVE")
@@ -572,8 +562,8 @@ plot_ordination(Bushman, Bushman.ord, "samples", color="OMEGA3_FATTY_ACIDS_G_AVE
 ```
 
 
-##  `plot_heatmap` Function
-In a [2010 article in BMC Genomics](http://www.biomedcentral.com/1471-2105/11/45), Rajaram and Oono describe an approach to creating a heatmap using ordination methods (namely, NMDS and PCA) to organize the rows and columns instead of (hierarchical) cluster analysis. In many cases the ordination-based ordering does a much better job than h-clustering at providing an order of elements that is easily interpretable. The authors provided an immediately useful example of their approach as [the NeatMap package for R](http://cran.r-project.org/web/packages/NeatMap/index.html). The NeatMap package can be used directly on the abundance table (`"otuTable"`-class) of phylogenetic-sequencing data, but the NMDS or PCA ordination options that it supports are not based on ecological distances. To fill this void, and because phyloseq already provides support for a large number of [ecological distances](https://github.com/joey711/phyloseq/wiki/distance) and [ordination methods](https://github.com/joey711/phyloseq/wiki/ordinate), phyloseq now includes the `plot_heatmap()` function: an ecology-oriented variant of the NeatMap approach to organizing a heatmap and build it using ggplot2 graphics tools. The [distance](https://github.com/joey711/phyloseq/wiki/distance) and [method](https://github.com/joey711/phyloseq/wiki/ordinate) arguments are the same as for the [plot_ordination](https://github.com/joey711/phyloseq/wiki/plot_ordination) function, and support large number of distances and ordination methods, respectively, with a strong leaning toward ecology. This function also provides the options to re-label the OTU and sample axis-ticks with a taxonomic name and/or sample variable, respectively, in the hope that this might hasten your interpretation of the patterns (See the documentation for the `sample.label` and `species.label` arguments, and the examples below). Note that this function makes no attempt to overlay dendrograms from hierarchical clustering next to the axes, as hierarchical clustering is not used to organize these plots. Also note that each re-ordered axis repeats at the edge, and so apparent clusters at the far right/left or top/bottom of the heat-map may actually be the same. For now, the placement of this edge can be considered arbitrary, so beware of this artifact of the graphic and visually check if there are two "mergeable" clusters at the edges of a particular axis. If you benefit from this phyloseq-specific implementation of [the NeatMap approach](http://cran.r-project.org/web/packages/NeatMap/index.html), please cite [the NeatMap article](http://www.biomedcentral.com/1471-2105/11/45), as well as phyloseq.
+## `plot_heatmap` Function
+In a [2010 article in BMC Genomics](http://www.biomedcentral.com/1471-2105/11/45), Rajaram and Oono describe an approach to creating a heatmap using ordination methods (namely, NMDS and PCA) to organize the rows and columns instead of (hierarchical) cluster analysis. In many cases the ordination-based ordering does a much better job than h-clustering at providing an order of elements that is easily interpretable. The authors provided an immediately useful example of their approach as [the NeatMap package for R](http://cran.r-project.org/web/packages/NeatMap/index.html). The NeatMap package can be used directly on the abundance table (`"otuTable"`-class) of phylogenetic-sequencing data, but the NMDS or PCA ordination options that it supports are not based on ecological distances. To fill this void, and because phyloseq already provides support for a large number of [ecological distances](https://github.com/joey711/phyloseq/wiki/distance) and [ordination methods](https://github.com/joey711/phyloseq/wiki/ordinate), phyloseq now includes the `plot_heatmap()` function: an ecology-oriented variant of the NeatMap approach to organizing a heatmap and build it using [ggplot](http://had.co.nz/ggplot2/) graphics tools. The [distance](https://github.com/joey711/phyloseq/wiki/distance) and [method](https://github.com/joey711/phyloseq/wiki/ordinate) arguments are the same as for the [plot_ordination](https://github.com/joey711/phyloseq/wiki/plot_ordination) function, and support large number of distances and ordination methods, respectively, with a strong leaning toward ecology. This function also provides the options to re-label the OTU and sample axis-ticks with a taxonomic name and/or sample variable, respectively, in the hope that this might hasten your interpretation of the patterns (See the documentation for the `sample.label` and `species.label` arguments, and the examples below). Note that this function makes no attempt to overlay dendrograms from hierarchical clustering next to the axes, as hierarchical clustering is not used to organize these plots. Also note that each re-ordered axis repeats at the edge, and so apparent clusters at the far right/left or top/bottom of the heat-map may actually be the same. For now, the placement of this edge can be considered arbitrary, so beware of this artifact of the graphic and visually check if there are two "mergeable" clusters at the edges of a particular axis. If you benefit from this phyloseq-specific implementation of [the NeatMap approach](http://cran.r-project.org/web/packages/NeatMap/index.html), please cite [the NeatMap article](http://www.biomedcentral.com/1471-2105/11/45), as well as phyloseq.
 
 Further examples are provided at [the plot_heatmap wiki page](https://github.com/joey711/phyloseq/wiki/plot_heatmap)
 
@@ -590,8 +580,7 @@ plot_heatmap(gpac_filt, "NMDS", "bray", "SampleType", "Family", trans=boxcox_tra
 
 
 #  Validation
-In this section, we will look at examples for using R to validate/test hypotheses
-we may have generated through some of the previous exploration.
+In this section, we will look at examples for using R to validate/test hypotheses we may have generated through some of the previous exploration.
 
 
 ##  Multiple Testing
@@ -638,7 +627,7 @@ GP3f.mt.table <- GP3f.mt.table[order(GP3f.mt.table[, "BH"]), ]
 subset(GP3f.mt.table, BH < 0.05)
 ```
 
-Some Alternative packages for multiple inference correction: "qvalue" package, "multcomp" package
+Some alternative packages for multiple inference correction: [the qvalue package](http://www.bioconductor.org/packages/release/bioc/html/qvalue.html), [the multcomp package](http://cran.r-project.org/web/packages/multcomp/index.html)
 
 
 #  Getting phyloseq data into other R tools
@@ -646,93 +635,94 @@ Some Alternative packages for multiple inference correction: "qvalue" package, "
 A big concern for many users is how they can easily get phyloseq-formatted data into other R tools. The following examples are meant to illustrate doing that with some commonly-requested tasks.
 
 
-##  Porting Data to vegan Functions
+##  Porting Data to [vegan](http://cran.r-project.org/web/packages/vegan//index.html) Functions
 
-For OTU abundance tables, vegan expects samples as rows, and OTUs/species/taxa as columns (so does the picante package). The following is an example function, called `veganotu`, for extracting the OTU table from a phyloseq data object, and converting it to a properly oriented standard matrix recognized by the vegan package.
+[The vegan package](http://vegan.r-forge.r-project.org/) is a popular and well-maintained R package (hosted in [CRAN](CRAN.r-project.org)) "for community and vegetation ecologists". It provides ordination methods, diversity analysis and other functions. Many of [vegan](http://cran.r-project.org/web/packages/vegan//index.html)'s distance and ordination functions are wrapped by functions in phyloseq. Of course, not everything in [vegan](http://cran.r-project.org/web/packages/vegan//index.html) is wrapped by phyloseq, and it may turn out that you need to use some function that is not wrapped by phyloseq. What do you do? The following subsection provides example code for running just such a function by accessing and coercing the necessary data components from a phyloseq data object.
+
+For OTU abundance tables, [vegan](http://cran.r-project.org/web/packages/vegan//index.html) expects samples as rows, and OTUs/species/taxa as columns (so does the picante package). The following is an example function, called `veganotu`, for extracting the OTU table from a phyloseq data object, and converting it to a properly oriented standard matrix recognized by the [vegan](http://cran.r-project.org/web/packages/vegan//index.html) package.
+
+We will use the `bioenv` function from [vegan](http://cran.r-project.org/web/packages/vegan//index.html) to test for sample variables that correlate well with the microbial community distances.
 
 ```{r veganotu}
 veganotu <- function(physeq){
+	require("vegan")
 	OTU <- otuTable(physeq)
 	if( speciesAreRows(OTU) ){ OTU <- t(OTU) }
 	return( as(OTU, "matrix") )
 }
 ```
 
-Now use this function for data input to vegan functions
-```{r}
-library("vegan")
-```
+Now we can use this function for data input to [vegan](http://cran.r-project.org/web/packages/vegan//index.html) functions. Let's try this with the `Bushman` dataset, since it has ample continuous variables with which to correlate microbiom distances. First, let's coerce the Bushman sample data component into a vanilla `"data.frame"` class that we will call `bushsd`.
 
-Try the `bioenv` function from vegan to test for sample variables that correlate well
-with the microbial community distances.
-Note from the `bioenv` documentation:
-There are 2^p-1 subsets of p variables, and an exhaustive search may take
-a very, very, very long time (parameter upto offers a partial relief).
-The formula interface can also help, by specifying variables in the correlation.
-
-Let's try this with the Bushman data, since it has ample continuous variables with which to correlate microbiom distances. 
-
-```{r}
+```{r coerceBushmanSD}
 keepvariables <- which(sapply(sampleData(Bushman), is.numeric))
 bushsd <- data.frame(sampleData(Bushman))[keepvariables]
 ```
-There are so many sample variables measured, this could take a long time!
-(`1.225996e+55` possible subsets)
+Now let's make a call to `bioenv` to see what happens... (not actually run in example, takes too long, be prepared to stop the run if you try it)
 ```{r, eval=FALSE}
 bioenv(veganotu(Bushman), bushsd)
 ```
+There are so many sample variables in the `Bushman` data that we would have to calculate `1.225996e+55` possible subsets in an exhaustive search calculation. That could take a long time! Note from the `bioenv` documentation that we could have expected that issue: 
 
-Instead let's focus on a few that we are interested in comparing,
-using the formula interface again. We'll look at the variable
-names again to remind us what is available
+"There are 2^p-1 subsets of `p` variables, and an exhaustive search may take a very, very, very long time (parameter `upto` offers a partial relief)."
+
+So one option is to use the `upto` parameter. Another is to specify [a model formula](http://stat.ethz.ch/R-manual/R-devel/library/stats/html/formula.html) when specifying the primary data argument to this function (see `?"~"` for some details), which allows us to specify variables in the correlation search. We could also simply trim the number of columns in `bushsd` to just the few variables that we really care about. Let's try the second option here, the [model formula](http://stat.ethz.ch/R-manual/R-devel/library/stats/html/formula.html) approach, and focus on a few that we are interested in comparing. We'll look at the variable names again to remind us what is available
 ```{r}
 names(bushsd)[1:10]
 ```
-
+I arbitrarily chose a mixture of variables from the full list previewed above.
 ```{r}
 bioenv(veganotu(Bushman) ~ DEPTH + AGE + TOTAL_FAT_G_AVE + INSOLUBLE_DIETARY_FIBER_G_AVE, bushsd)
 ```
 
-##  Ordination Example on the Gap Statistic
-Here is an example performing the gap statistic on ordination results
-calculated using phyloseq tools, followed by an example of how a 
-ggplot-based wrapper for this example might be included in the phyloseq
-package.
+Now that you know how to get phyloseq data into vegan, all of vegan's tools are now available to you to use as well. The following list is not exhaustive and focuses on the most popular tools, taken from [the vegan website front page](http://vegan.r-forge.r-project.org/):
 
-```{r}
+- Diversity analysis: Shannon, Simpson, Fisher indices, Rényi diversities and Hill numbers.
+- Species abundance models: Fisher and Preston models, species abundance distributions.
+- Analysis of species richness: species accumulation curves, extrapolated richness.
+- Ordination: support and meta functions for NMDS, redundancy analysis, constrained correspondence analysis, constrained analysis of proximities (all three with partial analysis),
+- Support functions for ordination: dissimilarity indices, extended dissimilarities, Procrustes analysis, ordination diagnostics, permutation tests.
+- Ordination and environment: vector fitting, centroid fitting and smooth surface fitting, adding species scores as weighted averages, adding convex hull, SD ellipses, arrows etc. to ordination.
+- Dissimilarity analyses: ANOVA using dissimilarities, ANOSIM, MRPP, BIOENV, Mantel and partial Mantel tests.
+- Data standardization: Hellinger, Wisconsin, Chi-square, Beals smoothing.
+
+##  Ordination Example on the Gap Statistic
+### Gap Statistic: How many clusters are there?
+From [the clusGap documentation](http://stat.ethz.ch/R-manual/R-devel/library/cluster/html/clusGap.html): 
+The `clusGap` function from [the cluster package](http://cran.r-project.org/web/packages/cluster/index.html) calculates a goodness of clustering measure, called [the “gap” statistic](www.stanford.edu/~hastie/Papers/gap.pdf). For each number of clusters `k`, it compares \log(W(k)) with E^*[\log(W(k))] where the latter is defined via bootstrapping, i.e. simulating from a reference distribution.
+
+The following is an example performing the gap statistic on ordination results calculated using phyloseq tools, followed by an example of how a [ggplot](http://had.co.nz/ggplot2/)-based wrapper for this example might be included in [the phyloseq package](http://joey711.github.com/phyloseq/). 
+
+### First perform the ordination using correspondence analysis
+```{r rerun-ent-ord-gap}
 library("cluster")
 # Load data
 data(enterotype)
 # ordination
-ent.dca <- ordinate(enterotype)
+ent.ca <- ordinate(enterotype, method="CCA", distance=NULL)
 ```
-
-Gap Statistic: How many clusters are there?
-```{r}
+### Now the Gap Statistic code
+```{r gapstat-regular}
 pam1 <- function(x,k) list(cluster = pam(x,k, cluster.only=TRUE))
-x <- scores(ent.dca)
-gskmn <- clusGap(x[, 1:2], FUN=kmeans, nstart=20, K.max = 6, B = 500)
-gskmn <- clusGap(x[, 1:2], FUN=pam1, K.max = 6, B = 500)
-plot(gskmn, main = "Gap statistic for the 'Enterotypes' data")
-mtext("k = 2 is best ... but  k = 3  pretty close")
+x <- scores(ent.ca, display="sites")
+# gskmn <- clusGap(x[, 1:2], FUN=kmeans, nstart=20, K.max = 6, B = 500)
+gskmn <- clusGap(x[, 1:2], FUN=pam1, K.max = 6, B = 50)
+gskmn
 ```
 
 That's nice. Just in case it is useful, let's look at what the wrapper-function might look like.
-```{r}
-gap_statistic_ordination <- function(ord, FUNcluster, K.max=6, axes=c(1:2), B=500, verbose=interactive(), ...){
+```{r gapstat-inclusion-function}
+gap_statistic_ordination <- function(ord, FUNcluster, type="sites", K.max=6, axes=c(1:2), B=500, verbose=interactive(), ...){
 	require("cluster")
-# 	If "pam1" was chosen, use this internally defined call to pam
+	#	If "pam1" was chosen, use this internally defined call to pam
 	if(FUNcluster == "pam1"){
 		FUNcluster <- function(x,k) list(cluster = pam(x,k, cluster.only=TRUE))		
 	}
-	
-# 	Use the scores function to get the ordination coordinates
-	x <- scores(ord)
-	
-# 	If axes not explicitly defined (NULL), then use all of them
+	# Use the scores function to get the ordination coordinates
+	x <- scores(ord, display=type)
+	#	If axes not explicitly defined (NULL), then use all of them
 	if(is.null(axes)){axes <- 1:ncol(x)}
-	
-# 	Finally, perform, and return, the gap statistic calculation using cluster::clusGap	
+	#	Finally, perform, and return, the gap statistic calculation using cluster::clusGap	
 	clusGap(x[, axes], FUN=FUNcluster, K.max=K.max, B=B, verbose=verbose, ...)
 }
 # Define a plot method for results...
@@ -746,12 +736,18 @@ plot_clusgap <- function(clusgap, title="Gap Statistic calculation results"){
 }
 ```
 
-Now test the result. Should work on ordination classes recognized by `scores` function, and provide a ggplot2 graphic instead of a base graphic.
-```{r}
-gs <- gap_statistic_ordination(ent.dca, "pam1", B=50, verbose=FALSE)
+Now try out this function. Should work on ordination classes recognized by `scores` function, and provide a [ggplot](http://had.co.nz/ggplot2/) graphic instead of a base graphic.
+######(Special Note: the phyloseq-defined `scores` extensions are not exported as regular functions to avoid conflict, so phyloseq-defined `scores` extensions can only be accessed with the `phyloseq:::` namespace prefix in front.)
+
+```{r gapstat-inphyloseq-example}
+gs <- gap_statistic_ordination(ent.ca, "pam1", B=50, verbose=FALSE)
 print(gs, method="Tibs2001SEmax")
 plot_clusgap(gs)
-# Base graphics means of plotting.
+```
+
+Base graphics plotting, for comparison.
+
+```{r}
 plot(gs, main = "Gap statistic for the 'Enterotypes' data")
 mtext("k = 2 is best ... but  k = 3  pretty close")	
 ```
