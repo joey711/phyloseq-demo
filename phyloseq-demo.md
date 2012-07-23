@@ -12,13 +12,15 @@ https://github.com/joey711/phyloseq
 susan@stat.stanford.edu\
 http://www-stat.stanford.edu/~susan/
 
-# Summary
+# Summary and Other Documentation Resources
 
-This is a demonstration manual for [the phyloseq package](http://joey711.github.com/phyloseq/). It is an R-markdown source-file with example code-chunks that can be reused if you have phyloseq installed.
+This document supports a live demonstration of tools in [the phyloseq package](http://joey711.github.com/phyloseq/), and supplements other documentation resources available for [the phyloseq package](https://github.com/joey711/phyloseq) (e.g. wiki, vignettes, publications, function-level documentation, etc.). It is built automatically from its [R-markdown source file](http://www.r-bloggers.com/announcing-the-r-markdown-package/) with example [code-chunks](http://rstudio.org/docs/authoring/using_markdown) that can be reused if you have phyloseq installed. The R-markdown file and other related materials are publicly available, and hosted on GitHub with an explicit open-access license/ copyright statement:
 
-# phyloseq Documentation
+## [Demo Materials Available Here](https://github.com/joey711/phyloseq-demo)
 
-Vignettes are included in phyloseq. A quick way to load them from within `R` is:
+## Other Package-Level Documentation
+
+As mentioned, vignettes are included in phyloseq. A quick way to load them from within `R` is:
 
 
 ```r
@@ -27,11 +29,16 @@ vignette("phyloseqanalysis")
 ```
 
 
-This demonstration document supports a live demonstration of tools in phyloseq, and supplements other documentation resources available for [the phyloseq package](https://github.com/joey711/phyloseq) (e.g. wiki, vignettes, publications, function-level documentation, etc.).
+### [The phyloseq Wiki](https://github.com/joey711/phyloseq/wiki)
+There is also a [GitHub-hosted wiki for phyloseq](https://github.com/joey711/phyloseq/wiki). Some of these pages contain more detailed examples of the topics/tasks covered in this demonstration.
+
+### [The phyloseq Issue Tracker](https://github.com/joey711/phyloseq/issues)
+There is also a GitHub-hosted [issue-tracker for phyloseq](https://github.com/joey711/phyloseq/issues), currently describing over 100 feature requests, bug reports, documentation revisions, help requests, and other suggestions. Only a small fraction of these issues are still outstanding, but the descriptions remain available for anyone to view and add comments/code.
 
 
 # Installation
-For the foreseeable near future, phyloseq is under active development. Users are encouraged to consistently update their version from [the phyloseq development website on GitHub](http://joey711.github.com/phyloseq/). The following code should install the newest "bleeding edge" version of [the phyloseq package](http://joey711.github.com/phyloseq/) onto your system, including dependencies. Further instructions are available at [the installation wiki](https://github.com/joey711/phyloseq/wiki/Installation)
+For the foreseeable near future, phyloseq is under active development. Users are encouraged to consistently update their version from [the phyloseq development website on GitHub](http://joey711.github.com/phyloseq/). The following code should install the newest "bleeding edge" version of [the phyloseq package](http://joey711.github.com/phyloseq/) onto your system, including dependencies. 
+
 
 ```r
 source("http://bioconductor.org/biocLite.R")
@@ -46,9 +53,12 @@ install_github("phyloseq", "joey711")
 ```
 
 
-#  Load phyloseq, and import data.
-Of course we need to start this tutorial by loading [the phyloseq package](http://joey711.github.com/phyloseq/)
-(assuming that it is installed.)
+## Alternative Installation Methods and Versions:
+The most stable release and development versions of phyloseq are released from Bioconductor. For installing from Bioconductor, and alternatives to "the bleeding edge", as well as the most updated installation news/instructions, please see [the installation wiki page](https://github.com/joey711/phyloseq/wiki/Installation).
+
+
+#  Load phyloseq, and Import Data.
+Of course we need to start this tutorial by loading [the phyloseq package](http://joey711.github.com/phyloseq/). This assumes you have already [installed phyloseq](https://github.com/joey711/phyloseq/wiki/Installation).
 
 ```r
 library("phyloseq")
@@ -246,6 +256,17 @@ dim(bmsd)
 
 ```
 ## [1] 102 225
+```
+
+```r
+biom_otu_tax
+```
+
+```
+## phyloseq-class experiment-level object
+## OTU Table:          [1873 species and 100 samples]
+##                      species are rows
+## Taxonomy Table:     [1873 species by 7 taxonomic ranks]:
 ```
 
 
@@ -657,8 +678,8 @@ UniFrac(eso)
 
 ```
 ##        B      C
-## C 0.5529       
-## D 0.5702 0.6219
+## C 0.5333       
+## D 0.5338 0.6367
 ```
 
 ```r
@@ -796,7 +817,7 @@ topp(0.1)
 ##     }
 ##     x >= sort(x, decreasing = TRUE)[ceiling(length(x) * p)]
 ## }
-## <environment: 0x1076e9e68>
+## <environment: 0x109cdcbc0>
 ```
 
 ```r
@@ -814,7 +835,7 @@ print(f1)
 ##     }
 ##     return(fval)
 ## }
-## <environment: 0x106fc9098>
+## <environment: 0x109c60e60>
 ## attr(,"class")
 ## [1] "filterfun"
 ```
@@ -955,7 +976,7 @@ GP1 <- subset_species(GP, Phylum %in% names(top5ph))
 
 
 ##  Distance Functions
-Before we get to network plots, let's discuss distances. Many tools use distances to perform their calculations. In phyloseq, ordinations, heatmap organization, and network plots all use the `distance` function internally for calculating OTU or Sample distance matrices (actually represented as a "dist" object).
+Before we get to network plots, let's discuss distances. Many tools use distances to perform their calculations. In phyloseq, ordinations, heatmaps, and network plots all use the `distance` function for calculating OTU or Sample distance matrices (actually represented as a "dist" object) when needed, particularly when PCoA/MDS or NMDS is involved.
 
 
 ```r
@@ -991,22 +1012,22 @@ distance("list")
 ```
 
 
-## `plot_network`
-The following code illustrates use the `make_network` and `plot_network` commands from phyloseq. The `GP` variable is an only-slightly-modified version of the `GlobalPatterns` dataset. The threshold was determined empirically to show something interesting for demonstration. In practice, this value has a huge effect on the resulting network, and its usefulness, and it is highly recommended that you investigate the results from multiple values.
+## [The plot_network function](https://github.com/joey711/phyloseq/wiki/plot_network)
+The following code illustrates using the `make_network` and `plot_network` functions in phyloseq. In this context, we are using networks to graphically represent thresholded distances between samples or OTUs. The euclidean distances between points on the plot are essentially arbitrary, only the "edges" (lines) between "nodes" (OTUs/samples) are derived directly from the data. For further examples, it is recommended that you take a look at [the plot_network wiki page](https://github.com/joey711/phyloseq/wiki/plot_network)
 
-Also it is recommended that you take a look at [the plot_network wiki page](https://github.com/joey711/phyloseq/wiki/plot_network) 
+The `GP` variable is an only-slightly-modified version of the `GlobalPatterns` dataset. The threshold was determined empirically to show something interesting for demonstration. In practice, this value has a huge effect on the resulting network, and its usefulness, and it is highly recommended that you investigate the results from multiple values.
 
 
 ```r
-ig <- make_network(GP, "samples", "bray", threshold = 0.9)
-(p3 <- plot_network(ig, GP, color = "SampleType", shape = "human", 
-    line_weight = 0.4, label = NULL))
+ig <- make_network(GP, type = "samples", distance = "bray", max.dist = 0.85)
+plot_network(ig, GP, color = "SampleType", shape = "human", line_weight = 0.4, 
+    label = NULL)
 ```
 
 ![plot of chunk plotnetwork-GPsamples](figure/plotnetwork-GPsamples.png) 
 
 
-A similar network representation of samples from the "Enterotypes" dataset.
+A similar network representation of samples from [the "Enterotypes" dataset](http://www.nature.com/nature/journal/v473/n7346/full/nature09944.html).
 
 ```r
 data(enterotype)
@@ -1037,12 +1058,33 @@ plot_network(jg, GP100, "species", color = "Phylum", line_weight = 0.4,
 ![plot of chunk plotnetwork-otus](figure/plotnetwork-otus.png) 
 
 
+## Ordination Methods
+(http://cran.r-project.org/web/packages/vegan/vignettes/intro-vegan.pdf)
 
-## The `ordinate` function
+"Ordination methods" in this context refers to methods for dimensional reduction of data -- usually the OTU abundance data, which is probably a large sparse matrix not so amenable to graphical display on its own. Graphically investigating the (usually) information-dense first few axes of an ordination result can be very useful for exploring and summarizing phylogenetic sequencing data. One of the resons for this is that many ordination methods are non-parametric, so they do not depend upon a prior hypothesis or model. This is essential for many microbiome investigations in which a model is only vaguely described or not available.
+
+A good quick summary of ordination methods is provided in the introductory vignette for the vegan package:
+
+[vegan introductory vignette](http://cran.r-project.org/web/packages/vegan/vignettes/intro-vegan.pdf)
+
+The following R task views are also useful for understanding ordination tools in R:
+
+[Analysis of Ecological and Environmental Data](http://cran.r-project.org/web/views/Environmetrics.html)
+
+[Multivariate Statistics](http://cran.r-project.org/web/views/Multivariate.html)
+
+The [ade4 package]() also provides a large number of ordination methods, and may be useful in your analysis.
+
+
+### [The ordinate function](https://github.com/joey711/phyloseq/wiki/ordinate)
+This function wraps several commonly-used ordination methods for OTU abundance tables (as well as related tables, in some cases). The type of ordination performed depends upon the argument to `method`. Try `ordinate("help")` or `ordinate("list")` for the currently supported method options.
+
+The output of this function will be an ordination class. The specific class depends upon the ordination method used, as well as the function/package that is called internally to perform it. As a general rule, any of the ordination classes returned by this function will be recognized by downstream tools in the phyloseq package -- for example the ordination plotting function, [plot_ordination](https://github.com/joey711/phyloseq/wiki/plot_ordination) (See next section for plot examples).
+
 Using `GP100` from the previous section, let's calculate the unweighted-UniFrac distance for each sample pair in the dataset, and then perform Multidimensional Scaling (aka Principle Coordinates Analysis) on the resulting distance. For details about calculating the UniFrac distance on larger datasets using parallel-computing options in supported by phyloseq, see [the wiki page on Fast Parallel UniFrac in phyloseq](https://github.com/joey711/phyloseq/wiki/Fast-Parallel-UniFrac)
 
 ```r
-GP.MDS <- ordinate(GP100, "MDS", "unifrac")
+GP.MDS <- ordinate(GP100, method = "MDS", distance = "unifrac")
 ```
 
 Here are just a few examples of other supported combinations.
@@ -1063,11 +1105,19 @@ The `plot_ordination` function has many options, and supports many combinations 
 This combination of MDS/PCoA ordination of the UniFrac distance is recently very popular in microbiome analyses. 
 
 ```r
-plot_ordination(GP100, GP.MDS, "samples", color = "SampleType") + 
-    geom_line() + geom_point(size = 5)
+require("ggplot2")
+ptitle <- "GP PCoA of UniFrac distance, GP most abundant 100 OTUs only"
+(p <- plot_ordination(GP100, GP.MDS, type = "samples", color = "SampleType", 
+    title = ptitle))
 ```
 
-![plot of chunk unnamed-chunk-45](figure/unnamed-chunk-45.png) 
+![plot of chunk GP100-UniFrac-PCoA](figure/GP100-UniFrac-PCoA1.png) 
+
+```r
+p + geom_point(size = 5) + geom_polygon(aes(fill = SampleType))
+```
+
+![plot of chunk GP100-UniFrac-PCoA](figure/GP100-UniFrac-PCoA2.png) 
 
 
 Get the names of the most-abundant phyla, and use for subsetting.
@@ -1083,42 +1133,46 @@ GP2 <- prune_species(topsp, GP2)
 ```
 
 
-Let's try DCA in one-liner syntax
+Let's try Correspondence Analysis(REF) with one-liner syntax
 
 ```r
-plot_ordination(GP2, ordinate(GP2, "DCA"), type = "samples", color = "SampleType") + 
-    geom_point(size = 4)
+(p2 <- plot_ordination(GP2, ordinate(GP2, "CCA"), type = "samples", 
+    color = "SampleType"))
 ```
 
-![plot of chunk unnamed-chunk-47](figure/unnamed-chunk-47.png) 
+![plot of chunk unnamed-chunk-46](figure/unnamed-chunk-461.png) 
+
+```r
+p2 + geom_point(size = 5) + geom_polygon(aes(fill = SampleType))
+```
+
+![plot of chunk unnamed-chunk-46](figure/unnamed-chunk-462.png) 
 
 
 ```r
-plot_ordination(GP2, ordinate(GP2, "DCA"), type = "species", color = "Phylum") + 
+plot_ordination(GP2, ordinate(GP2, "CCA"), type = "species", color = "Phylum") + 
     geom_point(size = 4)
-plot_ordination(GP2, ordinate(GP2, "DCA"), type = "split")
-plot_ordination(GP2, ordinate(GP2, "DCA"), type = "split", color = "SampleType")
-plot_ordination(GP2, ordinate(GP2, "DCA"), type = "biplot", shape = "Phylum")
-plot_ordination(GP2, ordinate(GP2, "DCA"), type = "split", color = "Phylum", 
+plot_ordination(GP2, ordinate(GP2, "CCA"), type = "split")
+plot_ordination(GP2, ordinate(GP2, "CCA"), type = "split", color = "SampleType")
+plot_ordination(GP2, ordinate(GP2, "CCA"), type = "biplot", shape = "Phylum")
+plot_ordination(GP2, ordinate(GP2, "CCA"), type = "split", color = "Phylum", 
     label = "SampleType")
-plot_ordination(GP2, ordinate(GP2, "DCA"), type = "split", color = "SampleType", 
+plot_ordination(GP2, ordinate(GP2, "CCA"), type = "split", color = "SampleType", 
     shape = "Phylum", label = "SampleType")
 ```
 
 
-
-## Mapping continuous variables to color (can't do it to shape)
-
-```r
-Bushman.ord <- ordinate(Bushman, "CCA")
-plot_ordination(Bushman, Bushman.ord, "samples", color = "OMEGA3_FATTY_ACIDS_G_AVE")
-```
-
-![plot of chunk unnamed-chunk-49](figure/unnamed-chunk-49.png) 
+### Mapping Continuous Variables to Color
+(Note: can't map continuous variables to shape with `plot_ordination` function)
 
 ```r
-# plot_ordination(Bushman, Bushman.ord, 'samples', color='VIT_B6_MG_AVE')
+p4title <- "Bushman dataset, PCoA/MDS ordination on Bray-Curtis distance"
+Bushman.ord <- ordinate(Bushman, method = "MDS", distance = "bray")
+plot_ordination(Bushman, Bushman.ord, "samples", color = "OMEGA3_FATTY_ACIDS_G_AVE", 
+    title = p4title)
 ```
+
+![plot of chunk Bushman-MDS-bray](figure/Bushman-MDS-bray.png) 
 
 
 
@@ -1129,10 +1183,10 @@ Further examples are provided at [the plot_heatmap wiki page](https://github.com
 
 
 ```r
-plot_heatmap(GP2, "MDS", "bray", "SampleType", "Family")
+plot_heatmap(GP2, "NMDS", "bray", "SampleType", "Family")
 ```
 
-![plot of chunk unnamed-chunk-50](figure/unnamed-chunk-50.png) 
+![plot of chunk plot-heatmap-NMDS-bray](figure/plot-heatmap-NMDS-bray.png) 
 
 
 Some alternative `plot_heatmap` transformations.
@@ -1444,7 +1498,9 @@ Now that you know how to get phyloseq data into vegan, all of vegan's tools are 
 - Dissimilarity analyses: ANOVA using dissimilarities, ANOSIM, MRPP, BIOENV, Mantel and partial Mantel tests.
 - Data standardization: Hellinger, Wisconsin, Chi-square, Beals smoothing.
 
+
 ##  Ordination Example on the Gap Statistic
+
 ### Gap Statistic: How many clusters are there?
 From [the clusGap documentation](http://stat.ethz.ch/R-manual/R-devel/library/cluster/html/clusGap.html): 
 The `clusGap` function from [the cluster package](http://cran.r-project.org/web/packages/cluster/index.html) calculates a goodness of clustering measure, called [the “gap” statistic](www.stanford.edu/~hastie/Papers/gap.pdf). For each number of clusters `k`, it compares \log(W(k)) with E^*[\log(W(k))] where the latter is defined via bootstrapping, i.e. simulating from a reference distribution.
@@ -1476,12 +1532,12 @@ gskmn
 ## B=50 simulated reference sets, k = 1..6
 ##  --> Number of clusters (method 'firstSEmax', SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.748 1.203 0.02302
-## [2,] 3.720  5.188 1.468 0.02159
-## [3,] 3.428  4.928 1.500 0.01958
-## [4,] 3.301  4.785 1.484 0.01945
-## [5,] 3.100  4.691 1.591 0.02366
-## [6,] 2.957  4.607 1.650 0.02651
+## [1,] 4.544  5.740 1.196 0.02644
+## [2,] 3.720  5.185 1.465 0.02072
+## [3,] 3.428  4.926 1.498 0.02347
+## [4,] 3.301  4.776 1.475 0.01861
+## [5,] 3.100  4.680 1.579 0.01655
+## [6,] 2.957  4.595 1.638 0.02154
 ```
 
 
@@ -1532,12 +1588,12 @@ print(gs, method = "Tibs2001SEmax")
 ## B=50 simulated reference sets, k = 1..6
 ##  --> Number of clusters (method 'Tibs2001SEmax', SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.749 1.205 0.02602
-## [2,] 3.720  5.195 1.475 0.01966
-## [3,] 3.428  4.931 1.503 0.02066
-## [4,] 3.301  4.783 1.482 0.01977
-## [5,] 3.100  4.684 1.583 0.02377
-## [6,] 2.957  4.598 1.641 0.02192
+## [1,] 4.544  5.746 1.201 0.02622
+## [2,] 3.720  5.187 1.467 0.01847
+## [3,] 3.428  4.929 1.501 0.02339
+## [4,] 3.301  4.780 1.479 0.02040
+## [5,] 3.100  4.677 1.577 0.01656
+## [6,] 2.957  4.595 1.638 0.02181
 ```
 
 ```r
@@ -1555,5 +1611,5 @@ plot(gs, main = "Gap statistic for the 'Enterotypes' data")
 mtext("k = 2 is best ... but  k = 3  pretty close")
 ```
 
-![plot of chunk unnamed-chunk-60](figure/unnamed-chunk-60.png) 
+![plot of chunk unnamed-chunk-57](figure/unnamed-chunk-57.png) 
 

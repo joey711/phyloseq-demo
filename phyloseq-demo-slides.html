@@ -41,20 +41,22 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>Paul J. McMurdie and Susan Holmes Statistics Department, Stanford University, Stanford, CA 94305, USA</p>
 <p>E-mail: mcmurdie@stanford.edu https://github.com/joey711/phyloseq susan@stat.stanford.edu<br />http://www-stat.stanford.edu/~susan/</p>
 </div>
-<div class="section slide level1" id="summary">
-<h1>Summary</h1>
-<p>This is a demonstration manual for <a href="http://joey711.github.com/phyloseq/">the phyloseq package</a>. It is an R-markdown source-file with example code-chunks that can be reused if you have phyloseq installed.</p>
-</div>
-<div class="section slide level1" id="phyloseq-documentation">
-<h1>phyloseq Documentation</h1>
-<p>Vignettes are included in phyloseq. A quick way to load them from within <code>R</code> is:</p>
+<div class="section slide level1" id="summary-and-other-documentation-resources">
+<h1>Summary and Other Documentation Resources</h1>
+<p>This document supports a live demonstration of tools in <a href="http://joey711.github.com/phyloseq/">the phyloseq package</a>, and supplements other documentation resources available for <a href="https://github.com/joey711/phyloseq">the phyloseq package</a> (e.g. wiki, vignettes, publications, function-level documentation, etc.). It is built automatically from its <a href="http://www.r-bloggers.com/announcing-the-r-markdown-package/">R-markdown source file</a> with example <a href="http://rstudio.org/docs/authoring/using_markdown">code-chunks</a> that can be reused if you have phyloseq installed. The R-markdown file and other related materials are publicly available, and hosted on GitHub with an explicit open-access license/ copyright statement:</p>
+<h2 id="demo-materials-available-here"><a href="https://github.com/joey711/phyloseq-demo">Demo Materials Available Here</a></h2>
+<h2 id="other-package-level-documentation">Other Package-Level Documentation</h2>
+<p>As mentioned, vignettes are included in phyloseq. A quick way to load them from within <code>R</code> is:</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">vignette</span>(<span class="st">&quot;phyloseqbasics&quot;</span>)
 <span class="kw">vignette</span>(<span class="st">&quot;phyloseqanalysis&quot;</span>)</code></pre>
-<p>This demonstration document supports a live demonstration of tools in phyloseq, and supplements other documentation resources available for <a href="https://github.com/joey711/phyloseq">the phyloseq package</a> (e.g. wiki, vignettes, publications, function-level documentation, etc.).</p>
+<h3 id="the-phyloseq-wiki"><a href="https://github.com/joey711/phyloseq/wiki">The phyloseq Wiki</a></h3>
+<p>There is also a <a href="https://github.com/joey711/phyloseq/wiki">GitHub-hosted wiki for phyloseq</a>. Some of these pages contain more detailed examples of the topics/tasks covered in this demonstration.</p>
+<h3 id="the-phyloseq-issue-tracker"><a href="https://github.com/joey711/phyloseq/issues">The phyloseq Issue Tracker</a></h3>
+<p>There is also a GitHub-hosted <a href="https://github.com/joey711/phyloseq/issues">issue-tracker for phyloseq</a>, currently describing over 100 feature requests, bug reports, documentation revisions, help requests, and other suggestions. Only a small fraction of these issues are still outstanding, but the descriptions remain available for anyone to view and add comments/code.</p>
 </div>
 <div class="section slide level1" id="installation">
 <h1>Installation</h1>
-<p>For the foreseeable near future, phyloseq is under active development. Users are encouraged to consistently update their version from <a href="http://joey711.github.com/phyloseq/">the phyloseq development website on GitHub</a>. The following code should install the newest &quot;bleeding edge&quot; version of <a href="http://joey711.github.com/phyloseq/">the phyloseq package</a> onto your system, including dependencies. Further instructions are available at <a href="https://github.com/joey711/phyloseq/wiki/Installation">the installation wiki</a></p>
+<p>For the foreseeable near future, phyloseq is under active development. Users are encouraged to consistently update their version from <a href="http://joey711.github.com/phyloseq/">the phyloseq development website on GitHub</a>. The following code should install the newest &quot;bleeding edge&quot; version of <a href="http://joey711.github.com/phyloseq/">the phyloseq package</a> onto your system, including dependencies.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="st">&quot;http://bioconductor.org/biocLite.R&quot;</span>)
 <span class="kw">biocLite</span>(<span class="st">&quot;multtest&quot;</span>)
 <span class="kw">biocLite</span>(<span class="st">&quot;genefilter&quot;</span>)
@@ -64,10 +66,12 @@ Load the devtools package
 <span class="kw">library</span>(<span class="st">&quot;devtools&quot;</span>)
 Build and install phyloseq
 <span class="kw">install_github</span>(<span class="st">&quot;phyloseq&quot;</span>, <span class="st">&quot;joey711&quot;</span>)</code></pre>
+<h2 id="alternative-installation-methods-and-versions">Alternative Installation Methods and Versions:</h2>
+<p>The most stable release and development versions of phyloseq are released from Bioconductor. For installing from Bioconductor, and alternatives to &quot;the bleeding edge&quot;, as well as the most updated installation news/instructions, please see <a href="https://github.com/joey711/phyloseq/wiki/Installation">the installation wiki page</a>.</p>
 </div>
 <div class="section slide level1" id="load-phyloseq-and-import-data.">
-<h1>Load phyloseq, and import data.</h1>
-<p>Of course we need to start this tutorial by loading <a href="http://joey711.github.com/phyloseq/">the phyloseq package</a> (assuming that it is installed.)</p>
+<h1>Load phyloseq, and Import Data.</h1>
+<p>Of course we need to start this tutorial by loading <a href="http://joey711.github.com/phyloseq/">the phyloseq package</a>. This assumes you have already <a href="https://github.com/joey711/phyloseq/wiki/Installation">installed phyloseq</a>.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;phyloseq&quot;</span>)</code></pre>
 <p>There is package-level documentation available. Note the following difference:</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="st">`</span><span class="dt">?</span><span class="st">`</span>(<span class="st">&quot;phyloseq-package&quot;</span>)
@@ -186,6 +190,11 @@ bmsd &lt;- <span class="kw">import_qiime_sampleData</span>(map_file)
 ## [1] &quot;phyloseq&quot;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(bmsd)</code></pre>
 <pre><code>## [1] 102 225</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">biom_otu_tax</code></pre>
+<pre><code>## phyloseq-class experiment-level object
+## OTU Table:          [1873 species and 100 samples]
+##                      species are rows
+## Taxonomy Table:     [1873 species by 7 taxonomic ranks]:</code></pre>
 <h2 id="direct-ftp-download-unzip-and-import">Direct ftp download, unzip, and import</h2>
 <p>The <code>.biom</code> and sample data files are also <a href="ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip">provided online (ftp)</a>, and a useful way to download and import into phyloseq directly from the ftp address in the following example code. This is an example in which we download a zip file with both biom- and qiime-formatted data, unzip it in a temporary directory from with in R, import the relavant files using phyloseq importers, and then delete the temporary files. This code <em>should</em> be platform independent, but occasionally there are finicky Windows issues that arise.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># This is not actually run</span>
@@ -397,8 +406,8 @@ eso &lt;- <span class="kw">rarefy_even_depth</span>(esophagus)
 <span class="co"># plot(as(otuTable(eso), &#39;vector&#39;), as(otuTable(esophagus), &#39;vector&#39;))</span></code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">UniFrac</span>(eso)</code></pre>
 <pre><code>##        B      C
-## C 0.5529       
-## D 0.5702 0.6219</code></pre>
+## C 0.5333       
+## D 0.5338 0.6367</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">UniFrac</span>(esophagus)</code></pre>
 <pre><code>##        B      C
 ## C 0.5176       
@@ -464,7 +473,7 @@ most_abundant_taxa &lt;- <span class="kw">sort</span>(<span class="kw">speciesSu
 ##     }
 ##     x &gt;= sort(x, decreasing = TRUE)[ceiling(length(x) * p)]
 ## }
-## &lt;environment: 0x1076e9e68&gt;</code></pre>
+## &lt;environment: 0x109cdcbc0&gt;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">f1 &lt;- <span class="kw">filterfunSample</span>(<span class="kw">topp</span>(<span class="fl">0.1</span>))
 <span class="kw">print</span>(f1)</code></pre>
 <pre><code>## function (x) 
@@ -476,7 +485,7 @@ most_abundant_taxa &lt;- <span class="kw">sort</span>(<span class="kw">speciesSu
 ##     }
 ##     return(fval)
 ## }
-## &lt;environment: 0x106fc9098&gt;
+## &lt;environment: 0x109c60e60&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;filterfun&quot;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">wh1 &lt;- <span class="kw">genefilterSample</span>(GP, f1, <span class="dt">A =</span> <span class="kw">round</span>(<span class="fl">0.5</span> * <span class="kw">nsamples</span>(GP)))
@@ -559,7 +568,7 @@ top5ph &lt;- <span class="kw">sort</span>(<span class="kw">tapply</span>(<span c
     <span class="dt">decreasing =</span> <span class="ot">TRUE</span>)[<span class="dv">1</span>:<span class="dv">5</span>]
 GP1 &lt;- <span class="kw">subset_species</span>(GP, Phylum %in% <span class="kw">names</span>(top5ph))</code></pre>
 <h2 id="distance-functions">Distance Functions</h2>
-<p>Before we get to network plots, let's discuss distances. Many tools use distances to perform their calculations. In phyloseq, ordinations, heatmap organization, and network plots all use the <code>distance</code> function internally for calculating OTU or Sample distance matrices (actually represented as a &quot;dist&quot; object).</p>
+<p>Before we get to network plots, let's discuss distances. Many tools use distances to perform their calculations. In phyloseq, ordinations, heatmaps, and network plots all use the <code>distance</code> function for calculating OTU or Sample distance matrices (actually represented as a &quot;dist&quot; object) when needed, particularly when PCoA/MDS or NMDS is involved.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">help</span>(<span class="st">&quot;distance&quot;</span>)  <span class="co"># Same as &#39;?distance&#39;</span>
 <span class="st">`</span><span class="dt">?</span><span class="st">`</span>(distance)</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(esophagus)
@@ -577,16 +586,16 @@ GP1 &lt;- <span class="kw">subset_species</span>(GP, Phylum %in% <span class="kw
 <span class="kw">distance</span>(esophagus, <span class="st">&quot;(A+B-2*J)/(A+B)&quot;</span>)  <span class="co"># designdist custom distance</span>
 <span class="kw">distance</span>(<span class="st">&quot;help&quot;</span>)
 <span class="kw">distance</span>(<span class="st">&quot;list&quot;</span>)</code></pre>
-<h2 id="plot_network"><code>plot_network</code></h2>
-<p>The following code illustrates use the <code>make_network</code> and <code>plot_network</code> commands from phyloseq. The <code>GP</code> variable is an only-slightly-modified version of the <code>GlobalPatterns</code> dataset. The threshold was determined empirically to show something interesting for demonstration. In practice, this value has a huge effect on the resulting network, and its usefulness, and it is highly recommended that you investigate the results from multiple values.</p>
-<p>Also it is recommended that you take a look at <a href="https://github.com/joey711/phyloseq/wiki/plot_network">the plot_network wiki page</a></p>
-<pre class="sourceCode r"><code class="sourceCode r">ig &lt;- <span class="kw">make_network</span>(GP, <span class="st">&quot;samples&quot;</span>, <span class="st">&quot;bray&quot;</span>, <span class="dt">threshold =</span> <span class="fl">0.9</span>)
-(p3 &lt;- <span class="kw">plot_network</span>(ig, GP, <span class="dt">color =</span> <span class="st">&quot;SampleType&quot;</span>, <span class="dt">shape =</span> <span class="st">&quot;human&quot;</span>, 
-    <span class="dt">line_weight =</span> <span class="fl">0.4</span>, <span class="dt">label =</span> <span class="ot">NULL</span>))</code></pre>
+<h2 id="the-plot_network-function"><a href="https://github.com/joey711/phyloseq/wiki/plot_network">The plot_network function</a></h2>
+<p>The following code illustrates using the <code>make_network</code> and <code>plot_network</code> functions in phyloseq. In this context, we are using networks to graphically represent thresholded distances between samples or OTUs. The euclidean distances between points on the plot are essentially arbitrary, only the &quot;edges&quot; (lines) between &quot;nodes&quot; (OTUs/samples) are derived directly from the data. For further examples, it is recommended that you take a look at <a href="https://github.com/joey711/phyloseq/wiki/plot_network">the plot_network wiki page</a></p>
+<p>The <code>GP</code> variable is an only-slightly-modified version of the <code>GlobalPatterns</code> dataset. The threshold was determined empirically to show something interesting for demonstration. In practice, this value has a huge effect on the resulting network, and its usefulness, and it is highly recommended that you investigate the results from multiple values.</p>
+<pre class="sourceCode r"><code class="sourceCode r">ig &lt;- <span class="kw">make_network</span>(GP, <span class="dt">type =</span> <span class="st">&quot;samples&quot;</span>, <span class="dt">distance =</span> <span class="st">&quot;bray&quot;</span>, <span class="dt">max.dist =</span> <span class="fl">0.85</span>)
+<span class="kw">plot_network</span>(ig, GP, <span class="dt">color =</span> <span class="st">&quot;SampleType&quot;</span>, <span class="dt">shape =</span> <span class="st">&quot;human&quot;</span>, <span class="dt">line_weight =</span> <span class="fl">0.4</span>, 
+    <span class="dt">label =</span> <span class="ot">NULL</span>)</code></pre>
 <div class="figure">
 <img src="figure/plotnetwork-GPsamples.png" alt="plot of chunk plotnetwork-GPsamples" /><p class="caption">plot of chunk plotnetwork-GPsamples</p>
 </div>
-<p>A similar network representation of samples from the &quot;Enterotypes&quot; dataset.</p>
+<p>A similar network representation of samples from <a href="http://www.nature.com/nature/journal/v473/n7346/full/nature09944.html">the &quot;Enterotypes&quot; dataset</a>.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(enterotype)
 ig &lt;- <span class="kw">make_network</span>(enterotype, <span class="dt">max.dist =</span> <span class="fl">0.3</span>)
 <span class="kw">plot_network</span>(ig, enterotype, <span class="dt">color =</span> <span class="st">&quot;SeqTech&quot;</span>, <span class="dt">shape =</span> <span class="st">&quot;Enterotype&quot;</span>, 
@@ -606,9 +615,20 @@ jg &lt;- <span class="kw">make_network</span>(GP100, <span class="st">&quot;spec
 <div class="figure">
 <img src="figure/plotnetwork-otus.png" alt="plot of chunk plotnetwork-otus" /><p class="caption">plot of chunk plotnetwork-otus</p>
 </div>
-<h2 id="the-ordinate-function">The <code>ordinate</code> function</h2>
+<h2 id="ordination-methods">Ordination Methods</h2>
+<p>(http://cran.r-project.org/web/packages/vegan/vignettes/intro-vegan.pdf)</p>
+<p>&quot;Ordination methods&quot; in this context refers to methods for dimensional reduction of data -- usually the OTU abundance data, which is probably a large sparse matrix not so amenable to graphical display on its own. Graphically investigating the (usually) information-dense first few axes of an ordination result can be very useful for exploring and summarizing phylogenetic sequencing data. One of the resons for this is that many ordination methods are non-parametric, so they do not depend upon a prior hypothesis or model. This is essential for many microbiome investigations in which a model is only vaguely described or not available.</p>
+<p>A good quick summary of ordination methods is provided in the introductory vignette for the vegan package:</p>
+<p><a href="http://cran.r-project.org/web/packages/vegan/vignettes/intro-vegan.pdf">vegan introductory vignette</a></p>
+<p>The following R task views are also useful for understanding ordination tools in R:</p>
+<p><a href="http://cran.r-project.org/web/views/Environmetrics.html">Analysis of Ecological and Environmental Data</a></p>
+<p><a href="http://cran.r-project.org/web/views/Multivariate.html">Multivariate Statistics</a></p>
+<p>The <a href="">ade4 package</a> also provides a large number of ordination methods, and may be useful in your analysis.</p>
+<h3 id="the-ordinate-function"><a href="https://github.com/joey711/phyloseq/wiki/ordinate">The ordinate function</a></h3>
+<p>This function wraps several commonly-used ordination methods for OTU abundance tables (as well as related tables, in some cases). The type of ordination performed depends upon the argument to <code>method</code>. Try <code>ordinate(&quot;help&quot;)</code> or <code>ordinate(&quot;list&quot;)</code> for the currently supported method options.</p>
+<p>The output of this function will be an ordination class. The specific class depends upon the ordination method used, as well as the function/package that is called internally to perform it. As a general rule, any of the ordination classes returned by this function will be recognized by downstream tools in the phyloseq package -- for example the ordination plotting function, <a href="https://github.com/joey711/phyloseq/wiki/plot_ordination">plot_ordination</a> (See next section for plot examples).</p>
 <p>Using <code>GP100</code> from the previous section, let's calculate the unweighted-UniFrac distance for each sample pair in the dataset, and then perform Multidimensional Scaling (aka Principle Coordinates Analysis) on the resulting distance. For details about calculating the UniFrac distance on larger datasets using parallel-computing options in supported by phyloseq, see <a href="https://github.com/joey711/phyloseq/wiki/Fast-Parallel-UniFrac">the wiki page on Fast Parallel UniFrac in phyloseq</a></p>
-<pre class="sourceCode r"><code class="sourceCode r">GP.MDS &lt;- <span class="kw">ordinate</span>(GP100, <span class="st">&quot;MDS&quot;</span>, <span class="st">&quot;unifrac&quot;</span>)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">GP.MDS &lt;- <span class="kw">ordinate</span>(GP100, <span class="dt">method =</span> <span class="st">&quot;MDS&quot;</span>, <span class="dt">distance =</span> <span class="st">&quot;unifrac&quot;</span>)</code></pre>
 <p>Here are just a few examples of other supported combinations.</p>
 <pre class="sourceCode r"><code class="sourceCode r">GP.NMDS &lt;- <span class="kw">ordinate</span>(GP, <span class="st">&quot;NMDS&quot;</span>, <span class="st">&quot;gower&quot;</span>)
 GP.NMDS &lt;- <span class="kw">ordinate</span>(GP, <span class="st">&quot;NMDS&quot;</span>, <span class="st">&quot;bray&quot;</span>)  <span class="co"># perform NMDS on bray-curtis distance</span>
@@ -618,10 +638,16 @@ GP.NMDS.gower &lt;- <span class="kw">ordinate</span>(GP, <span class="st">&quot;
 <h2 id="plot_ordination-function"><code>plot_ordination</code> function</h2>
 <p>The <code>plot_ordination</code> function has many options, and supports many combinations of ordinations, and sample or OTU co-variables mapped to color and shape. Many additional examples (with results) are included on <a href="https://github.com/joey711/phyloseq/wiki/plot_ordination">the plot_ordination wiki page</a>. For quicker reference, some example &quot;1-liners&quot; are also included at bottom of this section.</p>
 <p>This combination of MDS/PCoA ordination of the UniFrac distance is recently very popular in microbiome analyses.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_ordination</span>(GP100, GP.MDS, <span class="st">&quot;samples&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;SampleType&quot;</span>) + 
-    <span class="kw">geom_line</span>() + <span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">5</span>)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">require</span>(<span class="st">&quot;ggplot2&quot;</span>)
+ptitle &lt;- <span class="st">&quot;GP PCoA of UniFrac distance, GP most abundant 100 OTUs only&quot;</span>
+(p &lt;- <span class="kw">plot_ordination</span>(GP100, GP.MDS, <span class="dt">type =</span> <span class="st">&quot;samples&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;SampleType&quot;</span>, 
+    <span class="dt">title =</span> ptitle))</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-45.png" alt="plot of chunk unnamed-chunk-45" /><p class="caption">plot of chunk unnamed-chunk-45</p>
+<img src="figure/GP100-UniFrac-PCoA1.png" alt="plot of chunk GP100-UniFrac-PCoA" /><p class="caption">plot of chunk GP100-UniFrac-PCoA</p>
+</div>
+<pre class="sourceCode r"><code class="sourceCode r">p + <span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">5</span>) + <span class="kw">geom_polygon</span>(<span class="kw">aes</span>(<span class="dt">fill =</span> SampleType))</code></pre>
+<div class="figure">
+<img src="figure/GP100-UniFrac-PCoA2.png" alt="plot of chunk GP100-UniFrac-PCoA" /><p class="caption">plot of chunk GP100-UniFrac-PCoA</p>
 </div>
 <p>Get the names of the most-abundant phyla, and use for subsetting.</p>
 <pre class="sourceCode r"><code class="sourceCode r">top.TaxaGroup &lt;- <span class="kw">sort</span>(<span class="kw">tapply</span>(<span class="kw">speciesSums</span>(GP), <span class="kw">taxTab</span>(GP)[, <span class="st">&quot;Phylum&quot;</span>], 
@@ -631,34 +657,40 @@ top.TaxaGroup &lt;- top.TaxaGroup[top.TaxaGroup &gt; <span class="dv">1</span> *
 GP2 &lt;- <span class="kw">subset_species</span>(GP, Phylum %in% <span class="kw">names</span>(top.TaxaGroup))
 topsp &lt;- <span class="kw">names</span>(<span class="kw">sort</span>(<span class="kw">speciesSums</span>(GP2), <span class="ot">TRUE</span>)[<span class="dv">1</span>:<span class="dv">200</span>])
 GP2 &lt;- <span class="kw">prune_species</span>(topsp, GP2)</code></pre>
-<p>Let's try DCA in one-liner syntax</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_ordination</span>(GP2, <span class="kw">ordinate</span>(GP2, <span class="st">&quot;DCA&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;samples&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;SampleType&quot;</span>) + 
-    <span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">4</span>)</code></pre>
+<p>Let's try Correspondence Analysis(REF) with one-liner syntax</p>
+<pre class="sourceCode r"><code class="sourceCode r">(p2 &lt;- <span class="kw">plot_ordination</span>(GP2, <span class="kw">ordinate</span>(GP2, <span class="st">&quot;CCA&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;samples&quot;</span>, 
+    <span class="dt">color =</span> <span class="st">&quot;SampleType&quot;</span>))</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-47.png" alt="plot of chunk unnamed-chunk-47" /><p class="caption">plot of chunk unnamed-chunk-47</p>
+<img src="figure/unnamed-chunk-461.png" alt="plot of chunk unnamed-chunk-46" /><p class="caption">plot of chunk unnamed-chunk-46</p>
 </div>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_ordination</span>(GP2, <span class="kw">ordinate</span>(GP2, <span class="st">&quot;DCA&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;species&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;Phylum&quot;</span>) + 
+<pre class="sourceCode r"><code class="sourceCode r">p2 + <span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">5</span>) + <span class="kw">geom_polygon</span>(<span class="kw">aes</span>(<span class="dt">fill =</span> SampleType))</code></pre>
+<div class="figure">
+<img src="figure/unnamed-chunk-462.png" alt="plot of chunk unnamed-chunk-46" /><p class="caption">plot of chunk unnamed-chunk-46</p>
+</div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_ordination</span>(GP2, <span class="kw">ordinate</span>(GP2, <span class="st">&quot;CCA&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;species&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;Phylum&quot;</span>) + 
     <span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">4</span>)
-<span class="kw">plot_ordination</span>(GP2, <span class="kw">ordinate</span>(GP2, <span class="st">&quot;DCA&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;split&quot;</span>)
-<span class="kw">plot_ordination</span>(GP2, <span class="kw">ordinate</span>(GP2, <span class="st">&quot;DCA&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;split&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;SampleType&quot;</span>)
-<span class="kw">plot_ordination</span>(GP2, <span class="kw">ordinate</span>(GP2, <span class="st">&quot;DCA&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;biplot&quot;</span>, <span class="dt">shape =</span> <span class="st">&quot;Phylum&quot;</span>)
-<span class="kw">plot_ordination</span>(GP2, <span class="kw">ordinate</span>(GP2, <span class="st">&quot;DCA&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;split&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;Phylum&quot;</span>, 
+<span class="kw">plot_ordination</span>(GP2, <span class="kw">ordinate</span>(GP2, <span class="st">&quot;CCA&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;split&quot;</span>)
+<span class="kw">plot_ordination</span>(GP2, <span class="kw">ordinate</span>(GP2, <span class="st">&quot;CCA&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;split&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;SampleType&quot;</span>)
+<span class="kw">plot_ordination</span>(GP2, <span class="kw">ordinate</span>(GP2, <span class="st">&quot;CCA&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;biplot&quot;</span>, <span class="dt">shape =</span> <span class="st">&quot;Phylum&quot;</span>)
+<span class="kw">plot_ordination</span>(GP2, <span class="kw">ordinate</span>(GP2, <span class="st">&quot;CCA&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;split&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;Phylum&quot;</span>, 
     <span class="dt">label =</span> <span class="st">&quot;SampleType&quot;</span>)
-<span class="kw">plot_ordination</span>(GP2, <span class="kw">ordinate</span>(GP2, <span class="st">&quot;DCA&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;split&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;SampleType&quot;</span>, 
+<span class="kw">plot_ordination</span>(GP2, <span class="kw">ordinate</span>(GP2, <span class="st">&quot;CCA&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;split&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;SampleType&quot;</span>, 
     <span class="dt">shape =</span> <span class="st">&quot;Phylum&quot;</span>, <span class="dt">label =</span> <span class="st">&quot;SampleType&quot;</span>)</code></pre>
-<h2 id="mapping-continuous-variables-to-color-cant-do-it-to-shape">Mapping continuous variables to color (can't do it to shape)</h2>
-<pre class="sourceCode r"><code class="sourceCode r">Bushman.ord &lt;- <span class="kw">ordinate</span>(Bushman, <span class="st">&quot;CCA&quot;</span>)
-<span class="kw">plot_ordination</span>(Bushman, Bushman.ord, <span class="st">&quot;samples&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;OMEGA3_FATTY_ACIDS_G_AVE&quot;</span>)</code></pre>
+<h3 id="mapping-continuous-variables-to-color">Mapping Continuous Variables to Color</h3>
+<p>(Note: can't map continuous variables to shape with <code>plot_ordination</code> function)</p>
+<pre class="sourceCode r"><code class="sourceCode r">p4title &lt;- <span class="st">&quot;Bushman dataset, PCoA/MDS ordination on Bray-Curtis distance&quot;</span>
+Bushman.ord &lt;- <span class="kw">ordinate</span>(Bushman, <span class="dt">method =</span> <span class="st">&quot;MDS&quot;</span>, <span class="dt">distance =</span> <span class="st">&quot;bray&quot;</span>)
+<span class="kw">plot_ordination</span>(Bushman, Bushman.ord, <span class="st">&quot;samples&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;OMEGA3_FATTY_ACIDS_G_AVE&quot;</span>, 
+    <span class="dt">title =</span> p4title)</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-49.png" alt="plot of chunk unnamed-chunk-49" /><p class="caption">plot of chunk unnamed-chunk-49</p>
+<img src="figure/Bushman-MDS-bray.png" alt="plot of chunk Bushman-MDS-bray" /><p class="caption">plot of chunk Bushman-MDS-bray</p>
 </div>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># plot_ordination(Bushman, Bushman.ord, &#39;samples&#39;, color=&#39;VIT_B6_MG_AVE&#39;)</span></code></pre>
 <h2 id="plot_heatmap-function"><code>plot_heatmap</code> Function</h2>
 <p>In a <a href="http://www.biomedcentral.com/1471-2105/11/45">2010 article in BMC Genomics</a>, Rajaram and Oono describe an approach to creating a heatmap using ordination methods (namely, NMDS and PCA) to organize the rows and columns instead of (hierarchical) cluster analysis. In many cases the ordination-based ordering does a much better job than h-clustering at providing an order of elements that is easily interpretable. The authors provided an immediately useful example of their approach as <a href="http://cran.r-project.org/web/packages/NeatMap/index.html">the NeatMap package for R</a>. The NeatMap package can be used directly on the abundance table (<code>&quot;otuTable&quot;</code>-class) of phylogenetic-sequencing data, but the NMDS or PCA ordination options that it supports are not based on ecological distances. To fill this void, and because phyloseq already provides support for a large number of <a href="https://github.com/joey711/phyloseq/wiki/distance">ecological distances</a> and <a href="https://github.com/joey711/phyloseq/wiki/ordinate">ordination methods</a>, phyloseq now includes the <code>plot_heatmap()</code> function: an ecology-oriented variant of the NeatMap approach to organizing a heatmap and build it using <a href="http://had.co.nz/ggplot2/">ggplot</a> graphics tools. The <a href="https://github.com/joey711/phyloseq/wiki/distance">distance</a> and <a href="https://github.com/joey711/phyloseq/wiki/ordinate">method</a> arguments are the same as for the <a href="https://github.com/joey711/phyloseq/wiki/plot_ordination">plot_ordination</a> function, and support large number of distances and ordination methods, respectively, with a strong leaning toward ecology. This function also provides the options to re-label the OTU and sample axis-ticks with a taxonomic name and/or sample variable, respectively, in the hope that this might hasten your interpretation of the patterns (See the documentation for the <code>sample.label</code> and <code>species.label</code> arguments, and the examples below). Note that this function makes no attempt to overlay dendrograms from hierarchical clustering next to the axes, as hierarchical clustering is not used to organize these plots. Also note that each re-ordered axis repeats at the edge, and so apparent clusters at the far right/left or top/bottom of the heat-map may actually be the same. For now, the placement of this edge can be considered arbitrary, so beware of this artifact of the graphic and visually check if there are two &quot;mergeable&quot; clusters at the edges of a particular axis. If you benefit from this phyloseq-specific implementation of <a href="http://cran.r-project.org/web/packages/NeatMap/index.html">the NeatMap approach</a>, please cite <a href="http://www.biomedcentral.com/1471-2105/11/45">the NeatMap article</a>, as well as phyloseq.</p>
 <p>Further examples are provided at <a href="https://github.com/joey711/phyloseq/wiki/plot_heatmap">the plot_heatmap wiki page</a></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_heatmap</span>(GP2, <span class="st">&quot;MDS&quot;</span>, <span class="st">&quot;bray&quot;</span>, <span class="st">&quot;SampleType&quot;</span>, <span class="st">&quot;Family&quot;</span>)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_heatmap</span>(GP2, <span class="st">&quot;NMDS&quot;</span>, <span class="st">&quot;bray&quot;</span>, <span class="st">&quot;SampleType&quot;</span>, <span class="st">&quot;Family&quot;</span>)</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-50.png" alt="plot of chunk unnamed-chunk-50" /><p class="caption">plot of chunk unnamed-chunk-50</p>
+<img src="figure/plot-heatmap-NMDS-bray.png" alt="plot of chunk plot-heatmap-NMDS-bray" /><p class="caption">plot of chunk plot-heatmap-NMDS-bray</p>
 </div>
 <p>Some alternative <code>plot_heatmap</code> transformations.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_heatmap</span>(gpac_filt, <span class="st">&quot;NMDS&quot;</span>, <span class="st">&quot;bray&quot;</span>, <span class="st">&quot;SampleType&quot;</span>, <span class="st">&quot;Family&quot;</span>, <span class="dt">trans =</span> <span class="kw">log_trans</span>(<span class="dv">10</span>))
@@ -880,12 +912,12 @@ gskmn</code></pre>
 ## B=50 simulated reference sets, k = 1..6
 ##  --&gt; Number of clusters (method &#39;firstSEmax&#39;, SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.748 1.203 0.02302
-## [2,] 3.720  5.188 1.468 0.02159
-## [3,] 3.428  4.928 1.500 0.01958
-## [4,] 3.301  4.785 1.484 0.01945
-## [5,] 3.100  4.691 1.591 0.02366
-## [6,] 2.957  4.607 1.650 0.02651</code></pre>
+## [1,] 4.544  5.740 1.196 0.02644
+## [2,] 3.720  5.185 1.465 0.02072
+## [3,] 3.428  4.926 1.498 0.02347
+## [4,] 3.301  4.776 1.475 0.01861
+## [5,] 3.100  4.680 1.579 0.01655
+## [6,] 2.957  4.595 1.638 0.02154</code></pre>
 <p>That's nice. Just in case it is useful, let's look at what the wrapper-function might look like.</p>
 <pre class="sourceCode r"><code class="sourceCode r">gap_statistic_ordination &lt;- function(ord, FUNcluster, <span class="dt">type =</span> <span class="st">&quot;sites&quot;</span>, 
     <span class="dt">K.max =</span> <span class="dv">6</span>, <span class="dt">axes =</span> <span class="kw">c</span>(<span class="dv">1</span>:<span class="dv">2</span>), <span class="dt">B =</span> <span class="dv">500</span>, <span class="dt">verbose =</span> <span class="kw">interactive</span>(), ...) {
@@ -921,12 +953,12 @@ plot_clusgap &lt;- function(clusgap, <span class="dt">title =</span> <span class
 ## B=50 simulated reference sets, k = 1..6
 ##  --&gt; Number of clusters (method &#39;Tibs2001SEmax&#39;, SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.749 1.205 0.02602
-## [2,] 3.720  5.195 1.475 0.01966
-## [3,] 3.428  4.931 1.503 0.02066
-## [4,] 3.301  4.783 1.482 0.01977
-## [5,] 3.100  4.684 1.583 0.02377
-## [6,] 2.957  4.598 1.641 0.02192</code></pre>
+## [1,] 4.544  5.746 1.201 0.02622
+## [2,] 3.720  5.187 1.467 0.01847
+## [3,] 3.428  4.929 1.501 0.02339
+## [4,] 3.301  4.780 1.479 0.02040
+## [5,] 3.100  4.677 1.577 0.01656
+## [6,] 2.957  4.595 1.638 0.02181</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_clusgap</span>(gs)</code></pre>
 <div class="figure">
 <img src="figure/gapstat-inphyloseq-example.png" alt="plot of chunk gapstat-inphyloseq-example" /><p class="caption">plot of chunk gapstat-inphyloseq-example</p>
@@ -935,7 +967,7 @@ plot_clusgap &lt;- function(clusgap, <span class="dt">title =</span> <span class
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(gs, <span class="dt">main =</span> <span class="st">&quot;Gap statistic for the &#39;Enterotypes&#39; data&quot;</span>)
 <span class="kw">mtext</span>(<span class="st">&quot;k = 2 is best ... but  k = 3  pretty close&quot;</span>)</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-60.png" alt="plot of chunk unnamed-chunk-60" /><p class="caption">plot of chunk unnamed-chunk-60</p>
+<img src="figure/unnamed-chunk-57.png" alt="plot of chunk unnamed-chunk-57" /><p class="caption">plot of chunk unnamed-chunk-57</p>
 </div>
 </div>
 </body>
