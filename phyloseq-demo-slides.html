@@ -197,8 +197,8 @@ bmsd &lt;- <span class="kw">import_qiime_sampleData</span>(map_file)
 ## Taxonomy Table:     [1873 species by 7 taxonomic ranks]:</code></pre>
 <h2 id="direct-ftp-download-unzip-and-import">Direct ftp download, unzip, and import</h2>
 <p>The <code>.biom</code> and sample data files are also <a href="ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip">provided online (ftp)</a>, and a useful way to download and import into phyloseq directly from the ftp address in the following example code. This is an example in which we download a zip file with both biom- and qiime-formatted data, unzip it in a temporary directory from with in R, import the relavant files using phyloseq importers, and then delete the temporary files. This code <em>should</em> be platform independent, but occasionally there are finicky Windows issues that arise.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># This is not actually run</span>
-zipftp &lt;- <span class="st">&quot;ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip&quot;</span>
+<p>(Note: this is not actually run in this demo. Would be redundant, and occasionally Windows issues might crash it, based on experience.)</p>
+<pre class="sourceCode r"><code class="sourceCode r">zipftp &lt;- <span class="st">&quot;ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip&quot;</span>
 <span class="co"># First create a temporary directory in which to store the unpacked</span>
 <span class="co"># file(s) from the .zip</span>
 tmpdir &lt;- <span class="kw">tempdir</span>()
@@ -406,8 +406,8 @@ eso &lt;- <span class="kw">rarefy_even_depth</span>(esophagus)
 <span class="co"># plot(as(otuTable(eso), &#39;vector&#39;), as(otuTable(esophagus), &#39;vector&#39;))</span></code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">UniFrac</span>(eso)</code></pre>
 <pre><code>##        B      C
-## C 0.5333       
-## D 0.5338 0.6367</code></pre>
+## C 0.5622       
+## D 0.5685 0.6638</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">UniFrac</span>(esophagus)</code></pre>
 <pre><code>##        B      C
 ## C 0.5176       
@@ -473,7 +473,7 @@ most_abundant_taxa &lt;- <span class="kw">sort</span>(<span class="kw">speciesSu
 ##     }
 ##     x &gt;= sort(x, decreasing = TRUE)[ceiling(length(x) * p)]
 ## }
-## &lt;environment: 0x109cdcbc0&gt;</code></pre>
+## &lt;environment: 0x10bdc9310&gt;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">f1 &lt;- <span class="kw">filterfunSample</span>(<span class="kw">topp</span>(<span class="fl">0.1</span>))
 <span class="kw">print</span>(f1)</code></pre>
 <pre><code>## function (x) 
@@ -485,7 +485,7 @@ most_abundant_taxa &lt;- <span class="kw">sort</span>(<span class="kw">speciesSu
 ##     }
 ##     return(fval)
 ## }
-## &lt;environment: 0x109c60e60&gt;
+## &lt;environment: 0x10bd4a040&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;filterfun&quot;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">wh1 &lt;- <span class="kw">genefilterSample</span>(GP, f1, <span class="dt">A =</span> <span class="kw">round</span>(<span class="fl">0.5</span> * <span class="kw">nsamples</span>(GP)))
@@ -623,11 +623,11 @@ jg &lt;- <span class="kw">make_network</span>(GP100, <span class="st">&quot;spec
 <p>The following R task views are also useful for understanding ordination tools in R:</p>
 <p><a href="http://cran.r-project.org/web/views/Environmetrics.html">Analysis of Ecological and Environmental Data</a></p>
 <p><a href="http://cran.r-project.org/web/views/Multivariate.html">Multivariate Statistics</a></p>
-<p>The <a href="">ade4 package</a> also provides a large number of ordination methods, and may be useful in your analysis.</p>
+<p>The <a href="http://cran.r-project.org/web/packages/ade4/index.html">ade4 package</a> also provides a large number of ordination methods, and may be useful in your analysis.</p>
 <h3 id="the-ordinate-function"><a href="https://github.com/joey711/phyloseq/wiki/ordinate">The ordinate function</a></h3>
-<p>This function wraps several commonly-used ordination methods for OTU abundance tables (as well as related tables, in some cases). The type of ordination performed depends upon the argument to <code>method</code>. Try <code>ordinate(&quot;help&quot;)</code> or <code>ordinate(&quot;list&quot;)</code> for the currently supported method options.</p>
-<p>The output of this function will be an ordination class. The specific class depends upon the ordination method used, as well as the function/package that is called internally to perform it. As a general rule, any of the ordination classes returned by this function will be recognized by downstream tools in the phyloseq package -- for example the ordination plotting function, <a href="https://github.com/joey711/phyloseq/wiki/plot_ordination">plot_ordination</a> (See next section for plot examples).</p>
-<p>Using <code>GP100</code> from the previous section, let's calculate the unweighted-UniFrac distance for each sample pair in the dataset, and then perform Multidimensional Scaling (aka Principle Coordinates Analysis) on the resulting distance. For details about calculating the UniFrac distance on larger datasets using parallel-computing options in supported by phyloseq, see <a href="https://github.com/joey711/phyloseq/wiki/Fast-Parallel-UniFrac">the wiki page on Fast Parallel UniFrac in phyloseq</a></p>
+<p>This function wraps several commonly-used <a href="http://en.wikipedia.org/wiki/Ordination_(statistics)">ordination</a> methods for OTU abundance tables (as well as related tables, in some cases). The type of ordination performed depends upon the argument to <code>method</code>. Try <code>ordinate(&quot;help&quot;)</code> or <code>ordinate(&quot;list&quot;)</code> for the currently supported method options.</p>
+<p>The output of this function will be an ordination class. The specific class depends upon <a href="http://en.wikipedia.org/wiki/Ordination_(statistics)">the ordination method</a> used, as well as the underlying function/package that is called internally by phyloseq to perform it. As a general rule, any of the ordination classes returned by this function, `ordinate, will be recognized by downstream tools in <a href="http://joey711.github.com/phyloseq/">the phyloseq package</a> -- for example the ordination plotting function, <a href="https://github.com/joey711/phyloseq/wiki/plot_ordination">plot_ordination</a> (See next section for plot examples).</p>
+<p>Using <code>GP100</code> from the previous section, let's calculate <a href="https://github.com/joey711/phyloseq/wiki/Fast-Parallel-UniFrac">the unweighted-UniFrac distance</a> for each sample pair in the dataset, and then perform <a href="http://en.wikipedia.org/wiki/Multidimensional_scaling">Multidimensional Scaling</a> (aka <a href="http://en.wikipedia.org/wiki/Multidimensional_scaling">Principle Coordinates Analysis</a>) on the resulting distance. For details about calculating the UniFrac distance on larger datasets using parallel-computing options in supported by phyloseq, see <a href="https://github.com/joey711/phyloseq/wiki/Fast-Parallel-UniFrac">the wiki page on Fast Parallel UniFrac in phyloseq</a></p>
 <pre class="sourceCode r"><code class="sourceCode r">GP.MDS &lt;- <span class="kw">ordinate</span>(GP100, <span class="dt">method =</span> <span class="st">&quot;MDS&quot;</span>, <span class="dt">distance =</span> <span class="st">&quot;unifrac&quot;</span>)</code></pre>
 <p>Here are just a few examples of other supported combinations.</p>
 <pre class="sourceCode r"><code class="sourceCode r">GP.NMDS &lt;- <span class="kw">ordinate</span>(GP, <span class="st">&quot;NMDS&quot;</span>, <span class="st">&quot;gower&quot;</span>)
@@ -657,7 +657,7 @@ top.TaxaGroup &lt;- top.TaxaGroup[top.TaxaGroup &gt; <span class="dv">1</span> *
 GP2 &lt;- <span class="kw">subset_species</span>(GP, Phylum %in% <span class="kw">names</span>(top.TaxaGroup))
 topsp &lt;- <span class="kw">names</span>(<span class="kw">sort</span>(<span class="kw">speciesSums</span>(GP2), <span class="ot">TRUE</span>)[<span class="dv">1</span>:<span class="dv">200</span>])
 GP2 &lt;- <span class="kw">prune_species</span>(topsp, GP2)</code></pre>
-<p>Let's try Correspondence Analysis(REF) with one-liner syntax</p>
+<p>Let's try <a href="http://en.wikipedia.org/wiki/Correspondence_analysis">Correspondence Analysis</a> with &quot;one-liner&quot; syntax in which we include the <code>ordinate</code> call within the <code>plot_ordination</code> command.</p>
 <pre class="sourceCode r"><code class="sourceCode r">(p2 &lt;- <span class="kw">plot_ordination</span>(GP2, <span class="kw">ordinate</span>(GP2, <span class="st">&quot;CCA&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;samples&quot;</span>, 
     <span class="dt">color =</span> <span class="st">&quot;SampleType&quot;</span>))</code></pre>
 <div class="figure">
@@ -837,8 +837,8 @@ GP3f.mt.table &lt;- GP3f.mt.table[<span class="kw">order</span>(GP3f.mt.table[, 
 <p>Some alternative packages for multiple inference correction: <a href="http://www.bioconductor.org/packages/release/bioc/html/qvalue.html">the qvalue package</a>, <a href="http://cran.r-project.org/web/packages/multcomp/index.html">the multcomp package</a></p>
 </div>
 <div class="section slide level1" id="getting-phyloseq-data-into-other-r-tools">
-<h1>Getting phyloseq data into other R tools</h1>
-<p>A big concern for many users is how they can easily get phyloseq-formatted data into other R tools. The following examples are meant to illustrate doing that with some commonly-requested tasks.</p>
+<h1>Getting phyloseq Data into Other R Tools</h1>
+<p>A common question from many users related to how they can easily get phyloseq-formatted data into other R tools. The following examples are meant to illustrate doing that with some commonly-requested tasks.</p>
 <h2 id="porting-data-to-vegan-functions">Porting Data to <a href="http://cran.r-project.org/web/packages/vegan//index.html">vegan</a> Functions</h2>
 <p><a href="http://vegan.r-forge.r-project.org/">The vegan package</a> is a popular and well-maintained R package (hosted in <a href="CRAN.r-project.org">CRAN</a>) &quot;for community and vegetation ecologists&quot;. It provides ordination methods, diversity analysis and other functions. Many of <a href="http://cran.r-project.org/web/packages/vegan//index.html">vegan</a>'s distance and ordination functions are wrapped by functions in phyloseq. Of course, not everything in <a href="http://cran.r-project.org/web/packages/vegan//index.html">vegan</a> is wrapped by phyloseq, and it may turn out that you need to use some function that is not wrapped by phyloseq. What do you do? The following subsection provides example code for running just such a function by accessing and coercing the necessary data components from a phyloseq data object.</p>
 <p>For OTU abundance tables, <a href="http://cran.r-project.org/web/packages/vegan//index.html">vegan</a> expects samples as rows, and OTUs/species/taxa as columns (so does the picante package). The following is an example function, called <code>veganotu</code>, for extracting the OTU table from a phyloseq data object, and converting it to a properly oriented standard matrix recognized by the <a href="http://cran.r-project.org/web/packages/vegan//index.html">vegan</a> package.</p>
@@ -912,12 +912,12 @@ gskmn</code></pre>
 ## B=50 simulated reference sets, k = 1..6
 ##  --&gt; Number of clusters (method &#39;firstSEmax&#39;, SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.740 1.196 0.02644
-## [2,] 3.720  5.185 1.465 0.02072
-## [3,] 3.428  4.926 1.498 0.02347
-## [4,] 3.301  4.776 1.475 0.01861
-## [5,] 3.100  4.680 1.579 0.01655
-## [6,] 2.957  4.595 1.638 0.02154</code></pre>
+## [1,] 4.544  5.748 1.204 0.02304
+## [2,] 3.720  5.190 1.470 0.02167
+## [3,] 3.428  4.931 1.503 0.01654
+## [4,] 3.301  4.780 1.479 0.02046
+## [5,] 3.100  4.685 1.585 0.02148
+## [6,] 2.957  4.601 1.644 0.02200</code></pre>
 <p>That's nice. Just in case it is useful, let's look at what the wrapper-function might look like.</p>
 <pre class="sourceCode r"><code class="sourceCode r">gap_statistic_ordination &lt;- function(ord, FUNcluster, <span class="dt">type =</span> <span class="st">&quot;sites&quot;</span>, 
     <span class="dt">K.max =</span> <span class="dv">6</span>, <span class="dt">axes =</span> <span class="kw">c</span>(<span class="dv">1</span>:<span class="dv">2</span>), <span class="dt">B =</span> <span class="dv">500</span>, <span class="dt">verbose =</span> <span class="kw">interactive</span>(), ...) {
@@ -946,19 +946,19 @@ plot_clusgap &lt;- function(clusgap, <span class="dt">title =</span> <span class
     p &lt;- p + <span class="kw">opts</span>(<span class="dt">title =</span> title)
     <span class="kw">return</span>(p)
 }</code></pre>
-<p>Now try out this function. Should work on ordination classes recognized by <code>scores</code> function, and provide a <a href="http://had.co.nz/ggplot2/">ggplot</a> graphic instead of a base graphic. ######(Special Note: the phyloseq-defined <code>scores</code> extensions are not exported as regular functions to avoid conflict, so phyloseq-defined <code>scores</code> extensions can only be accessed with the <code>phyloseq:::</code> namespace prefix in front.)</p>
+<p>Now try out this function. Should work on ordination classes recognized by <code>scores</code> function, and provide a <a href="http://had.co.nz/ggplot2/">ggplot</a> graphic instead of a base graphic. (Special Note: the phyloseq-defined <code>scores</code> extensions are not exported as regular functions to avoid conflict, so phyloseq-defined <code>scores</code> extensions can only be accessed with the <code>phyloseq:::</code> namespace prefix in front.)</p>
 <pre class="sourceCode r"><code class="sourceCode r">gs &lt;- <span class="kw">gap_statistic_ordination</span>(ent.ca, <span class="st">&quot;pam1&quot;</span>, <span class="dt">B =</span> <span class="dv">50</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)
 <span class="kw">print</span>(gs, <span class="dt">method =</span> <span class="st">&quot;Tibs2001SEmax&quot;</span>)</code></pre>
 <pre><code>## Clustering Gap statistic [&quot;clusGap&quot;].
 ## B=50 simulated reference sets, k = 1..6
 ##  --&gt; Number of clusters (method &#39;Tibs2001SEmax&#39;, SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.746 1.201 0.02622
-## [2,] 3.720  5.187 1.467 0.01847
-## [3,] 3.428  4.929 1.501 0.02339
-## [4,] 3.301  4.780 1.479 0.02040
-## [5,] 3.100  4.677 1.577 0.01656
-## [6,] 2.957  4.595 1.638 0.02181</code></pre>
+## [1,] 4.544  5.745 1.201 0.02263
+## [2,] 3.720  5.193 1.473 0.02142
+## [3,] 3.428  4.930 1.502 0.01950
+## [4,] 3.301  4.785 1.483 0.01936
+## [5,] 3.100  4.686 1.586 0.02094
+## [6,] 2.957  4.603 1.645 0.02002</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_clusgap</span>(gs)</code></pre>
 <div class="figure">
 <img src="figure/gapstat-inphyloseq-example.png" alt="plot of chunk gapstat-inphyloseq-example" /><p class="caption">plot of chunk gapstat-inphyloseq-example</p>

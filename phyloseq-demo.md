@@ -273,8 +273,9 @@ biom_otu_tax
 ## Direct ftp download, unzip, and import
 The `.biom` and sample data files are also [provided online (ftp)](ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip), and a useful way to download and import into phyloseq directly from the ftp address in the following example code. This is an example in which we download a zip file with both biom- and qiime-formatted data, unzip it in a temporary directory from with in R, import the relavant files using phyloseq importers, and then delete the temporary files. This code *should* be platform independent, but occasionally there are finicky Windows issues that arise.
 
+(Note: this is not actually run in this demo. Would be redundant, and occasionally Windows issues might crash it, based on experience.)
+
 ```r
-# This is not actually run
 zipftp <- "ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip"
 # First create a temporary directory in which to store the unpacked
 # file(s) from the .zip
@@ -678,8 +679,8 @@ UniFrac(eso)
 
 ```
 ##        B      C
-## C 0.5333       
-## D 0.5338 0.6367
+## C 0.5622       
+## D 0.5685 0.6638
 ```
 
 ```r
@@ -817,7 +818,7 @@ topp(0.1)
 ##     }
 ##     x >= sort(x, decreasing = TRUE)[ceiling(length(x) * p)]
 ## }
-## <environment: 0x109cdcbc0>
+## <environment: 0x10bdc9310>
 ```
 
 ```r
@@ -835,7 +836,7 @@ print(f1)
 ##     }
 ##     return(fval)
 ## }
-## <environment: 0x109c60e60>
+## <environment: 0x10bd4a040>
 ## attr(,"class")
 ## [1] "filterfun"
 ```
@@ -1073,15 +1074,15 @@ The following R task views are also useful for understanding ordination tools in
 
 [Multivariate Statistics](http://cran.r-project.org/web/views/Multivariate.html)
 
-The [ade4 package]() also provides a large number of ordination methods, and may be useful in your analysis.
+The [ade4 package](http://cran.r-project.org/web/packages/ade4/index.html) also provides a large number of ordination methods, and may be useful in your analysis.
 
 
 ### [The ordinate function](https://github.com/joey711/phyloseq/wiki/ordinate)
-This function wraps several commonly-used ordination methods for OTU abundance tables (as well as related tables, in some cases). The type of ordination performed depends upon the argument to `method`. Try `ordinate("help")` or `ordinate("list")` for the currently supported method options.
+This function wraps several commonly-used [ordination](http://en.wikipedia.org/wiki/Ordination_(statistics)) methods for OTU abundance tables (as well as related tables, in some cases). The type of ordination performed depends upon the argument to `method`. Try `ordinate("help")` or `ordinate("list")` for the currently supported method options.
 
-The output of this function will be an ordination class. The specific class depends upon the ordination method used, as well as the function/package that is called internally to perform it. As a general rule, any of the ordination classes returned by this function will be recognized by downstream tools in the phyloseq package -- for example the ordination plotting function, [plot_ordination](https://github.com/joey711/phyloseq/wiki/plot_ordination) (See next section for plot examples).
+The output of this function will be an ordination class. The specific class depends upon [the ordination method](http://en.wikipedia.org/wiki/Ordination_(statistics)) used, as well as the underlying function/package that is called internally by phyloseq to perform it. As a general rule, any of the ordination classes returned by this function, `ordinate, will be recognized by downstream tools in [the phyloseq package](http://joey711.github.com/phyloseq/) -- for example the ordination plotting function, [plot_ordination](https://github.com/joey711/phyloseq/wiki/plot_ordination) (See next section for plot examples).
 
-Using `GP100` from the previous section, let's calculate the unweighted-UniFrac distance for each sample pair in the dataset, and then perform Multidimensional Scaling (aka Principle Coordinates Analysis) on the resulting distance. For details about calculating the UniFrac distance on larger datasets using parallel-computing options in supported by phyloseq, see [the wiki page on Fast Parallel UniFrac in phyloseq](https://github.com/joey711/phyloseq/wiki/Fast-Parallel-UniFrac)
+Using `GP100` from the previous section, let's calculate [the unweighted-UniFrac distance](https://github.com/joey711/phyloseq/wiki/Fast-Parallel-UniFrac) for each sample pair in the dataset, and then perform [Multidimensional Scaling](http://en.wikipedia.org/wiki/Multidimensional_scaling) (aka [Principle Coordinates Analysis](http://en.wikipedia.org/wiki/Multidimensional_scaling)) on the resulting distance. For details about calculating the UniFrac distance on larger datasets using parallel-computing options in supported by phyloseq, see [the wiki page on Fast Parallel UniFrac in phyloseq](https://github.com/joey711/phyloseq/wiki/Fast-Parallel-UniFrac)
 
 ```r
 GP.MDS <- ordinate(GP100, method = "MDS", distance = "unifrac")
@@ -1133,7 +1134,7 @@ GP2 <- prune_species(topsp, GP2)
 ```
 
 
-Let's try Correspondence Analysis(REF) with one-liner syntax
+Let's try [Correspondence Analysis](http://en.wikipedia.org/wiki/Correspondence_analysis) with "one-liner" syntax in which we include the `ordinate` call within the `plot_ordination` command.
 
 ```r
 (p2 <- plot_ordination(GP2, ordinate(GP2, "CCA"), type = "samples", 
@@ -1405,9 +1406,9 @@ subset(GP3f.mt.table, BH < 0.05)
 Some alternative packages for multiple inference correction: [the qvalue package](http://www.bioconductor.org/packages/release/bioc/html/qvalue.html), [the multcomp package](http://cran.r-project.org/web/packages/multcomp/index.html)
 
 
-#  Getting phyloseq data into other R tools
+#  Getting phyloseq Data into Other R Tools
 
-A big concern for many users is how they can easily get phyloseq-formatted data into other R tools. The following examples are meant to illustrate doing that with some commonly-requested tasks.
+A common question from many users related to how they can easily get phyloseq-formatted data into other R tools. The following examples are meant to illustrate doing that with some commonly-requested tasks.
 
 
 ##  Porting Data to [vegan](http://cran.r-project.org/web/packages/vegan//index.html) Functions
@@ -1532,12 +1533,12 @@ gskmn
 ## B=50 simulated reference sets, k = 1..6
 ##  --> Number of clusters (method 'firstSEmax', SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.740 1.196 0.02644
-## [2,] 3.720  5.185 1.465 0.02072
-## [3,] 3.428  4.926 1.498 0.02347
-## [4,] 3.301  4.776 1.475 0.01861
-## [5,] 3.100  4.680 1.579 0.01655
-## [6,] 2.957  4.595 1.638 0.02154
+## [1,] 4.544  5.748 1.204 0.02304
+## [2,] 3.720  5.190 1.470 0.02167
+## [3,] 3.428  4.931 1.503 0.01654
+## [4,] 3.301  4.780 1.479 0.02046
+## [5,] 3.100  4.685 1.585 0.02148
+## [6,] 2.957  4.601 1.644 0.02200
 ```
 
 
@@ -1574,8 +1575,7 @@ plot_clusgap <- function(clusgap, title = "Gap Statistic calculation results") {
 ```
 
 
-Now try out this function. Should work on ordination classes recognized by `scores` function, and provide a [ggplot](http://had.co.nz/ggplot2/) graphic instead of a base graphic.
-######(Special Note: the phyloseq-defined `scores` extensions are not exported as regular functions to avoid conflict, so phyloseq-defined `scores` extensions can only be accessed with the `phyloseq:::` namespace prefix in front.)
+Now try out this function. Should work on ordination classes recognized by `scores` function, and provide a [ggplot](http://had.co.nz/ggplot2/) graphic instead of a base graphic. (Special Note: the phyloseq-defined `scores` extensions are not exported as regular functions to avoid conflict, so phyloseq-defined `scores` extensions can only be accessed with the `phyloseq:::` namespace prefix in front.)
 
 
 ```r
@@ -1588,12 +1588,12 @@ print(gs, method = "Tibs2001SEmax")
 ## B=50 simulated reference sets, k = 1..6
 ##  --> Number of clusters (method 'Tibs2001SEmax', SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.746 1.201 0.02622
-## [2,] 3.720  5.187 1.467 0.01847
-## [3,] 3.428  4.929 1.501 0.02339
-## [4,] 3.301  4.780 1.479 0.02040
-## [5,] 3.100  4.677 1.577 0.01656
-## [6,] 2.957  4.595 1.638 0.02181
+## [1,] 4.544  5.745 1.201 0.02263
+## [2,] 3.720  5.193 1.473 0.02142
+## [3,] 3.428  4.930 1.502 0.01950
+## [4,] 3.301  4.785 1.483 0.01936
+## [5,] 3.100  4.686 1.586 0.02094
+## [6,] 2.957  4.603 1.645 0.02002
 ```
 
 ```r

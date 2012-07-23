@@ -158,8 +158,9 @@ biom_otu_tax
 
 ## Direct ftp download, unzip, and import
 The `.biom` and sample data files are also [provided online (ftp)](ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip), and a useful way to download and import into phyloseq directly from the ftp address in the following example code. This is an example in which we download a zip file with both biom- and qiime-formatted data, unzip it in a temporary directory from with in R, import the relavant files using phyloseq importers, and then delete the temporary files. This code *should* be platform independent, but occasionally there are finicky Windows issues that arise.
+
+(Note: this is not actually run in this demo. Would be redundant, and occasionally Windows issues might crash it, based on experience.)
 ```{r BushmanFTP, eval=FALSE}
-# This is not actually run
 zipftp <- "ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip" 
 # First create a temporary directory in which to store the unpacked file(s) from the .zip
 tmpdir <- tempdir()
