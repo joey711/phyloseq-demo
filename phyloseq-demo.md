@@ -16,7 +16,7 @@ http://www-stat.stanford.edu/~susan/
 
 This document supports a live demonstration of tools in [the phyloseq package](http://joey711.github.com/phyloseq/), and supplements other documentation resources available for [the phyloseq package](https://github.com/joey711/phyloseq) (e.g. wiki, vignettes, publications, function-level documentation, etc.). It is built automatically from its [R-markdown source file](http://www.r-bloggers.com/announcing-the-r-markdown-package/) with example [code-chunks](http://rstudio.org/docs/authoring/using_markdown) that can be reused if you have phyloseq installed. The R-markdown file and other related materials are publicly available, and hosted on GitHub with an explicit open-access license/ copyright statement:
 
-## [Demo Materials Available Here](https://github.com/joey711/phyloseq-demo)
+## [Demo Materials Available Here](https://github.com/joey711/phyloseq-demo/zipball/master)
 
 ## Other Package-Level Documentation
 
@@ -37,24 +37,31 @@ There is also a GitHub-hosted [issue-tracker for phyloseq](https://github.com/jo
 
 
 # Installation
-For the foreseeable near future, phyloseq is under active development. Users are encouraged to consistently update their version from [the phyloseq development website on GitHub](http://joey711.github.com/phyloseq/). The following code should install the newest "bleeding edge" version of [the phyloseq package](http://joey711.github.com/phyloseq/) onto your system, including dependencies. 
+The phyloseq package is under active development. Users are encouraged to consistently update their version from [the phyloseq development website on GitHub](http://joey711.github.com/phyloseq/). The following code should install the newest "bleeding edge" version of [the phyloseq package](http://joey711.github.com/phyloseq/) onto your system, including dependencies. 
 
 
 ```r
 source("http://bioconductor.org/biocLite.R")
 biocLite("multtest")
 biocLite("genefilter")
+```
+
 Make sure you have devtools installed
+
+```r
 install.packages("devtools")
-Load the devtools package
+```
+
+Load the devtools package, and install with `install_github`
+
+```r
 library("devtools")
-Build and install phyloseq
 install_github("phyloseq", "joey711")
 ```
 
 
 ## Alternative Installation Methods and Versions:
-The most stable release and development versions of phyloseq are released from Bioconductor. For installing from Bioconductor, and alternatives to "the bleeding edge", as well as the most updated installation news/instructions, please see [the installation wiki page](https://github.com/joey711/phyloseq/wiki/Installation).
+The most stable releases and development versions of phyloseq are hosted by Bioconductor. For installing from Bioconductor, and alternatives to "the bleeding edge", as well as the most updated installation news/instructions, please see [the installation wiki page](https://github.com/joey711/phyloseq/wiki/Installation).
 
 
 #  Load phyloseq, and Import Data.
@@ -68,8 +75,8 @@ library("phyloseq")
 There is package-level documentation available. Note the following difference:
 
 ```r
-`?`("phyloseq-package")
-`?`(phyloseq  # this is a function)
+help("phyloseq-package")
+help("phyloseq")
 ```
 
 The latter loads instead the documentation for the constructor function named `phyloseq()`
@@ -270,7 +277,17 @@ biom_otu_tax
 ```
 
 
-## Direct ftp download, unzip, and import
+
+## Merging datasets or components
+We need to merge these two separate Bushman dataset objects into one "phyloseq" object. Presently, the two data objects contain the `otuTable`, `taxonomyTable`, and `sampleData` components, respectively. If we had three objects that were all components (think single tables, or a tree), then we would use the constructor function, `phyloseq`. However, because the `.biom` file contained two tables (including an `otuTable`), the `import_biom` function returned a valid `"phyloseq-class"` instance instead that contained both components. Whenever you need to add or merge data componentes from one (or more) phyloseq-class objects, the merging function, `merge_phyloseq`, is recommended, rather than the constructor (`phyloseq`).
+
+```r
+Bushman <- merge_phyloseq(biom_otu_tax, bmsd)
+```
+
+
+
+## Extra Example: Direct ftp Download, Unzip, and Import
 The `.biom` and sample data files are also [provided online (ftp)](ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip), and a useful way to download and import into phyloseq directly from the ftp address in the following example code. This is an example in which we download a zip file with both biom- and qiime-formatted data, unzip it in a temporary directory from with in R, import the relavant files using phyloseq importers, and then delete the temporary files. This code *should* be platform independent, but occasionally there are finicky Windows issues that arise.
 
 (Note: this is not actually run in this demo. Would be redundant, and occasionally Windows issues might crash it, based on experience.)
@@ -300,16 +317,8 @@ unlink(tmpdir)
 ```
 
 
-## Merging datasets or components
-We need to merge these two separate Bushman dataset objects into one "phyloseq" object. Presently, the two data objects contain the `otuTable`, `taxonomyTable`, and `sampleData` components, respectively. If we had three objects that were all components (think single tables, or a tree), then we would use the constructor function, `phyloseq`. However, because the `.biom` file contained two tables (including an `otuTable`), the `import_biom` function returned a valid `"phyloseq-class"` instance instead that contained both components. Whenever you need to add or merge data componentes from one (or more) phyloseq-class objects, the merging function, `merge_phyloseq`, is recommended, rather than the constructor (`phyloseq`).
 
-```r
-Bushman <- merge_phyloseq(biom_otu_tax, bmsd)
-```
-
-
-
-#  Basic interaction with phyloseq data
+#  Basic Interaction with phyloseq Data
 
 Let's look at some basic print and accessor functions/methods provided in phyloseq.
 
@@ -393,8 +402,9 @@ length(sample.variables(Bushman))
 ## [1] 225
 ```
 
+How can we look at the values for a particular variable? (Here I've arbitrarily chose the name of the 5th sample variable)
+
 ```r
-# How can we look at the values for a particular variable
 getVariable(Bushman, sample.variables(Bushman)[5])
 ```
 
@@ -521,6 +531,13 @@ Load additional graphics-related packages
 
 ```r
 library("ggplot2")
+```
+
+```
+## Use suppressPackageStartupMessages to eliminate package startup messages.
+```
+
+```r
 library("scales")
 library("grid")
 ```
@@ -589,7 +606,7 @@ plot_tree(GP.chl, color = "SampleType", shape = "Family", label.tips = "Genus",
     size = "abundance")
 ```
 
-![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17.png) 
+![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18.png) 
 
 ###### The graphic produced by the `plot_tree` function in phyloseq. In this case the data is a subset of the `GlobalPatterns` dataset in which only OTUs from the phylum *Chlamydiae* are included. Additionally, the tree has been annotated with genus labels at each tree tip. The points next to tips represent samples in which the OTU was observed, and are shaped according to taxonomic rank of Fammily, and shaded according to the sample type (sample source environment).
 
@@ -599,7 +616,7 @@ plot_tree(GP.chl, color = "SampleType", shape = "Family", label.tips = "Genus",
 plot_tree(GP.chl, "treeonly")
 ```
 
-![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18.png) 
+![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-19.png) 
 
 ###### Here is the result of plotting the "bare" tree with no options directing the mapping of a variable to the tree, and `"treeonly"` as the argument to `method`. Not as informative as the previous tree.
 
@@ -614,7 +631,7 @@ ent10 <- prune_species(TopNOTUs, enterotype)
 plot_taxa_bar(ent10, "Genus", x = "SeqTech", fill = "TaxaGroup")
 ```
 
-![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-19.png) 
+![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20.png) 
 
 
 ```r
@@ -622,7 +639,7 @@ plot_taxa_bar(ent10, "Genus", x = "SeqTech", fill = "TaxaGroup") +
     facet_wrap(~Enterotype)
 ```
 
-![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20.png) 
+![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-21.png) 
 
 
 This one takes a little while to calculate (not run).
@@ -679,8 +696,8 @@ UniFrac(eso)
 
 ```
 ##        B      C
-## C 0.5622       
-## D 0.5685 0.6638
+## C 0.5271       
+## D 0.5652 0.6532
 ```
 
 ```r
@@ -715,7 +732,7 @@ plot_ordination(GP.chl, ordinate(GP.chl, "MDS"), color = "SampleType") +
     geom_point(size = 5)
 ```
 
-![plot of chunk unnamed-chunk-26](figure/unnamed-chunk-26.png) 
+![plot of chunk unnamed-chunk-27](figure/unnamed-chunk-27.png) 
 
 
 ```r
@@ -723,7 +740,7 @@ plot_ordination(GP.chl.r, ordinate(GP.chl.r, "MDS"), color = "SampleType") +
     geom_point(size = 5)
 ```
 
-![plot of chunk unnamed-chunk-27](figure/unnamed-chunk-27.png) 
+![plot of chunk unnamed-chunk-28](figure/unnamed-chunk-28.png) 
 
 
 How does rarefying affect the larger untrimmed dataset? (not run)
@@ -818,7 +835,7 @@ topp(0.1)
 ##     }
 ##     x >= sort(x, decreasing = TRUE)[ceiling(length(x) * p)]
 ## }
-## <environment: 0x10bdc9310>
+## <environment: 0x109889358>
 ```
 
 ```r
@@ -836,7 +853,7 @@ print(f1)
 ##     }
 ##     return(fval)
 ## }
-## <environment: 0x10bd4a040>
+## <environment: 0x109960980>
 ## attr(,"class")
 ## [1] "filterfun"
 ```
@@ -900,7 +917,7 @@ p1 <- qplot(x = log10(variance), data = data.frame(variance = specvar),
 print(p1)
 ```
 
-![plot of chunk unnamed-chunk-34](figure/unnamed-chunk-34.png) 
+![plot of chunk unnamed-chunk-35](figure/unnamed-chunk-35.png) 
 
 
 However, the value of the variance is highly-dependent on the sequencing effort of each sample (the total number of reads sequenced from a particular sample). Thus we segway to transformations (e.g. convert to fractional abundance prior to filtering)
@@ -926,7 +943,7 @@ qplot(x = log10(variance), data = data.frame(variance = specvar))
 ## this.
 ```
 
-![plot of chunk unnamed-chunk-35](figure/unnamed-chunk-35.png) 
+![plot of chunk unnamed-chunk-36](figure/unnamed-chunk-36.png) 
 
 
 ```r
@@ -938,7 +955,7 @@ print(p1, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
 print(p2, vp = viewport(layout.pos.row = 2, layout.pos.col = 1))
 ```
 
-![plot of chunk unnamed-chunk-36](figure/unnamed-chunk-36.png) 
+![plot of chunk unnamed-chunk-37](figure/unnamed-chunk-37.png) 
 
 
 Now how would we filter the taxa with variance smaller than 0.001?
@@ -953,7 +970,7 @@ Show results with a heatmp
 plot_heatmap(gpac_filt, "NMDS", "bray", "SampleType", "Family")
 ```
 
-![plot of chunk unnamed-chunk-38](figure/unnamed-chunk-38.png) 
+![plot of chunk unnamed-chunk-39](figure/unnamed-chunk-39.png) 
 
 Note that the code in this section is not an endorsement of this particular threshold (0.001), just a demonstration for how you might remove OTUs/taxa/species that do not change much across the samples in your experiment.
 
@@ -1141,13 +1158,13 @@ Let's try [Correspondence Analysis](http://en.wikipedia.org/wiki/Correspondence_
     color = "SampleType"))
 ```
 
-![plot of chunk unnamed-chunk-46](figure/unnamed-chunk-461.png) 
+![plot of chunk unnamed-chunk-47](figure/unnamed-chunk-471.png) 
 
 ```r
 p2 + geom_point(size = 5) + geom_polygon(aes(fill = SampleType))
 ```
 
-![plot of chunk unnamed-chunk-46](figure/unnamed-chunk-462.png) 
+![plot of chunk unnamed-chunk-47](figure/unnamed-chunk-472.png) 
 
 
 ```r
@@ -1533,12 +1550,12 @@ gskmn
 ## B=50 simulated reference sets, k = 1..6
 ##  --> Number of clusters (method 'firstSEmax', SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.748 1.204 0.02304
-## [2,] 3.720  5.190 1.470 0.02167
-## [3,] 3.428  4.931 1.503 0.01654
-## [4,] 3.301  4.780 1.479 0.02046
-## [5,] 3.100  4.685 1.585 0.02148
-## [6,] 2.957  4.601 1.644 0.02200
+## [1,] 4.544  5.740 1.195 0.02363
+## [2,] 3.720  5.186 1.466 0.02359
+## [3,] 3.428  4.924 1.497 0.02116
+## [4,] 3.301  4.779 1.478 0.02271
+## [5,] 3.100  4.680 1.579 0.01811
+## [6,] 2.957  4.595 1.638 0.01828
 ```
 
 
@@ -1588,12 +1605,12 @@ print(gs, method = "Tibs2001SEmax")
 ## B=50 simulated reference sets, k = 1..6
 ##  --> Number of clusters (method 'Tibs2001SEmax', SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.745 1.201 0.02263
-## [2,] 3.720  5.193 1.473 0.02142
-## [3,] 3.428  4.930 1.502 0.01950
-## [4,] 3.301  4.785 1.483 0.01936
-## [5,] 3.100  4.686 1.586 0.02094
-## [6,] 2.957  4.603 1.645 0.02002
+## [1,] 4.544  5.743 1.198 0.02208
+## [2,] 3.720  5.183 1.463 0.01948
+## [3,] 3.428  4.929 1.501 0.01719
+## [4,] 3.301  4.782 1.480 0.01824
+## [5,] 3.100  4.681 1.581 0.02113
+## [6,] 2.957  4.599 1.642 0.02115
 ```
 
 ```r
@@ -1611,5 +1628,5 @@ plot(gs, main = "Gap statistic for the 'Enterotypes' data")
 mtext("k = 2 is best ... but  k = 3  pretty close")
 ```
 
-![plot of chunk unnamed-chunk-57](figure/unnamed-chunk-57.png) 
+![plot of chunk unnamed-chunk-58](figure/unnamed-chunk-58.png) 
 

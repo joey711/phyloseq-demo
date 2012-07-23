@@ -16,7 +16,7 @@ http://www-stat.stanford.edu/~susan/
 
 This document supports a live demonstration of tools in [the phyloseq package](http://joey711.github.com/phyloseq/), and supplements other documentation resources available for [the phyloseq package](https://github.com/joey711/phyloseq) (e.g. wiki, vignettes, publications, function-level documentation, etc.). It is built automatically from its [R-markdown source file](http://www.r-bloggers.com/announcing-the-r-markdown-package/) with example [code-chunks](http://rstudio.org/docs/authoring/using_markdown) that can be reused if you have phyloseq installed. The R-markdown file and other related materials are publicly available, and hosted on GitHub with an explicit open-access license/ copyright statement:
 
-## [Demo Materials Available Here](https://github.com/joey711/phyloseq-demo)
+## [Demo Materials Available Here](https://github.com/joey711/phyloseq-demo/zipball/master)
 
 ## Other Package-Level Documentation
 
@@ -35,22 +35,25 @@ There is also a GitHub-hosted [issue-tracker for phyloseq](https://github.com/jo
 
 
 # Installation
-For the foreseeable near future, phyloseq is under active development. Users are encouraged to consistently update their version from [the phyloseq development website on GitHub](http://joey711.github.com/phyloseq/). The following code should install the newest "bleeding edge" version of [the phyloseq package](http://joey711.github.com/phyloseq/) onto your system, including dependencies. 
+The phyloseq package is under active development. Users are encouraged to consistently update their version from [the phyloseq development website on GitHub](http://joey711.github.com/phyloseq/). The following code should install the newest "bleeding edge" version of [the phyloseq package](http://joey711.github.com/phyloseq/) onto your system, including dependencies. 
 
-```{r installation, eval=FALSE}
+```{r installation1, eval=FALSE}
 source("http://bioconductor.org/biocLite.R")
 biocLite("multtest")
 biocLite("genefilter")
+```
 Make sure you have devtools installed
+```{r installation2, eval=FALSE}
 install.packages("devtools")
-Load the devtools package
+```
+Load the devtools package, and install with `install_github`
+```{r installation3, eval=FALSE}
 library("devtools")
-Build and install phyloseq
 install_github("phyloseq", "joey711")
 ```
 
 ## Alternative Installation Methods and Versions:
-The most stable release and development versions of phyloseq are released from Bioconductor. For installing from Bioconductor, and alternatives to "the bleeding edge", as well as the most updated installation news/instructions, please see [the installation wiki page](https://github.com/joey711/phyloseq/wiki/Installation).
+The most stable releases and development versions of phyloseq are hosted by Bioconductor. For installing from Bioconductor, and alternatives to "the bleeding edge", as well as the most updated installation news/instructions, please see [the installation wiki page](https://github.com/joey711/phyloseq/wiki/Installation).
 
 
 #  Load phyloseq, and Import Data.
@@ -61,8 +64,8 @@ library("phyloseq")
 
 There is package-level documentation available. Note the following difference:
 ```{r, eval=FALSE}
-?"phyloseq-package"
-?phyloseq # this is a function
+help("phyloseq-package")
+help("phyloseq")
 ```
 The latter loads instead the documentation for the constructor function named `phyloseq()`
 
@@ -156,7 +159,15 @@ class(bmsd); dim(bmsd)
 biom_otu_tax
 ```
 
-## Direct ftp download, unzip, and import
+
+## Merging datasets or components
+We need to merge these two separate Bushman dataset objects into one "phyloseq" object. Presently, the two data objects contain the `otuTable`, `taxonomyTable`, and `sampleData` components, respectively. If we had three objects that were all components (think single tables, or a tree), then we would use the constructor function, `phyloseq`. However, because the `.biom` file contained two tables (including an `otuTable`), the `import_biom` function returned a valid `"phyloseq-class"` instance instead that contained both components. Whenever you need to add or merge data componentes from one (or more) phyloseq-class objects, the merging function, `merge_phyloseq`, is recommended, rather than the constructor (`phyloseq`).
+```{r}
+Bushman <- merge_phyloseq(biom_otu_tax, bmsd)
+```
+
+
+## Extra Example: Direct ftp Download, Unzip, and Import
 The `.biom` and sample data files are also [provided online (ftp)](ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip), and a useful way to download and import into phyloseq directly from the ftp address in the following example code. This is an example in which we download a zip file with both biom- and qiime-formatted data, unzip it in a temporary directory from with in R, import the relavant files using phyloseq importers, and then delete the temporary files. This code *should* be platform independent, but occasionally there are finicky Windows issues that arise.
 
 (Note: this is not actually run in this demo. Would be redundant, and occasionally Windows issues might crash it, based on experience.)
@@ -182,14 +193,8 @@ unlink(temp)
 unlink(tmpdir)
 ```
 
-## Merging datasets or components
-We need to merge these two separate Bushman dataset objects into one "phyloseq" object. Presently, the two data objects contain the `otuTable`, `taxonomyTable`, and `sampleData` components, respectively. If we had three objects that were all components (think single tables, or a tree), then we would use the constructor function, `phyloseq`. However, because the `.biom` file contained two tables (including an `otuTable`), the `import_biom` function returned a valid `"phyloseq-class"` instance instead that contained both components. Whenever you need to add or merge data componentes from one (or more) phyloseq-class objects, the merging function, `merge_phyloseq`, is recommended, rather than the constructor (`phyloseq`).
-```{r}
-Bushman <- merge_phyloseq(biom_otu_tax, bmsd)
-```
 
-
-#  Basic interaction with phyloseq data
+#  Basic Interaction with phyloseq Data
 
 Let's look at some basic print and accessor functions/methods provided in phyloseq.
 
@@ -214,7 +219,9 @@ This is useful later in plotting
 ```{r}
 sample.variables(Bushman)[1:10]
 length(sample.variables(Bushman))
-# How can we look at the values for a particular variable
+```
+How can we look at the values for a particular variable? (Here I've arbitrarily chose the name of the 5th sample variable)
+```{r}
 getVariable(Bushman, sample.variables(Bushman)[5])
 ```
 

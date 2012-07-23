@@ -44,7 +44,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div class="section slide level1" id="summary-and-other-documentation-resources">
 <h1>Summary and Other Documentation Resources</h1>
 <p>This document supports a live demonstration of tools in <a href="http://joey711.github.com/phyloseq/">the phyloseq package</a>, and supplements other documentation resources available for <a href="https://github.com/joey711/phyloseq">the phyloseq package</a> (e.g. wiki, vignettes, publications, function-level documentation, etc.). It is built automatically from its <a href="http://www.r-bloggers.com/announcing-the-r-markdown-package/">R-markdown source file</a> with example <a href="http://rstudio.org/docs/authoring/using_markdown">code-chunks</a> that can be reused if you have phyloseq installed. The R-markdown file and other related materials are publicly available, and hosted on GitHub with an explicit open-access license/ copyright statement:</p>
-<h2 id="demo-materials-available-here"><a href="https://github.com/joey711/phyloseq-demo">Demo Materials Available Here</a></h2>
+<h2 id="demo-materials-available-here"><a href="https://github.com/joey711/phyloseq-demo/zipball/master">Demo Materials Available Here</a></h2>
 <h2 id="other-package-level-documentation">Other Package-Level Documentation</h2>
 <p>As mentioned, vignettes are included in phyloseq. A quick way to load them from within <code>R</code> is:</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">vignette</span>(<span class="st">&quot;phyloseqbasics&quot;</span>)
@@ -56,26 +56,25 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 <div class="section slide level1" id="installation">
 <h1>Installation</h1>
-<p>For the foreseeable near future, phyloseq is under active development. Users are encouraged to consistently update their version from <a href="http://joey711.github.com/phyloseq/">the phyloseq development website on GitHub</a>. The following code should install the newest &quot;bleeding edge&quot; version of <a href="http://joey711.github.com/phyloseq/">the phyloseq package</a> onto your system, including dependencies.</p>
+<p>The phyloseq package is under active development. Users are encouraged to consistently update their version from <a href="http://joey711.github.com/phyloseq/">the phyloseq development website on GitHub</a>. The following code should install the newest &quot;bleeding edge&quot; version of <a href="http://joey711.github.com/phyloseq/">the phyloseq package</a> onto your system, including dependencies.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="st">&quot;http://bioconductor.org/biocLite.R&quot;</span>)
 <span class="kw">biocLite</span>(<span class="st">&quot;multtest&quot;</span>)
-<span class="kw">biocLite</span>(<span class="st">&quot;genefilter&quot;</span>)
-Make sure you have devtools installed
-<span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)
-Load the devtools package
-<span class="kw">library</span>(<span class="st">&quot;devtools&quot;</span>)
-Build and install phyloseq
+<span class="kw">biocLite</span>(<span class="st">&quot;genefilter&quot;</span>)</code></pre>
+<p>Make sure you have devtools installed</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)</code></pre>
+<p>Load the devtools package, and install with <code>install_github</code></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;devtools&quot;</span>)
 <span class="kw">install_github</span>(<span class="st">&quot;phyloseq&quot;</span>, <span class="st">&quot;joey711&quot;</span>)</code></pre>
 <h2 id="alternative-installation-methods-and-versions">Alternative Installation Methods and Versions:</h2>
-<p>The most stable release and development versions of phyloseq are released from Bioconductor. For installing from Bioconductor, and alternatives to &quot;the bleeding edge&quot;, as well as the most updated installation news/instructions, please see <a href="https://github.com/joey711/phyloseq/wiki/Installation">the installation wiki page</a>.</p>
+<p>The most stable releases and development versions of phyloseq are hosted by Bioconductor. For installing from Bioconductor, and alternatives to &quot;the bleeding edge&quot;, as well as the most updated installation news/instructions, please see <a href="https://github.com/joey711/phyloseq/wiki/Installation">the installation wiki page</a>.</p>
 </div>
 <div class="section slide level1" id="load-phyloseq-and-import-data.">
 <h1>Load phyloseq, and Import Data.</h1>
 <p>Of course we need to start this tutorial by loading <a href="http://joey711.github.com/phyloseq/">the phyloseq package</a>. This assumes you have already <a href="https://github.com/joey711/phyloseq/wiki/Installation">installed phyloseq</a>.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;phyloseq&quot;</span>)</code></pre>
 <p>There is package-level documentation available. Note the following difference:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="st">`</span><span class="dt">?</span><span class="st">`</span>(<span class="st">&quot;phyloseq-package&quot;</span>)
-<span class="st">`</span><span class="dt">?</span><span class="st">`</span>(phyloseq  <span class="co"># this is a function)</span></code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">help</span>(<span class="st">&quot;phyloseq-package&quot;</span>)
+<span class="kw">help</span>(<span class="st">&quot;phyloseq&quot;</span>)</code></pre>
 <p>The latter loads instead the documentation for the constructor function named <code>phyloseq()</code></p>
 <h2 id="basic-data-import">Basic Data Import</h2>
 <h3 id="importing-the-output-from-qiime">Importing the Output from <a href="http://qiime.org/">QIIME</a></h3>
@@ -195,7 +194,10 @@ bmsd &lt;- <span class="kw">import_qiime_sampleData</span>(map_file)
 ## OTU Table:          [1873 species and 100 samples]
 ##                      species are rows
 ## Taxonomy Table:     [1873 species by 7 taxonomic ranks]:</code></pre>
-<h2 id="direct-ftp-download-unzip-and-import">Direct ftp download, unzip, and import</h2>
+<h2 id="merging-datasets-or-components">Merging datasets or components</h2>
+<p>We need to merge these two separate Bushman dataset objects into one &quot;phyloseq&quot; object. Presently, the two data objects contain the <code>otuTable</code>, <code>taxonomyTable</code>, and <code>sampleData</code> components, respectively. If we had three objects that were all components (think single tables, or a tree), then we would use the constructor function, <code>phyloseq</code>. However, because the <code>.biom</code> file contained two tables (including an <code>otuTable</code>), the <code>import_biom</code> function returned a valid <code>&quot;phyloseq-class&quot;</code> instance instead that contained both components. Whenever you need to add or merge data componentes from one (or more) phyloseq-class objects, the merging function, <code>merge_phyloseq</code>, is recommended, rather than the constructor (<code>phyloseq</code>).</p>
+<pre class="sourceCode r"><code class="sourceCode r">Bushman &lt;- <span class="kw">merge_phyloseq</span>(biom_otu_tax, bmsd)</code></pre>
+<h2 id="extra-example-direct-ftp-download-unzip-and-import">Extra Example: Direct ftp Download, Unzip, and Import</h2>
 <p>The <code>.biom</code> and sample data files are also <a href="ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip">provided online (ftp)</a>, and a useful way to download and import into phyloseq directly from the ftp address in the following example code. This is an example in which we download a zip file with both biom- and qiime-formatted data, unzip it in a temporary directory from with in R, import the relavant files using phyloseq importers, and then delete the temporary files. This code <em>should</em> be platform independent, but occasionally there are finicky Windows issues that arise.</p>
 <p>(Note: this is not actually run in this demo. Would be redundant, and occasionally Windows issues might crash it, based on experience.)</p>
 <pre class="sourceCode r"><code class="sourceCode r">zipftp &lt;- <span class="st">&quot;ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip&quot;</span>
@@ -219,12 +221,9 @@ bmsd &lt;- <span class="kw">import_qiime_sampleData</span>(map_file)
 <span class="co"># files</span>
 <span class="kw">unlink</span>(temp)
 <span class="kw">unlink</span>(tmpdir)</code></pre>
-<h2 id="merging-datasets-or-components">Merging datasets or components</h2>
-<p>We need to merge these two separate Bushman dataset objects into one &quot;phyloseq&quot; object. Presently, the two data objects contain the <code>otuTable</code>, <code>taxonomyTable</code>, and <code>sampleData</code> components, respectively. If we had three objects that were all components (think single tables, or a tree), then we would use the constructor function, <code>phyloseq</code>. However, because the <code>.biom</code> file contained two tables (including an <code>otuTable</code>), the <code>import_biom</code> function returned a valid <code>&quot;phyloseq-class&quot;</code> instance instead that contained both components. Whenever you need to add or merge data componentes from one (or more) phyloseq-class objects, the merging function, <code>merge_phyloseq</code>, is recommended, rather than the constructor (<code>phyloseq</code>).</p>
-<pre class="sourceCode r"><code class="sourceCode r">Bushman &lt;- <span class="kw">merge_phyloseq</span>(biom_otu_tax, bmsd)</code></pre>
 </div>
 <div class="section slide level1" id="basic-interaction-with-phyloseq-data">
-<h1>Basic interaction with phyloseq data</h1>
+<h1>Basic Interaction with phyloseq Data</h1>
 <p>Let's look at some basic print and accessor functions/methods provided in phyloseq.</p>
 <h2 id="print-method">Print method</h2>
 <pre class="sourceCode r"><code class="sourceCode r">Bushman</code></pre>
@@ -256,8 +255,8 @@ bmsd &lt;- <span class="kw">import_qiime_sampleData</span>(map_file)
 ##  [9] &quot;OXALIC_ACID_MG_AVE&quot;          &quot;PUFA_EICOSAPENTAENOIC_G_AVE&quot;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(<span class="kw">sample.variables</span>(Bushman))</code></pre>
 <pre><code>## [1] 225</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># How can we look at the values for a particular variable</span>
-<span class="kw">getVariable</span>(Bushman, <span class="kw">sample.variables</span>(Bushman)[<span class="dv">5</span>])</code></pre>
+<p>How can we look at the values for a particular variable? (Here I've arbitrarily chose the name of the 5th sample variable)</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getVariable</span>(Bushman, <span class="kw">sample.variables</span>(Bushman)[<span class="dv">5</span>])</code></pre>
 <pre><code>##   [1] 267.759   0.000   0.000   0.000   0.000   0.000   0.000   0.000
 ##   [9]  67.961   1.167 253.080   0.000   0.000  10.263   0.000 472.708
 ##  [17]  60.739   0.000 178.793 282.437   0.000  94.628   0.000   0.000
@@ -318,8 +317,9 @@ bmsd &lt;- <span class="kw">import_qiime_sampleData</span>(map_file)
 <div class="section slide level1" id="simple-summary-graphics">
 <h1>Simple Summary Graphics</h1>
 <p>Load additional graphics-related packages</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;ggplot2&quot;</span>)
-<span class="kw">library</span>(<span class="st">&quot;scales&quot;</span>)
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;ggplot2&quot;</span>)</code></pre>
+<pre><code>## Use suppressPackageStartupMessages to eliminate package startup messages.</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;scales&quot;</span>)
 <span class="kw">library</span>(<span class="st">&quot;grid&quot;</span>)</code></pre>
 <h2 id="some-examples-for-plotting-richness-estimates-from-un-trimmed-data.">Some examples for plotting richness estimates from un-trimmed data.</h2>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_richness_estimates</span>(Bushman)  <span class="co">#, &#39;sample.names&#39;, &#39;SampleType&#39;)</span></code></pre>
@@ -356,12 +356,12 @@ GlobalPatterns</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_tree</span>(GP.chl, <span class="dt">color =</span> <span class="st">&quot;SampleType&quot;</span>, <span class="dt">shape =</span> <span class="st">&quot;Family&quot;</span>, <span class="dt">label.tips =</span> <span class="st">&quot;Genus&quot;</span>, 
     <span class="dt">size =</span> <span class="st">&quot;abundance&quot;</span>)</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-17.png" alt="plot of chunk unnamed-chunk-17" /><p class="caption">plot of chunk unnamed-chunk-17</p>
+<img src="figure/unnamed-chunk-18.png" alt="plot of chunk unnamed-chunk-18" /><p class="caption">plot of chunk unnamed-chunk-18</p>
 </div>
 <h6 id="the-graphic-produced-by-the-plot_tree-function-in-phyloseq.-in-this-case-the-data-is-a-subset-of-the-globalpatterns-dataset-in-which-only-otus-from-the-phylum-chlamydiae-are-included.-additionally-the-tree-has-been-annotated-with-genus-labels-at-each-tree-tip.-the-points-next-to-tips-represent-samples-in-which-the-otu-was-observed-and-are-shaped-according-to-taxonomic-rank-of-fammily-and-shaded-according-to-the-sample-type-sample-source-environment.">The graphic produced by the <code>plot_tree</code> function in phyloseq. In this case the data is a subset of the <code>GlobalPatterns</code> dataset in which only OTUs from the phylum <em>Chlamydiae</em> are included. Additionally, the tree has been annotated with genus labels at each tree tip. The points next to tips represent samples in which the OTU was observed, and are shaped according to taxonomic rank of Fammily, and shaded according to the sample type (sample source environment).</h6>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_tree</span>(GP.chl, <span class="st">&quot;treeonly&quot;</span>)</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-18.png" alt="plot of chunk unnamed-chunk-18" /><p class="caption">plot of chunk unnamed-chunk-18</p>
+<img src="figure/unnamed-chunk-19.png" alt="plot of chunk unnamed-chunk-19" /><p class="caption">plot of chunk unnamed-chunk-19</p>
 </div>
 <h6 id="here-is-the-result-of-plotting-the-bare-tree-with-no-options-directing-the-mapping-of-a-variable-to-the-tree-and-treeonly-as-the-argument-to-method.-not-as-informative-as-the-previous-tree.">Here is the result of plotting the &quot;bare&quot; tree with no options directing the mapping of a variable to the tree, and <code>&quot;treeonly&quot;</code> as the argument to <code>method</code>. Not as informative as the previous tree.</h6>
 <h2 id="abundance-bar-plots">Abundance bar plots</h2>
@@ -371,12 +371,12 @@ TopNOTUs &lt;- <span class="kw">names</span>(<span class="kw">sort</span>(<span 
 ent10 &lt;- <span class="kw">prune_species</span>(TopNOTUs, enterotype)
 <span class="kw">plot_taxa_bar</span>(ent10, <span class="st">&quot;Genus&quot;</span>, <span class="dt">x =</span> <span class="st">&quot;SeqTech&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;TaxaGroup&quot;</span>)</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-19.png" alt="plot of chunk unnamed-chunk-19" /><p class="caption">plot of chunk unnamed-chunk-19</p>
+<img src="figure/unnamed-chunk-20.png" alt="plot of chunk unnamed-chunk-20" /><p class="caption">plot of chunk unnamed-chunk-20</p>
 </div>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_taxa_bar</span>(ent10, <span class="st">&quot;Genus&quot;</span>, <span class="dt">x =</span> <span class="st">&quot;SeqTech&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;TaxaGroup&quot;</span>) + 
     <span class="kw">facet_wrap</span>(~Enterotype)</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-20.png" alt="plot of chunk unnamed-chunk-20" /><p class="caption">plot of chunk unnamed-chunk-20</p>
+<img src="figure/unnamed-chunk-21.png" alt="plot of chunk unnamed-chunk-21" /><p class="caption">plot of chunk unnamed-chunk-21</p>
 </div>
 <p>This one takes a little while to calculate (not run).</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_taxa_bar</span>(Bushman, <span class="st">&quot;Phylum&quot;</span>, <span class="ot">NULL</span>, <span class="fl">0.9</span>, <span class="st">&quot;SEX&quot;</span>, <span class="st">&quot;INSOLUBLE_DIETARY_FIBER_G_AVE&quot;</span>)</code></pre>
@@ -406,8 +406,8 @@ eso &lt;- <span class="kw">rarefy_even_depth</span>(esophagus)
 <span class="co"># plot(as(otuTable(eso), &#39;vector&#39;), as(otuTable(esophagus), &#39;vector&#39;))</span></code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">UniFrac</span>(eso)</code></pre>
 <pre><code>##        B      C
-## C 0.5622       
-## D 0.5685 0.6638</code></pre>
+## C 0.5271       
+## D 0.5652 0.6532</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">UniFrac</span>(esophagus)</code></pre>
 <pre><code>##        B      C
 ## C 0.5176       
@@ -425,12 +425,12 @@ GP.chl.r &lt;- <span class="kw">rarefy_even_depth</span>(GP.chl)
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_ordination</span>(GP.chl, <span class="kw">ordinate</span>(GP.chl, <span class="st">&quot;MDS&quot;</span>), <span class="dt">color =</span> <span class="st">&quot;SampleType&quot;</span>) + 
     <span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">5</span>)</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-26.png" alt="plot of chunk unnamed-chunk-26" /><p class="caption">plot of chunk unnamed-chunk-26</p>
+<img src="figure/unnamed-chunk-27.png" alt="plot of chunk unnamed-chunk-27" /><p class="caption">plot of chunk unnamed-chunk-27</p>
 </div>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_ordination</span>(GP.chl.r, <span class="kw">ordinate</span>(GP.chl.r, <span class="st">&quot;MDS&quot;</span>), <span class="dt">color =</span> <span class="st">&quot;SampleType&quot;</span>) + 
     <span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">5</span>)</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-27.png" alt="plot of chunk unnamed-chunk-27" /><p class="caption">plot of chunk unnamed-chunk-27</p>
+<img src="figure/unnamed-chunk-28.png" alt="plot of chunk unnamed-chunk-28" /><p class="caption">plot of chunk unnamed-chunk-28</p>
 </div>
 <p>How does rarefying affect the larger untrimmed dataset? (not run)</p>
 <pre class="sourceCode r"><code class="sourceCode r">GP.r &lt;- <span class="kw">rarefy_even_depth</span>(GP)
@@ -473,7 +473,7 @@ most_abundant_taxa &lt;- <span class="kw">sort</span>(<span class="kw">speciesSu
 ##     }
 ##     x &gt;= sort(x, decreasing = TRUE)[ceiling(length(x) * p)]
 ## }
-## &lt;environment: 0x10bdc9310&gt;</code></pre>
+## &lt;environment: 0x109889358&gt;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">f1 &lt;- <span class="kw">filterfunSample</span>(<span class="kw">topp</span>(<span class="fl">0.1</span>))
 <span class="kw">print</span>(f1)</code></pre>
 <pre><code>## function (x) 
@@ -485,7 +485,7 @@ most_abundant_taxa &lt;- <span class="kw">sort</span>(<span class="kw">speciesSu
 ##     }
 ##     return(fval)
 ## }
-## &lt;environment: 0x10bd4a040&gt;
+## &lt;environment: 0x109960980&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;filterfun&quot;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">wh1 &lt;- <span class="kw">genefilterSample</span>(GP, f1, <span class="dt">A =</span> <span class="kw">round</span>(<span class="fl">0.5</span> * <span class="kw">nsamples</span>(GP)))
@@ -519,7 +519,7 @@ p1 &lt;- <span class="kw">qplot</span>(<span class="dt">x =</span> <span class="
     <span class="dt">binwidth =</span> <span class="kw">abs</span>(<span class="kw">do.call</span>(<span class="st">&quot;-&quot;</span>, <span class="kw">as.list</span>(<span class="kw">range</span>(<span class="kw">log10</span>(specvar))))/<span class="dv">20</span>))
 <span class="kw">print</span>(p1)</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-34.png" alt="plot of chunk unnamed-chunk-34" /><p class="caption">plot of chunk unnamed-chunk-34</p>
+<img src="figure/unnamed-chunk-35.png" alt="plot of chunk unnamed-chunk-35" /><p class="caption">plot of chunk unnamed-chunk-35</p>
 </div>
 <p>However, the value of the variance is highly-dependent on the sequencing effort of each sample (the total number of reads sequenced from a particular sample). Thus we segway to transformations (e.g. convert to fractional abundance prior to filtering)</p>
 <h2 id="transformations">Transformations</h2>
@@ -535,7 +535,7 @@ specvar &lt;- <span class="kw">sapply</span>(<span class="kw">species.names</spa
 <pre><code>## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust
 ## this.</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-35.png" alt="plot of chunk unnamed-chunk-35" /><p class="caption">plot of chunk unnamed-chunk-35</p>
+<img src="figure/unnamed-chunk-36.png" alt="plot of chunk unnamed-chunk-36" /><p class="caption">plot of chunk unnamed-chunk-36</p>
 </div>
 <pre class="sourceCode r"><code class="sourceCode r">p2 &lt;- <span class="kw">qplot</span>(<span class="dt">x =</span> <span class="kw">log10</span>(variance), <span class="dt">data =</span> <span class="kw">data.frame</span>(<span class="dt">variance =</span> specvar), 
     <span class="dt">binwidth =</span> <span class="kw">abs</span>(<span class="kw">do.call</span>(<span class="st">&quot;-&quot;</span>, <span class="kw">as.list</span>(<span class="kw">range</span>(<span class="kw">log10</span>(specvar))))/<span class="dv">20</span>))
@@ -544,14 +544,14 @@ specvar &lt;- <span class="kw">sapply</span>(<span class="kw">species.names</spa
 <span class="kw">print</span>(p1, <span class="dt">vp =</span> <span class="kw">viewport</span>(<span class="dt">layout.pos.row =</span> <span class="dv">1</span>, <span class="dt">layout.pos.col =</span> <span class="dv">1</span>))
 <span class="kw">print</span>(p2, <span class="dt">vp =</span> <span class="kw">viewport</span>(<span class="dt">layout.pos.row =</span> <span class="dv">2</span>, <span class="dt">layout.pos.col =</span> <span class="dv">1</span>))</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-36.png" alt="plot of chunk unnamed-chunk-36" /><p class="caption">plot of chunk unnamed-chunk-36</p>
+<img src="figure/unnamed-chunk-37.png" alt="plot of chunk unnamed-chunk-37" /><p class="caption">plot of chunk unnamed-chunk-37</p>
 </div>
 <p>Now how would we filter the taxa with variance smaller than 0.001?</p>
 <pre class="sourceCode r"><code class="sourceCode r">gpac_filt &lt;- <span class="kw">prune_species</span>(specvar &gt; <span class="fl">0.001</span>, gpac)</code></pre>
 <p>Show results with a heatmp</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_heatmap</span>(gpac_filt, <span class="st">&quot;NMDS&quot;</span>, <span class="st">&quot;bray&quot;</span>, <span class="st">&quot;SampleType&quot;</span>, <span class="st">&quot;Family&quot;</span>)</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-38.png" alt="plot of chunk unnamed-chunk-38" /><p class="caption">plot of chunk unnamed-chunk-38</p>
+<img src="figure/unnamed-chunk-39.png" alt="plot of chunk unnamed-chunk-39" /><p class="caption">plot of chunk unnamed-chunk-39</p>
 </div>
 <p>Note that the code in this section is not an endorsement of this particular threshold (0.001), just a demonstration for how you might remove OTUs/taxa/species that do not change much across the samples in your experiment.</p>
 <p>For normalization, also consider features in the &quot;edgeR&quot; package, and for standardization the <code>decostand</code> function in vegan-package</p>
@@ -661,11 +661,11 @@ GP2 &lt;- <span class="kw">prune_species</span>(topsp, GP2)</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">(p2 &lt;- <span class="kw">plot_ordination</span>(GP2, <span class="kw">ordinate</span>(GP2, <span class="st">&quot;CCA&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;samples&quot;</span>, 
     <span class="dt">color =</span> <span class="st">&quot;SampleType&quot;</span>))</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-461.png" alt="plot of chunk unnamed-chunk-46" /><p class="caption">plot of chunk unnamed-chunk-46</p>
+<img src="figure/unnamed-chunk-471.png" alt="plot of chunk unnamed-chunk-47" /><p class="caption">plot of chunk unnamed-chunk-47</p>
 </div>
 <pre class="sourceCode r"><code class="sourceCode r">p2 + <span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">5</span>) + <span class="kw">geom_polygon</span>(<span class="kw">aes</span>(<span class="dt">fill =</span> SampleType))</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-462.png" alt="plot of chunk unnamed-chunk-46" /><p class="caption">plot of chunk unnamed-chunk-46</p>
+<img src="figure/unnamed-chunk-472.png" alt="plot of chunk unnamed-chunk-47" /><p class="caption">plot of chunk unnamed-chunk-47</p>
 </div>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_ordination</span>(GP2, <span class="kw">ordinate</span>(GP2, <span class="st">&quot;CCA&quot;</span>), <span class="dt">type =</span> <span class="st">&quot;species&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;Phylum&quot;</span>) + 
     <span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">4</span>)
@@ -912,12 +912,12 @@ gskmn</code></pre>
 ## B=50 simulated reference sets, k = 1..6
 ##  --&gt; Number of clusters (method &#39;firstSEmax&#39;, SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.748 1.204 0.02304
-## [2,] 3.720  5.190 1.470 0.02167
-## [3,] 3.428  4.931 1.503 0.01654
-## [4,] 3.301  4.780 1.479 0.02046
-## [5,] 3.100  4.685 1.585 0.02148
-## [6,] 2.957  4.601 1.644 0.02200</code></pre>
+## [1,] 4.544  5.740 1.195 0.02363
+## [2,] 3.720  5.186 1.466 0.02359
+## [3,] 3.428  4.924 1.497 0.02116
+## [4,] 3.301  4.779 1.478 0.02271
+## [5,] 3.100  4.680 1.579 0.01811
+## [6,] 2.957  4.595 1.638 0.01828</code></pre>
 <p>That's nice. Just in case it is useful, let's look at what the wrapper-function might look like.</p>
 <pre class="sourceCode r"><code class="sourceCode r">gap_statistic_ordination &lt;- function(ord, FUNcluster, <span class="dt">type =</span> <span class="st">&quot;sites&quot;</span>, 
     <span class="dt">K.max =</span> <span class="dv">6</span>, <span class="dt">axes =</span> <span class="kw">c</span>(<span class="dv">1</span>:<span class="dv">2</span>), <span class="dt">B =</span> <span class="dv">500</span>, <span class="dt">verbose =</span> <span class="kw">interactive</span>(), ...) {
@@ -953,12 +953,12 @@ plot_clusgap &lt;- function(clusgap, <span class="dt">title =</span> <span class
 ## B=50 simulated reference sets, k = 1..6
 ##  --&gt; Number of clusters (method &#39;Tibs2001SEmax&#39;, SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.745 1.201 0.02263
-## [2,] 3.720  5.193 1.473 0.02142
-## [3,] 3.428  4.930 1.502 0.01950
-## [4,] 3.301  4.785 1.483 0.01936
-## [5,] 3.100  4.686 1.586 0.02094
-## [6,] 2.957  4.603 1.645 0.02002</code></pre>
+## [1,] 4.544  5.743 1.198 0.02208
+## [2,] 3.720  5.183 1.463 0.01948
+## [3,] 3.428  4.929 1.501 0.01719
+## [4,] 3.301  4.782 1.480 0.01824
+## [5,] 3.100  4.681 1.581 0.02113
+## [6,] 2.957  4.599 1.642 0.02115</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_clusgap</span>(gs)</code></pre>
 <div class="figure">
 <img src="figure/gapstat-inphyloseq-example.png" alt="plot of chunk gapstat-inphyloseq-example" /><p class="caption">plot of chunk gapstat-inphyloseq-example</p>
@@ -967,7 +967,7 @@ plot_clusgap &lt;- function(clusgap, <span class="dt">title =</span> <span class
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(gs, <span class="dt">main =</span> <span class="st">&quot;Gap statistic for the &#39;Enterotypes&#39; data&quot;</span>)
 <span class="kw">mtext</span>(<span class="st">&quot;k = 2 is best ... but  k = 3  pretty close&quot;</span>)</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-57.png" alt="plot of chunk unnamed-chunk-57" /><p class="caption">plot of chunk unnamed-chunk-57</p>
+<img src="figure/unnamed-chunk-58.png" alt="plot of chunk unnamed-chunk-58" /><p class="caption">plot of chunk unnamed-chunk-58</p>
 </div>
 </div>
 </body>
