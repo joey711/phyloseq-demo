@@ -64,7 +64,7 @@ install_github("phyloseq", "joey711")
 The most stable releases and development versions of phyloseq are hosted by Bioconductor. For installing from Bioconductor, and alternatives to "the bleeding edge", as well as the most updated installation news/instructions, please see [the installation wiki page](https://github.com/joey711/phyloseq/wiki/Installation).
 
 
-#  Load phyloseq, and Import Data.
+# Load phyloseq, and Import Data.
 Of course we need to start this tutorial by loading [the phyloseq package](http://joey711.github.com/phyloseq/). This assumes you have already [installed phyloseq](https://github.com/joey711/phyloseq/wiki/Installation).
 ```{r, message=FALSE}
 library("phyloseq")
@@ -173,6 +173,15 @@ We need to merge these two separate Bushman dataset objects into one "phyloseq" 
 ```{r}
 Bushman <- merge_phyloseq(biom_otu_tax, bmsd)
 ```
+
+
+## Extra Example: [the Human Microbiome Project](http://obs.rc.fas.harvard.edu/turnbaugh/Papers/Turnbaugh_HMP.pdf)
+
+[Import the HMP-v35 Dataset](https://github.com/joey711/phyloseq/wiki/Import-Human-Microbiome-Data-v35)
+
+This is an example importing into [phyloseq](http://joey711.github.com/phyloseq/) the files produced by [Qiime](http://qiime.org/) after being run on [the Human Microbiome Project](http://obs.rc.fas.harvard.edu/turnbaugh/Papers/Turnbaugh_HMP.pdf)'s [v35 dataset](http://hmpdacc.org/micro_analysis/microbiome_analyses.php), which is avilable from [HMP-DACC](http://hmpdacc.org/).
+
+This takes about 35 minutes on a laptop, and we are providing the resulting phyloseq-formatted result as an `.RData` file, so that you do not have to repeat the process. See [the wiki page devoted to importing the HMPv35 dataset into phyloseq](https://github.com/joey711/phyloseq/wiki/Import-Human-Microbiome-Data-v35)
 
 
 ## Extra Example: Direct ftp Download, Unzip, and Import

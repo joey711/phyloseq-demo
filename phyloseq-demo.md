@@ -3,13 +3,21 @@
 Demo: phyloseq – A Bioconductor package for handling and analysis of high-throughput phylogenetic sequence data 
 ========================================================
 
-Paul J. McMurdie and Susan Holmes
+## Paul J. McMurdie and Susan Holmes
+
 Statistics Department, Stanford University,
+
 Stanford, CA 94305, USA
     
-E-mail: mcmurdie@stanford.edu
-https://github.com/joey711/phyloseq
-susan@stat.stanford.edu\
+### E-mail
+
+mcmurdie@stanford.edu
+
+susan@stat.stanford.edu
+
+### Websites
+joey711.github.com/phyloseq
+
 http://www-stat.stanford.edu/~susan/
 
 # Summary and Other Documentation Resources
@@ -64,11 +72,35 @@ install_github("phyloseq", "joey711")
 The most stable releases and development versions of phyloseq are hosted by Bioconductor. For installing from Bioconductor, and alternatives to "the bleeding edge", as well as the most updated installation news/instructions, please see [the installation wiki page](https://github.com/joey711/phyloseq/wiki/Installation).
 
 
-#  Load phyloseq, and Import Data.
+# Load phyloseq, and Import Data.
 Of course we need to start this tutorial by loading [the phyloseq package](http://joey711.github.com/phyloseq/). This assumes you have already [installed phyloseq](https://github.com/joey711/phyloseq/wiki/Installation).
 
 ```r
 library("phyloseq")
+```
+
+```
+## Warning: A specification for S3 class "connection" in package
+## 'BiocGenerics' seems equivalent to one from package 'RJSONIO' and is not
+## turning on duplicate class definitions for this class
+```
+
+```
+## Warning: A specification for S3 class "file" in package 'BiocGenerics'
+## seems equivalent to one from package 'RJSONIO' and is not turning on
+## duplicate class definitions for this class
+```
+
+```
+## Warning: A specification for S3 class "pipe" in package 'BiocGenerics'
+## seems equivalent to one from package 'RJSONIO' and is not turning on
+## duplicate class definitions for this class
+```
+
+```
+## Warning: A specification for S3 class "textConnection" in package
+## 'BiocGenerics' seems equivalent to one from package 'RJSONIO' and is not
+## turning on duplicate class definitions for this class
 ```
 
 
@@ -287,6 +319,15 @@ Bushman <- merge_phyloseq(biom_otu_tax, bmsd)
 
 
 
+## Extra Example: [the Human Microbiome Project](http://obs.rc.fas.harvard.edu/turnbaugh/Papers/Turnbaugh_HMP.pdf)
+
+[Import the HMP-v35 Dataset](https://github.com/joey711/phyloseq/wiki/Import-Human-Microbiome-Data-v35)
+
+This is an example importing into [phyloseq](http://joey711.github.com/phyloseq/) the files produced by [Qiime](http://qiime.org/) after being run on [the Human Microbiome Project](http://obs.rc.fas.harvard.edu/turnbaugh/Papers/Turnbaugh_HMP.pdf)'s [v35 dataset](http://hmpdacc.org/micro_analysis/microbiome_analyses.php), which is avilable from [HMP-DACC](http://hmpdacc.org/).
+
+This takes about 35 minutes on a laptop, and we are providing the resulting phyloseq-formatted result as an `.RData` file, so that you do not have to repeat the process. See [the wiki page devoted to importing the HMPv35 dataset into phyloseq](https://github.com/joey711/phyloseq/wiki/Import-Human-Microbiome-Data-v35)
+
+
 ## Extra Example: Direct ftp Download, Unzip, and Import
 The `.biom` and sample data files are also [provided online (ftp)](ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip), and a useful way to download and import into phyloseq directly from the ftp address in the following example code. This is an example in which we download a zip file with both biom- and qiime-formatted data, unzip it in a temporary directory from with in R, import the relavant files using phyloseq importers, and then delete the temporary files. This code *should* be platform independent, but occasionally there are finicky Windows issues that arise.
 
@@ -318,7 +359,7 @@ unlink(tmpdir)
 
 
 
-#  Basic Interaction with phyloseq Data
+# Basic Interaction with phyloseq Data
 
 Let's look at some basic print and accessor functions/methods provided in phyloseq.
 
@@ -531,13 +572,6 @@ Load additional graphics-related packages
 
 ```r
 library("ggplot2")
-```
-
-```
-## Use suppressPackageStartupMessages to eliminate package startup messages.
-```
-
-```r
 library("scales")
 library("grid")
 ```
@@ -575,9 +609,9 @@ plot_richness_estimates(Bushman, x = "VEGETABLE_PROTEIN_G_AVE")
 
 
 ## Plotting an Annotated Phylogenetic Tree
-A useful display on a phylogenetic tree is to add points next to tips/leaves/OTUs to represent samples in which the OTU was observed. This is facillitated in [the phyloseq package](http://joey711.github.com/phyloseq/) through the `plot_tree` function, which produces a [ggplot](http://had.co.nz/ggplot2/)-based phylogenetic tree, and also allows several options for mapping color, shape, and size of these sample points to variables in the dataset. These point aesthetics can be mapped to sample data or to taxonomic data, depending on needs and which information needs to be reinforced in your graphic.
+A useful display on a phylogenetic tree is to add points next to tips/leaves/OTUs to represent samples in which the OTU was observed. This is facilitated in [the phyloseq package](http://joey711.github.com/phyloseq/) through the `plot_tree` function, which produces a [ggplot](http://had.co.nz/ggplot2/)-based phylogenetic tree, and also allows several options for mapping color, shape, and size of these sample points to variables in the dataset. These point aesthetics can be mapped to sample data or to taxonomic data, depending on needs and which information needs to be reinforced in your graphic.
 
-Caution: Trying to plot too many taxa (tree tips) at once obscures meaning. Let's look at just the Chlamydiae phylum in the incldued `GlobalPatterns` dataset. Note that this also requires subsetting the `GlobalPatterns` dataset using the `subset_species` function, part of the "preprocessing" tools described in the following section.
+Caution: Trying to plot too many taxa (tree tips) at once obscures meaning. Let's look at just the *Chlamydiae* phylum in the incldued `GlobalPatterns` dataset. Note that this also requires subsetting the `GlobalPatterns` dataset using the `subset_species` function, part of the "preprocessing" tools described in the following section.
 
 ```r
 data(GlobalPatterns)
@@ -608,7 +642,7 @@ plot_tree(GP.chl, color = "SampleType", shape = "Family", label.tips = "Genus",
 
 ![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18.png) 
 
-###### The graphic produced by the `plot_tree` function in phyloseq. In this case the data is a subset of the `GlobalPatterns` dataset in which only OTUs from the phylum *Chlamydiae* are included. Additionally, the tree has been annotated with genus labels at each tree tip. The points next to tips represent samples in which the OTU was observed, and are shaped according to taxonomic rank of Fammily, and shaded according to the sample type (sample source environment).
+This figure contains the graphic produced by the `plot_tree` function in phyloseq. In this case the data is a subset of the `GlobalPatterns` dataset in which only OTUs from the phylum *Chlamydiae* are included. Additionally, the tree has been annotated with genus labels at each tree tip. The points next to tips represent samples in which the OTU was observed, and are shaped according to taxonomic rank of Family, and shaded according to the sample type (sample source environment).
 
 
 
@@ -618,7 +652,7 @@ plot_tree(GP.chl, "treeonly")
 
 ![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-19.png) 
 
-###### Here is the result of plotting the "bare" tree with no options directing the mapping of a variable to the tree, and `"treeonly"` as the argument to `method`. Not as informative as the previous tree.
+This figure is the result of plotting the "bare" tree with no options directing the mapping of a variable to the tree, and `"treeonly"` as the argument to `method`. Not as informative as the previous tree.
 
 
 ## Abundance bar plots
@@ -650,8 +684,10 @@ plot_taxa_bar(Bushman, "Phylum", NULL, 0.9, "SEX", "INSOLUBLE_DIETARY_FIBER_G_AV
 
 
 
-# Preprocessing Abundance Data 
+# Preprocessing Abundance Data
+
 This section includes examples preprocessing (filtering, trimming, subsetting, etc) phyloseq data. Let's start by resetting the `GlobalPatterns` example data and adding a human category.
+
 
 ```r
 data(GlobalPatterns)
@@ -696,8 +732,8 @@ UniFrac(eso)
 
 ```
 ##        B      C
-## C 0.5271       
-## D 0.5652 0.6532
+## C 0.5731       
+## D 0.5873 0.6273
 ```
 
 ```r
@@ -828,14 +864,11 @@ topp(0.1)
 ```
 
 ```
-## function (x) 
-## {
-##     if (na.rm) {
-##         x = x[!is.na(x)]
+## function(x){
+## 		if(na.rm){x = x[!is.na(x)]}
+## 		x >= sort(x, decreasing=TRUE)[ceiling(length(x)*p)]
 ##     }
-##     x >= sort(x, decreasing = TRUE)[ceiling(length(x) * p)]
-## }
-## <environment: 0x109889358>
+## <environment: 0x1091b1720>
 ```
 
 ```r
@@ -853,7 +886,7 @@ print(f1)
 ##     }
 ##     return(fval)
 ## }
-## <environment: 0x109960980>
+## <environment: 0x113cee578>
 ## attr(,"class")
 ## [1] "filterfun"
 ```
@@ -980,7 +1013,23 @@ For normalization, also consider features in the "edgeR" package, and for standa
 # Graphics for Inference and Exploration
 In the following section(s) we will illustrate using graphical tools provided by [the phyloseq package](http://joey711.github.com/phyloseq/). These are meant to be flexible ways to explore and summarize the data.
 
-For sake of time of calculation/rendering in this section, let's subset the data further to most abundant 5 phyla.
+For further details, there is a collection of "show and tell" wiki-pages describing the available graphics options supported by the phyloseq-package. These include example code for reproducing the figures shown. Many of the default settings are modifiable within the function arguments directly, and virtually everything about these plots can be further modified via the layers interface of [ggplot2](http://had.co.nz/ggplot2/).
+
+For quick reference (even though some have been described already), the key graphics-producing functions in phyloseq are:
+
+### [plot_heatmap](https://github.com/joey711/phyloseq/wiki/plot_heatmap)
+
+### [plot_tree](https://github.com/joey711/phyloseq/wiki/plot_tree)
+
+### [plot_ordination](https://github.com/joey711/phyloseq/wiki/plot_ordination)
+
+### [plot_network](https://github.com/joey711/phyloseq/wiki/plot_network)
+
+### [plot_richness_estimates](https://github.com/joey711/phyloseq/wiki/plot_richness_estimates)
+
+### [plot_taxa_bar](https://github.com/joey711/phyloseq/wiki/plot_taxa_bar)
+
+We are going to show some examples that would take a lot of time to calculate and render on a dataset as large as `GlobalPatterns`. For the sake of time in this section, let's subset the data further to the most abundant 5 phyla.
 
 ```r
 data(GlobalPatterns)  # Reload GlobalPatterns
@@ -1003,10 +1052,12 @@ help("distance")  # Same as '?distance'
 ```
 
 
+A relatively recent, popular distance method that relies heavily on the phylogenetic tree is [UniFrac](https://github.com/joey711/phyloseq/wiki/Fast-Parallel-UniFrac). It has been implemented in phyloseq as a fast parallel function, also wrapped by [the distance function](https://github.com/joey711/phyloseq/wiki/distance). See the phyloseq wiki page describing [Fast Parallel UniFrac](https://github.com/joey711/phyloseq/wiki/Fast-Parallel-UniFrac) for further details, citations, and performance results. 
+
 
 ```r
 data(esophagus)
-distance(esophagus)  # Unweighted UniFrac
+distance(esophagus)  # unweighted UniFrac
 ```
 
 ```
@@ -1015,10 +1066,19 @@ distance(esophagus)  # Unweighted UniFrac
 ## D 0.5182 0.5422
 ```
 
+```r
+distance(esophagus, weighted = TRUE)  # weighted UniFrac
+```
+
+```
+##        B      C
+## C 0.2035       
+## D 0.2603 0.2477
+```
+
 Here are some other examples. There are some 45 or so methods. 
 
 ```r
-distance(esophagus, weighted = TRUE)  # weighted UniFrac
 distance(esophagus, "jaccard")  # vegdist jaccard
 distance(esophagus, "bray")  # vegdist bray-curtis
 distance(esophagus, "gower")  # vegdist option 'gower'
@@ -1077,9 +1137,8 @@ plot_network(jg, GP100, "species", color = "Phylum", line_weight = 0.4,
 
 
 ## Ordination Methods
-(http://cran.r-project.org/web/packages/vegan/vignettes/intro-vegan.pdf)
 
-"Ordination methods" in this context refers to methods for dimensional reduction of data -- usually the OTU abundance data, which is probably a large sparse matrix not so amenable to graphical display on its own. Graphically investigating the (usually) information-dense first few axes of an ordination result can be very useful for exploring and summarizing phylogenetic sequencing data. One of the resons for this is that many ordination methods are non-parametric, so they do not depend upon a prior hypothesis or model. This is essential for many microbiome investigations in which a model is only vaguely described or not available.
+["Ordination methods"](http://en.wikipedia.org/wiki/Ordination_(statistics)) in this context refers to methods for dimensional reduction of data -- usually the OTU abundance data, which is probably a large sparse matrix not so amenable to graphical display on its own. Graphically investigating the (usually) information-dense first few axes of an ordination result can be very useful for exploring and summarizing phylogenetic sequencing data. One of the resons for this is that many ordination methods are [non-parametric](http://en.wikipedia.org/wiki/Non-parametric_statistics), so they do not depend upon a prior hypothesis or model. This is essential for many microbiome investigations in which a model is only vaguely described or not available.
 
 A good quick summary of ordination methods is provided in the introductory vignette for the vegan package:
 
@@ -1097,7 +1156,7 @@ The [ade4 package](http://cran.r-project.org/web/packages/ade4/index.html) also 
 ### [The ordinate function](https://github.com/joey711/phyloseq/wiki/ordinate)
 This function wraps several commonly-used [ordination](http://en.wikipedia.org/wiki/Ordination_(statistics)) methods for OTU abundance tables (as well as related tables, in some cases). The type of ordination performed depends upon the argument to `method`. Try `ordinate("help")` or `ordinate("list")` for the currently supported method options.
 
-The output of this function will be an ordination class. The specific class depends upon [the ordination method](http://en.wikipedia.org/wiki/Ordination_(statistics)) used, as well as the underlying function/package that is called internally by phyloseq to perform it. As a general rule, any of the ordination classes returned by this function, `ordinate, will be recognized by downstream tools in [the phyloseq package](http://joey711.github.com/phyloseq/) -- for example the ordination plotting function, [plot_ordination](https://github.com/joey711/phyloseq/wiki/plot_ordination) (See next section for plot examples).
+The output of this function will be an ordination class. The specific class depends upon [the ordination method](http://en.wikipedia.org/wiki/Ordination_(statistics)) used, as well as the underlying function/package that is called internally by phyloseq to perform it. As a general rule, any of the ordination classes returned by this function, `ordinate`, will be recognized by downstream tools in [the phyloseq package](http://joey711.github.com/phyloseq/) -- for example the ordination plotting function, [plot_ordination](https://github.com/joey711/phyloseq/wiki/plot_ordination) (See next section for plot examples).
 
 Using `GP100` from the previous section, let's calculate [the unweighted-UniFrac distance](https://github.com/joey711/phyloseq/wiki/Fast-Parallel-UniFrac) for each sample pair in the dataset, and then perform [Multidimensional Scaling](http://en.wikipedia.org/wiki/Multidimensional_scaling) (aka [Principle Coordinates Analysis](http://en.wikipedia.org/wiki/Multidimensional_scaling)) on the resulting distance. For details about calculating the UniFrac distance on larger datasets using parallel-computing options in supported by phyloseq, see [the wiki page on Fast Parallel UniFrac in phyloseq](https://github.com/joey711/phyloseq/wiki/Fast-Parallel-UniFrac)
 
@@ -1117,10 +1176,11 @@ GP.NMDS.gower <- ordinate(GP, "NMDS", "gower")
 
 
 
-## `plot_ordination` function
-The `plot_ordination` function has many options, and supports many combinations of ordinations, and sample or OTU co-variables mapped to color and shape. Many additional examples (with results) are included on [the plot_ordination wiki page](https://github.com/joey711/phyloseq/wiki/plot_ordination). For quicker reference, some example "1-liners" are also included at bottom of this section.
+### [The plot_ordination function](https://github.com/joey711/phyloseq/wiki/plot_ordination)
 
-This combination of MDS/PCoA ordination of the UniFrac distance is recently very popular in microbiome analyses. 
+The `plot_ordination` function has many options, and supports many combinations of ordinations, including the mapping of sample and/or OTU variables to color and shape [aesthetics](http://had.co.nz/ggplot2/aes.html). Many additional examples (with results) are included on [the plot_ordination wiki page](https://github.com/joey711/phyloseq/wiki/plot_ordination). For quicker reference, some example "1-liners" are also included at bottom of this section.
+
+This combination of MDS/PCoA ordination of [the UniFrac distance](https://github.com/joey711/phyloseq/wiki/Fast-Parallel-UniFrac) is recently very popular in microbiome analyses. 
 
 ```r
 require("ggplot2")
@@ -1194,7 +1254,7 @@ plot_ordination(Bushman, Bushman.ord, "samples", color = "OMEGA3_FATTY_ACIDS_G_A
 
 
 
-## `plot_heatmap` Function
+## [The plot_heatmap() function](https://github.com/joey711/phyloseq/wiki/plot_heatmap)
 In a [2010 article in BMC Genomics](http://www.biomedcentral.com/1471-2105/11/45), Rajaram and Oono describe an approach to creating a heatmap using ordination methods (namely, NMDS and PCA) to organize the rows and columns instead of (hierarchical) cluster analysis. In many cases the ordination-based ordering does a much better job than h-clustering at providing an order of elements that is easily interpretable. The authors provided an immediately useful example of their approach as [the NeatMap package for R](http://cran.r-project.org/web/packages/NeatMap/index.html). The NeatMap package can be used directly on the abundance table (`"otuTable"`-class) of phylogenetic-sequencing data, but the NMDS or PCA ordination options that it supports are not based on ecological distances. To fill this void, and because phyloseq already provides support for a large number of [ecological distances](https://github.com/joey711/phyloseq/wiki/distance) and [ordination methods](https://github.com/joey711/phyloseq/wiki/ordinate), phyloseq now includes the `plot_heatmap()` function: an ecology-oriented variant of the NeatMap approach to organizing a heatmap and build it using [ggplot](http://had.co.nz/ggplot2/) graphics tools. The [distance](https://github.com/joey711/phyloseq/wiki/distance) and [method](https://github.com/joey711/phyloseq/wiki/ordinate) arguments are the same as for the [plot_ordination](https://github.com/joey711/phyloseq/wiki/plot_ordination) function, and support large number of distances and ordination methods, respectively, with a strong leaning toward ecology. This function also provides the options to re-label the OTU and sample axis-ticks with a taxonomic name and/or sample variable, respectively, in the hope that this might hasten your interpretation of the patterns (See the documentation for the `sample.label` and `species.label` arguments, and the examples below). Note that this function makes no attempt to overlay dendrograms from hierarchical clustering next to the axes, as hierarchical clustering is not used to organize these plots. Also note that each re-ordered axis repeats at the edge, and so apparent clusters at the far right/left or top/bottom of the heat-map may actually be the same. For now, the placement of this edge can be considered arbitrary, so beware of this artifact of the graphic and visually check if there are two "mergeable" clusters at the edges of a particular axis. If you benefit from this phyloseq-specific implementation of [the NeatMap approach](http://cran.r-project.org/web/packages/NeatMap/index.html), please cite [the NeatMap article](http://www.biomedcentral.com/1471-2105/11/45), as well as phyloseq.
 
 Further examples are provided at [the plot_heatmap wiki page](https://github.com/joey711/phyloseq/wiki/plot_heatmap)
@@ -1550,12 +1610,12 @@ gskmn
 ## B=50 simulated reference sets, k = 1..6
 ##  --> Number of clusters (method 'firstSEmax', SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.740 1.195 0.02363
-## [2,] 3.720  5.186 1.466 0.02359
-## [3,] 3.428  4.924 1.497 0.02116
-## [4,] 3.301  4.779 1.478 0.02271
-## [5,] 3.100  4.680 1.579 0.01811
-## [6,] 2.957  4.595 1.638 0.01828
+## [1,] 4.544  5.743 1.198 0.02592
+## [2,] 3.720  5.191 1.471 0.02211
+## [3,] 3.428  4.929 1.502 0.02300
+## [4,] 3.301  4.780 1.479 0.02235
+## [5,] 3.100  4.680 1.580 0.02474
+## [6,] 2.957  4.595 1.638 0.02381
 ```
 
 
@@ -1605,12 +1665,12 @@ print(gs, method = "Tibs2001SEmax")
 ## B=50 simulated reference sets, k = 1..6
 ##  --> Number of clusters (method 'Tibs2001SEmax', SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.743 1.198 0.02208
-## [2,] 3.720  5.183 1.463 0.01948
-## [3,] 3.428  4.929 1.501 0.01719
-## [4,] 3.301  4.782 1.480 0.01824
-## [5,] 3.100  4.681 1.581 0.02113
-## [6,] 2.957  4.599 1.642 0.02115
+## [1,] 4.544  5.748 1.204 0.02153
+## [2,] 3.720  5.188 1.468 0.01848
+## [3,] 3.428  4.924 1.496 0.02099
+## [4,] 3.301  4.783 1.481 0.02035
+## [5,] 3.100  4.684 1.584 0.02246
+## [6,] 2.957  4.598 1.641 0.02421
 ```
 
 ```r
