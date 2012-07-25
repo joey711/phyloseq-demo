@@ -733,8 +733,8 @@ UniFrac(eso)
 
 ```
 ##        B      C
-## C 0.5692       
-## D 0.5416 0.6439
+## C 0.5334       
+## D 0.5465 0.5962
 ```
 
 ```r
@@ -794,7 +794,7 @@ plot_ordination(GP.r, ordinate(GP.r), color = "SampleType") + geom_point(size = 
 
 
 
-## `prune_species` vs. `subset_species`
+## prune_species() vs. subset_species()
 These are two very different methods for subsetting OTUs in a dataset.
 
 
@@ -857,7 +857,7 @@ length(getTaxa(GP.chl, "Phylum"))
 
 
 
-## `filterfunSample` and `genefilterSample`
+## filterfunSample() and genefilterSample()
 This tool takes after the `genefilter` function from the genefilter package, but emphasizes within-microbiome conditions. The following code illustrates . The function `topp` is a filter function that returns the most abundant `p` fraction of taxa. The `filterfunSample` function takes one or or more functions like `topp` and binds them in order to define a filtering protocol function, in this case called: `f1`. This function, `f1`, is then passed to `genefilterSample` along with the dataset that is going to be pruned as well as a value for `A`, the number of samples in which an OTU must pass the filtering conditions.
 
 ```r
@@ -872,7 +872,7 @@ topp(0.1)
 ##     }
 ##     x >= sort(x, decreasing = TRUE)[ceiling(length(x) * p)]
 ## }
-## <environment: 0x1099c1bf0>
+## <environment: 0x10dd9c040>
 ```
 
 ```r
@@ -890,7 +890,7 @@ print(f1)
 ##     }
 ##     return(fval)
 ## }
-## <environment: 0x1090a3628>
+## <environment: 0x10dd3d830>
 ## attr(,"class")
 ## [1] "filterfun"
 ```
@@ -1611,12 +1611,12 @@ gskmn
 ## B=50 simulated reference sets, k = 1..6
 ##  --> Number of clusters (method 'firstSEmax', SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.749 1.205 0.02332
-## [2,] 3.720  5.191 1.471 0.02280
-## [3,] 3.428  4.929 1.501 0.01892
-## [4,] 3.301  4.781 1.480 0.02129
-## [5,] 3.100  4.682 1.582 0.02586
-## [6,] 2.957  4.598 1.641 0.02167
+## [1,] 4.544  5.751 1.207 0.02168
+## [2,] 3.720  5.198 1.478 0.02173
+## [3,] 3.428  4.932 1.504 0.01975
+## [4,] 3.301  4.789 1.488 0.01852
+## [5,] 3.100  4.689 1.589 0.01950
+## [6,] 2.957  4.602 1.644 0.01820
 ```
 
 
@@ -1664,14 +1664,14 @@ print(gs, method = "Tibs2001SEmax")
 ```
 ## Clustering Gap statistic ["clusGap"].
 ## B=50 simulated reference sets, k = 1..6
-##  --> Number of clusters (method 'Tibs2001SEmax', SE.factor=1): 3
+##  --> Number of clusters (method 'Tibs2001SEmax', SE.factor=1): 2
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.747 1.203 0.02913
-## [2,] 3.720  5.190 1.470 0.02020
-## [3,] 3.428  4.928 1.500 0.02126
-## [4,] 3.301  4.779 1.478 0.02058
-## [5,] 3.100  4.680 1.580 0.02306
-## [6,] 2.957  4.596 1.639 0.02123
+## [1,] 4.544  5.756 1.211 0.02407
+## [2,] 3.720  5.196 1.476 0.01761
+## [3,] 3.428  4.926 1.498 0.02189
+## [4,] 3.301  4.783 1.481 0.02146
+## [5,] 3.100  4.681 1.581 0.02307
+## [6,] 2.957  4.598 1.640 0.02032
 ```
 
 ```r

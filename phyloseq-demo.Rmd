@@ -388,7 +388,7 @@ plot_ordination(GP.r, ordinate(GP.r), color="SampleType") + geom_point(size=5)
 ```
 
 
-## `prune_species` vs. `subset_species`
+## prune_species() vs. subset_species()
 These are two very different methods for subsetting OTUs in a dataset.
 
 ```{r}
@@ -413,7 +413,7 @@ length(getTaxa(GP.chl, "Phylum"))
 ```
 
 
-## `filterfunSample` and `genefilterSample`
+## filterfunSample() and genefilterSample()
 This tool takes after the `genefilter` function from the genefilter package, but emphasizes within-microbiome conditions. The following code illustrates . The function `topp` is a filter function that returns the most abundant `p` fraction of taxa. The `filterfunSample` function takes one or or more functions like `topp` and binds them in order to define a filtering protocol function, in this case called: `f1`. This function, `f1`, is then passed to `genefilterSample` along with the dataset that is going to be pruned as well as a value for `A`, the number of samples in which an OTU must pass the filtering conditions.
 ```{r}
 topp(0.1)

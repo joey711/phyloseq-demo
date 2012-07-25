@@ -428,8 +428,8 @@ eso &lt;- <span class="kw">rarefy_even_depth</span>(esophagus)
 <span class="co"># plot(as(otuTable(eso), &#39;vector&#39;), as(otuTable(esophagus), &#39;vector&#39;))</span></code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">UniFrac</span>(eso)</code></pre>
 <pre><code>##        B      C
-## C 0.5692       
-## D 0.5416 0.6439</code></pre>
+## C 0.5334       
+## D 0.5465 0.5962</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">UniFrac</span>(esophagus)</code></pre>
 <pre><code>##        B      C
 ## C 0.5176       
@@ -458,7 +458,7 @@ GP.chl.r &lt;- <span class="kw">rarefy_even_depth</span>(GP.chl)
 <pre class="sourceCode r"><code class="sourceCode r">GP.r &lt;- <span class="kw">rarefy_even_depth</span>(GP)
 <span class="kw">plot_ordination</span>(GP, <span class="kw">ordinate</span>(GP), <span class="dt">color =</span> <span class="st">&quot;SampleType&quot;</span>) + <span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">5</span>)</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_ordination</span>(GP.r, <span class="kw">ordinate</span>(GP.r), <span class="dt">color =</span> <span class="st">&quot;SampleType&quot;</span>) + <span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">5</span>)</code></pre>
-<h2 id="prune_species-vs.-subset_species"><code>prune_species</code> vs. <code>subset_species</code></h2>
+<h2 id="prune_species-vs.-subset_species">prune_species() vs. subset_species()</h2>
 <p>These are two very different methods for subsetting OTUs in a dataset.</p>
 <pre class="sourceCode r"><code class="sourceCode r">topN &lt;- <span class="dv">20</span>
 most_abundant_taxa &lt;- <span class="kw">sort</span>(<span class="kw">speciesSums</span>(GP), <span class="ot">TRUE</span>)[<span class="dv">1</span>:topN]
@@ -485,7 +485,7 @@ most_abundant_taxa &lt;- <span class="kw">sort</span>(<span class="kw">speciesSu
 <pre><code>## [1] 21</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(<span class="kw">getTaxa</span>(GP.chl, <span class="st">&quot;Phylum&quot;</span>))</code></pre>
 <pre><code>## [1] 1</code></pre>
-<h2 id="filterfunsample-and-genefiltersample"><code>filterfunSample</code> and <code>genefilterSample</code></h2>
+<h2 id="filterfunsample-and-genefiltersample">filterfunSample() and genefilterSample()</h2>
 <p>This tool takes after the <code>genefilter</code> function from the genefilter package, but emphasizes within-microbiome conditions. The following code illustrates . The function <code>topp</code> is a filter function that returns the most abundant <code>p</code> fraction of taxa. The <code>filterfunSample</code> function takes one or or more functions like <code>topp</code> and binds them in order to define a filtering protocol function, in this case called: <code>f1</code>. This function, <code>f1</code>, is then passed to <code>genefilterSample</code> along with the dataset that is going to be pruned as well as a value for <code>A</code>, the number of samples in which an OTU must pass the filtering conditions.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">topp</span>(<span class="fl">0.1</span>)</code></pre>
 <pre><code>## function (x) 
@@ -495,7 +495,7 @@ most_abundant_taxa &lt;- <span class="kw">sort</span>(<span class="kw">speciesSu
 ##     }
 ##     x &gt;= sort(x, decreasing = TRUE)[ceiling(length(x) * p)]
 ## }
-## &lt;environment: 0x1099c1bf0&gt;</code></pre>
+## &lt;environment: 0x10dd9c040&gt;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">f1 &lt;- <span class="kw">filterfunSample</span>(<span class="kw">topp</span>(<span class="fl">0.1</span>))
 <span class="kw">print</span>(f1)</code></pre>
 <pre><code>## function (x) 
@@ -507,7 +507,7 @@ most_abundant_taxa &lt;- <span class="kw">sort</span>(<span class="kw">speciesSu
 ##     }
 ##     return(fval)
 ## }
-## &lt;environment: 0x1090a3628&gt;
+## &lt;environment: 0x10dd3d830&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;filterfun&quot;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">wh1 &lt;- <span class="kw">genefilterSample</span>(GP, f1, <span class="dt">A =</span> <span class="kw">round</span>(<span class="fl">0.5</span> * <span class="kw">nsamples</span>(GP)))
@@ -939,12 +939,12 @@ gskmn</code></pre>
 ## B=50 simulated reference sets, k = 1..6
 ##  --&gt; Number of clusters (method &#39;firstSEmax&#39;, SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.749 1.205 0.02332
-## [2,] 3.720  5.191 1.471 0.02280
-## [3,] 3.428  4.929 1.501 0.01892
-## [4,] 3.301  4.781 1.480 0.02129
-## [5,] 3.100  4.682 1.582 0.02586
-## [6,] 2.957  4.598 1.641 0.02167</code></pre>
+## [1,] 4.544  5.751 1.207 0.02168
+## [2,] 3.720  5.198 1.478 0.02173
+## [3,] 3.428  4.932 1.504 0.01975
+## [4,] 3.301  4.789 1.488 0.01852
+## [5,] 3.100  4.689 1.589 0.01950
+## [6,] 2.957  4.602 1.644 0.01820</code></pre>
 <p>That's nice. Just in case it is useful, let's look at what the wrapper-function might look like.</p>
 <pre class="sourceCode r"><code class="sourceCode r">gap_statistic_ordination &lt;- function(ord, FUNcluster, <span class="dt">type =</span> <span class="st">&quot;sites&quot;</span>, 
     <span class="dt">K.max =</span> <span class="dv">6</span>, <span class="dt">axes =</span> <span class="kw">c</span>(<span class="dv">1</span>:<span class="dv">2</span>), <span class="dt">B =</span> <span class="dv">500</span>, <span class="dt">verbose =</span> <span class="kw">interactive</span>(), ...) {
@@ -978,14 +978,14 @@ plot_clusgap &lt;- function(clusgap, <span class="dt">title =</span> <span class
 <span class="kw">print</span>(gs, <span class="dt">method =</span> <span class="st">&quot;Tibs2001SEmax&quot;</span>)</code></pre>
 <pre><code>## Clustering Gap statistic [&quot;clusGap&quot;].
 ## B=50 simulated reference sets, k = 1..6
-##  --&gt; Number of clusters (method &#39;Tibs2001SEmax&#39;, SE.factor=1): 3
+##  --&gt; Number of clusters (method &#39;Tibs2001SEmax&#39;, SE.factor=1): 2
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.747 1.203 0.02913
-## [2,] 3.720  5.190 1.470 0.02020
-## [3,] 3.428  4.928 1.500 0.02126
-## [4,] 3.301  4.779 1.478 0.02058
-## [5,] 3.100  4.680 1.580 0.02306
-## [6,] 2.957  4.596 1.639 0.02123</code></pre>
+## [1,] 4.544  5.756 1.211 0.02407
+## [2,] 3.720  5.196 1.476 0.01761
+## [3,] 3.428  4.926 1.498 0.02189
+## [4,] 3.301  4.783 1.481 0.02146
+## [5,] 3.100  4.681 1.581 0.02307
+## [6,] 2.957  4.598 1.640 0.02032</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_clusgap</span>(gs)</code></pre>
 <div class="figure">
 <img src="figure/gapstat-inphyloseq-example.png" alt="plot of chunk gapstat-inphyloseq-example" /><p class="caption">plot of chunk gapstat-inphyloseq-example</p>
