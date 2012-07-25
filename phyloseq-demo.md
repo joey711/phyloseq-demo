@@ -20,6 +20,7 @@ joey711.github.com/phyloseq
 
 http://www-stat.stanford.edu/~susan/
 
+
 # Summary and Other Documentation Resources
 
 This document supports a live demonstration of tools in [the phyloseq package](http://joey711.github.com/phyloseq/), and supplements other documentation resources available for [the phyloseq package](https://github.com/joey711/phyloseq) (e.g. wiki, vignettes, publications, function-level documentation, etc.). It is built automatically from its [R-markdown source file](http://www.r-bloggers.com/announcing-the-r-markdown-package/) with example [code-chunks](http://rstudio.org/docs/authoring/using_markdown) that can be reused if you have phyloseq installed. The R-markdown file and other related materials are publicly available, and hosted on GitHub with an explicit open-access license/ copyright statement:
@@ -32,8 +33,8 @@ As mentioned, vignettes are included in phyloseq. A quick way to load them from 
 
 
 ```r
-vignette("phyloseqbasics")
-vignette("phyloseqanalysis")
+vignette("phyloseq_basics")
+vignette("phyloseq_analysis")
 ```
 
 
@@ -732,8 +733,8 @@ UniFrac(eso)
 
 ```
 ##        B      C
-## C 0.5731       
-## D 0.5873 0.6273
+## C 0.5692       
+## D 0.5416 0.6439
 ```
 
 ```r
@@ -864,11 +865,14 @@ topp(0.1)
 ```
 
 ```
-## function(x){
-## 		if(na.rm){x = x[!is.na(x)]}
-## 		x >= sort(x, decreasing=TRUE)[ceiling(length(x)*p)]
+## function (x) 
+## {
+##     if (na.rm) {
+##         x = x[!is.na(x)]
 ##     }
-## <environment: 0x1091b1720>
+##     x >= sort(x, decreasing = TRUE)[ceiling(length(x) * p)]
+## }
+## <environment: 0x1099c1bf0>
 ```
 
 ```r
@@ -886,7 +890,7 @@ print(f1)
 ##     }
 ##     return(fval)
 ## }
-## <environment: 0x113cee578>
+## <environment: 0x1090a3628>
 ## attr(,"class")
 ## [1] "filterfun"
 ```
@@ -945,12 +949,10 @@ Now define a function to get the across-sample variance of each OTU/taxa/species
 specvar <- sapply(species.names(gpac), function(i, physeq) {
     var(getSamples(physeq, i))
 }, gpac)
-p1 <- qplot(x = log10(variance), data = data.frame(variance = specvar), 
-    binwidth = abs(do.call("-", as.list(range(log10(specvar))))/20))
-print(p1)
+# p1 <- qplot(x=log10(variance), data=data.frame(variance=specvar),
+# binwidth=abs(do.call('-', as.list(range(log10(specvar))))/20) )
+# print(p1)
 ```
-
-![plot of chunk unnamed-chunk-35](figure/unnamed-chunk-35.png) 
 
 
 However, the value of the variance is highly-dependent on the sequencing effort of each sample (the total number of reads sequenced from a particular sample). Thus we segway to transformations (e.g. convert to fractional abundance prior to filtering)
@@ -968,18 +970,13 @@ gpacf <- transformSampleCounts(gpac, function(x) {
 specvar <- sapply(species.names(gpacf), function(i, physeq) {
     var(getSamples(physeq, i))
 }, gpacf)
-qplot(x = log10(variance), data = data.frame(variance = specvar))
 ```
 
-```
-## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust
-## this.
-```
 
-![plot of chunk unnamed-chunk-36](figure/unnamed-chunk-36.png) 
-
+More plots not run...
 
 ```r
+qplot(x = log10(variance), data = data.frame(variance = specvar))
 p2 <- qplot(x = log10(variance), data = data.frame(variance = specvar), 
     binwidth = abs(do.call("-", as.list(range(log10(specvar))))/20))
 grid.newpage()
@@ -988,26 +985,30 @@ print(p1, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
 print(p2, vp = viewport(layout.pos.row = 2, layout.pos.col = 1))
 ```
 
-![plot of chunk unnamed-chunk-37](figure/unnamed-chunk-37.png) 
 
-
-Now how would we filter the taxa with variance smaller than 0.001?
+Now how would we filter the taxa with variance smaller than 0.001 (Assuming we wanted to pick an arbitrary threshold in this way)?
 
 ```r
 gpac_filt <- prune_species(specvar > 0.001, gpac)
 ```
 
-Show results with a heatmp
+Show results with a heatmap
 
 ```r
 plot_heatmap(gpac_filt, "NMDS", "bray", "SampleType", "Family")
 ```
 
-![plot of chunk unnamed-chunk-39](figure/unnamed-chunk-39.png) 
+![plot of chunk unnamed-chunk-39](figure/unnamed-chunk-391.png) 
+
+```r
+plot_heatmap(gpac, "NMDS", "bray", "SampleType", "Family")
+```
+
+![plot of chunk unnamed-chunk-39](figure/unnamed-chunk-392.png) 
 
 Note that the code in this section is not an endorsement of this particular threshold (0.001), just a demonstration for how you might remove OTUs/taxa/species that do not change much across the samples in your experiment.
 
-For normalization, also consider features in the "edgeR" package, and for standardization the `decostand` function in vegan-package
+For more advanced normalization features (like shrinkage, etc.), also consider features in [the edgeR package](http://www.bioconductor.org/packages/release/bioc/html/edgeR.html), [the DESeq package](http://bioconductor.org/packages/release/bioc/html/DESeq.html), and for standardization the `decostand` function in [the vegan-package](http://cran.r-project.org/web/packages/vegan//index.html); as well as probably many others that could be useful in this context.
 
 
 # Graphics for Inference and Exploration
@@ -1282,7 +1283,7 @@ In this section, we will look at examples for using R to validate/test hypothese
 
 
 ##  Multiple Testing
-In this example we will perform testing on fractional abundances to remove effect of differences in total sequencing across samples for same taxa. For the sake of time, let's subset our testing to the first 200 most abundant OTUs, and transform these counts to their relative abundance in their source sample (note that this introduce bias in real-life scenarios).
+In this example we will perform testing on fractional abundances to remove effect of differences in total sequencing across samples for same taxa. For the sake of time, let's subset our testing to the first 200 most abundant OTUs, and transform these counts to their relative abundance in their source sample (note that this introduce bias in real-life scenarios). In practice, these OTU abundances need to be preprocessed prior to testing, and many good methods in microarray analysis and differential expression sequencing could probably apply to this data (but are not directly implemented/supported in phyloseq, yet). Otherwise, beware that the old motto "garbage-in, garbage-out" can definitely apply to your data if you are not careful.
 
 
 ```r
@@ -1610,12 +1611,12 @@ gskmn
 ## B=50 simulated reference sets, k = 1..6
 ##  --> Number of clusters (method 'firstSEmax', SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.743 1.198 0.02592
-## [2,] 3.720  5.191 1.471 0.02211
-## [3,] 3.428  4.929 1.502 0.02300
-## [4,] 3.301  4.780 1.479 0.02235
-## [5,] 3.100  4.680 1.580 0.02474
-## [6,] 2.957  4.595 1.638 0.02381
+## [1,] 4.544  5.749 1.205 0.02332
+## [2,] 3.720  5.191 1.471 0.02280
+## [3,] 3.428  4.929 1.501 0.01892
+## [4,] 3.301  4.781 1.480 0.02129
+## [5,] 3.100  4.682 1.582 0.02586
+## [6,] 2.957  4.598 1.641 0.02167
 ```
 
 
@@ -1665,12 +1666,12 @@ print(gs, method = "Tibs2001SEmax")
 ## B=50 simulated reference sets, k = 1..6
 ##  --> Number of clusters (method 'Tibs2001SEmax', SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.748 1.204 0.02153
-## [2,] 3.720  5.188 1.468 0.01848
-## [3,] 3.428  4.924 1.496 0.02099
-## [4,] 3.301  4.783 1.481 0.02035
-## [5,] 3.100  4.684 1.584 0.02246
-## [6,] 2.957  4.598 1.641 0.02421
+## [1,] 4.544  5.747 1.203 0.02913
+## [2,] 3.720  5.190 1.470 0.02020
+## [3,] 3.428  4.928 1.500 0.02126
+## [4,] 3.301  4.779 1.478 0.02058
+## [5,] 3.100  4.680 1.580 0.02306
+## [6,] 2.957  4.596 1.639 0.02123
 ```
 
 ```r
@@ -1689,4 +1690,33 @@ mtext("k = 2 is best ... but  k = 3  pretty close")
 ```
 
 ![plot of chunk unnamed-chunk-58](figure/unnamed-chunk-58.png) 
+
+
+
+# Future Directions for phyloseq
+
+## Suggestions from Attendees/Developers
+Don't be afraid to post feedback / needs on [the phyloseq issues tracker](https://github.com/joey711/phyloseq/issues):
+
+https://github.com/joey711/phyloseq/issues
+
+## Big(ger) Data
+The firehose of new-gen sequencing data is making possible "big" datasets in this realm. We are considering some of the best approaches to help a tool like phyloseq address computational issues that are arising from dealing with this data, without compromising some of the other features (interactivity, reproducibility, connection with existing R tools). Some promising tools already available for R that might help include:
+
+### Sparse matrix classes
+Like in [the Matrix package](http://cran.r-project.org/web/packages/Matrix/index.html). This mainly applies to in-ram computations, especially when the full matrix is actually needed. In principle, this might only apply be required to represent the preprocessed data, which could still be sparse.
+
+### Store full dataset in a database
+Some suggested packages at this conference so far, obviousl not-yet implemented in phyloseq, are:
+
+- [the hdf5 package](http://cran.r-project.org/web/packages/hdf5/index.html)
+
+- [the ff package](http://cran.r-project.org/web/packages/ff/index.html)
+
+### Use BioConductor tools for representing data
+
+- Alternative ways of representing the related data
+
+- Adding at least a representative sequence for each OTU. Using `DNAStringSet` class?
+
 

@@ -54,8 +54,8 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <h2 id="demo-materials-available-here"><a href="https://github.com/joey711/phyloseq-demo/zipball/master">Demo Materials Available Here</a></h2>
 <h2 id="other-package-level-documentation">Other Package-Level Documentation</h2>
 <p>As mentioned, vignettes are included in phyloseq. A quick way to load them from within <code>R</code> is:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">vignette</span>(<span class="st">&quot;phyloseqbasics&quot;</span>)
-<span class="kw">vignette</span>(<span class="st">&quot;phyloseqanalysis&quot;</span>)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">vignette</span>(<span class="st">&quot;phyloseq_basics&quot;</span>)
+<span class="kw">vignette</span>(<span class="st">&quot;phyloseq_analysis&quot;</span>)</code></pre>
 <h3 id="the-phyloseq-wiki"><a href="https://github.com/joey711/phyloseq/wiki">The phyloseq Wiki</a></h3>
 <p>There is also a <a href="https://github.com/joey711/phyloseq/wiki">GitHub-hosted wiki for phyloseq</a>. Some of these pages contain more detailed examples of the topics/tasks covered in this demonstration.</p>
 <h3 id="the-phyloseq-issue-tracker"><a href="https://github.com/joey711/phyloseq/issues">The phyloseq Issue Tracker</a></h3>
@@ -428,8 +428,8 @@ eso &lt;- <span class="kw">rarefy_even_depth</span>(esophagus)
 <span class="co"># plot(as(otuTable(eso), &#39;vector&#39;), as(otuTable(esophagus), &#39;vector&#39;))</span></code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">UniFrac</span>(eso)</code></pre>
 <pre><code>##        B      C
-## C 0.5731       
-## D 0.5873 0.6273</code></pre>
+## C 0.5692       
+## D 0.5416 0.6439</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">UniFrac</span>(esophagus)</code></pre>
 <pre><code>##        B      C
 ## C 0.5176       
@@ -488,11 +488,14 @@ most_abundant_taxa &lt;- <span class="kw">sort</span>(<span class="kw">speciesSu
 <h2 id="filterfunsample-and-genefiltersample"><code>filterfunSample</code> and <code>genefilterSample</code></h2>
 <p>This tool takes after the <code>genefilter</code> function from the genefilter package, but emphasizes within-microbiome conditions. The following code illustrates . The function <code>topp</code> is a filter function that returns the most abundant <code>p</code> fraction of taxa. The <code>filterfunSample</code> function takes one or or more functions like <code>topp</code> and binds them in order to define a filtering protocol function, in this case called: <code>f1</code>. This function, <code>f1</code>, is then passed to <code>genefilterSample</code> along with the dataset that is going to be pruned as well as a value for <code>A</code>, the number of samples in which an OTU must pass the filtering conditions.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">topp</span>(<span class="fl">0.1</span>)</code></pre>
-<pre><code>## function(x){
-##      if(na.rm){x = x[!is.na(x)]}
-##      x &gt;= sort(x, decreasing=TRUE)[ceiling(length(x)*p)]
+<pre><code>## function (x) 
+## {
+##     if (na.rm) {
+##         x = x[!is.na(x)]
 ##     }
-## &lt;environment: 0x1091b1720&gt;</code></pre>
+##     x &gt;= sort(x, decreasing = TRUE)[ceiling(length(x) * p)]
+## }
+## &lt;environment: 0x1099c1bf0&gt;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">f1 &lt;- <span class="kw">filterfunSample</span>(<span class="kw">topp</span>(<span class="fl">0.1</span>))
 <span class="kw">print</span>(f1)</code></pre>
 <pre><code>## function (x) 
@@ -504,7 +507,7 @@ most_abundant_taxa &lt;- <span class="kw">sort</span>(<span class="kw">speciesSu
 ##     }
 ##     return(fval)
 ## }
-## &lt;environment: 0x113cee578&gt;
+## &lt;environment: 0x1090a3628&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;filterfun&quot;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">wh1 &lt;- <span class="kw">genefilterSample</span>(GP, f1, <span class="dt">A =</span> <span class="kw">round</span>(<span class="fl">0.5</span> * <span class="kw">nsamples</span>(GP)))
@@ -534,12 +537,9 @@ most_abundant_taxa &lt;- <span class="kw">sort</span>(<span class="kw">speciesSu
 <pre class="sourceCode r"><code class="sourceCode r">specvar &lt;- <span class="kw">sapply</span>(<span class="kw">species.names</span>(gpac), function(i, physeq) {
     <span class="kw">var</span>(<span class="kw">getSamples</span>(physeq, i))
 }, gpac)
-p1 &lt;- <span class="kw">qplot</span>(<span class="dt">x =</span> <span class="kw">log10</span>(variance), <span class="dt">data =</span> <span class="kw">data.frame</span>(<span class="dt">variance =</span> specvar), 
-    <span class="dt">binwidth =</span> <span class="kw">abs</span>(<span class="kw">do.call</span>(<span class="st">&quot;-&quot;</span>, <span class="kw">as.list</span>(<span class="kw">range</span>(<span class="kw">log10</span>(specvar))))/<span class="dv">20</span>))
-<span class="kw">print</span>(p1)</code></pre>
-<div class="figure">
-<img src="figure/unnamed-chunk-35.png" alt="plot of chunk unnamed-chunk-35" /><p class="caption">plot of chunk unnamed-chunk-35</p>
-</div>
+<span class="co"># p1 &lt;- qplot(x=log10(variance), data=data.frame(variance=specvar),</span>
+<span class="co"># binwidth=abs(do.call(&#39;-&#39;, as.list(range(log10(specvar))))/20) )</span>
+<span class="co"># print(p1)</span></code></pre>
 <p>However, the value of the variance is highly-dependent on the sequencing effort of each sample (the total number of reads sequenced from a particular sample). Thus we segway to transformations (e.g. convert to fractional abundance prior to filtering)</p>
 <h2 id="transformations">Transformations</h2>
 <p>Useful for: Standardization / Normalization / Smoothing / Shrinking. Second-order function: <code>transformSampleCounts</code>.</p>
@@ -549,31 +549,28 @@ p1 &lt;- <span class="kw">qplot</span>(<span class="dt">x =</span> <span class="
 })
 specvar &lt;- <span class="kw">sapply</span>(<span class="kw">species.names</span>(gpacf), function(i, physeq) {
     <span class="kw">var</span>(<span class="kw">getSamples</span>(physeq, i))
-}, gpacf)
-<span class="kw">qplot</span>(<span class="dt">x =</span> <span class="kw">log10</span>(variance), <span class="dt">data =</span> <span class="kw">data.frame</span>(<span class="dt">variance =</span> specvar))</code></pre>
-<pre><code>## stat_bin: binwidth defaulted to range/30. Use &#39;binwidth = x&#39; to adjust
-## this.</code></pre>
-<div class="figure">
-<img src="figure/unnamed-chunk-36.png" alt="plot of chunk unnamed-chunk-36" /><p class="caption">plot of chunk unnamed-chunk-36</p>
-</div>
-<pre class="sourceCode r"><code class="sourceCode r">p2 &lt;- <span class="kw">qplot</span>(<span class="dt">x =</span> <span class="kw">log10</span>(variance), <span class="dt">data =</span> <span class="kw">data.frame</span>(<span class="dt">variance =</span> specvar), 
+}, gpacf)</code></pre>
+<p>More plots not run...</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">qplot</span>(<span class="dt">x =</span> <span class="kw">log10</span>(variance), <span class="dt">data =</span> <span class="kw">data.frame</span>(<span class="dt">variance =</span> specvar))
+p2 &lt;- <span class="kw">qplot</span>(<span class="dt">x =</span> <span class="kw">log10</span>(variance), <span class="dt">data =</span> <span class="kw">data.frame</span>(<span class="dt">variance =</span> specvar), 
     <span class="dt">binwidth =</span> <span class="kw">abs</span>(<span class="kw">do.call</span>(<span class="st">&quot;-&quot;</span>, <span class="kw">as.list</span>(<span class="kw">range</span>(<span class="kw">log10</span>(specvar))))/<span class="dv">20</span>))
 <span class="kw">grid.newpage</span>()
 <span class="kw">pushViewport</span>(<span class="kw">viewport</span>(<span class="dt">layout =</span> <span class="kw">grid.layout</span>(<span class="dv">2</span>, <span class="dv">1</span>)))
 <span class="kw">print</span>(p1, <span class="dt">vp =</span> <span class="kw">viewport</span>(<span class="dt">layout.pos.row =</span> <span class="dv">1</span>, <span class="dt">layout.pos.col =</span> <span class="dv">1</span>))
 <span class="kw">print</span>(p2, <span class="dt">vp =</span> <span class="kw">viewport</span>(<span class="dt">layout.pos.row =</span> <span class="dv">2</span>, <span class="dt">layout.pos.col =</span> <span class="dv">1</span>))</code></pre>
-<div class="figure">
-<img src="figure/unnamed-chunk-37.png" alt="plot of chunk unnamed-chunk-37" /><p class="caption">plot of chunk unnamed-chunk-37</p>
-</div>
-<p>Now how would we filter the taxa with variance smaller than 0.001?</p>
+<p>Now how would we filter the taxa with variance smaller than 0.001 (Assuming we wanted to pick an arbitrary threshold in this way)?</p>
 <pre class="sourceCode r"><code class="sourceCode r">gpac_filt &lt;- <span class="kw">prune_species</span>(specvar &gt; <span class="fl">0.001</span>, gpac)</code></pre>
-<p>Show results with a heatmp</p>
+<p>Show results with a heatmap</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_heatmap</span>(gpac_filt, <span class="st">&quot;NMDS&quot;</span>, <span class="st">&quot;bray&quot;</span>, <span class="st">&quot;SampleType&quot;</span>, <span class="st">&quot;Family&quot;</span>)</code></pre>
 <div class="figure">
-<img src="figure/unnamed-chunk-39.png" alt="plot of chunk unnamed-chunk-39" /><p class="caption">plot of chunk unnamed-chunk-39</p>
+<img src="figure/unnamed-chunk-391.png" alt="plot of chunk unnamed-chunk-39" /><p class="caption">plot of chunk unnamed-chunk-39</p>
+</div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_heatmap</span>(gpac, <span class="st">&quot;NMDS&quot;</span>, <span class="st">&quot;bray&quot;</span>, <span class="st">&quot;SampleType&quot;</span>, <span class="st">&quot;Family&quot;</span>)</code></pre>
+<div class="figure">
+<img src="figure/unnamed-chunk-392.png" alt="plot of chunk unnamed-chunk-39" /><p class="caption">plot of chunk unnamed-chunk-39</p>
 </div>
 <p>Note that the code in this section is not an endorsement of this particular threshold (0.001), just a demonstration for how you might remove OTUs/taxa/species that do not change much across the samples in your experiment.</p>
-<p>For normalization, also consider features in the &quot;edgeR&quot; package, and for standardization the <code>decostand</code> function in vegan-package</p>
+<p>For more advanced normalization features (like shrinkage, etc.), also consider features in <a href="http://www.bioconductor.org/packages/release/bioc/html/edgeR.html">the edgeR package</a>, <a href="http://bioconductor.org/packages/release/bioc/html/DESeq.html">the DESeq package</a>, and for standardization the <code>decostand</code> function in <a href="http://cran.r-project.org/web/packages/vegan//index.html">the vegan-package</a>; as well as probably many others that could be useful in this context.</p>
 </div>
 <div class="section slide level1" id="graphics-for-inference-and-exploration">
 <h1>Graphics for Inference and Exploration</h1>
@@ -731,7 +728,7 @@ Bushman.ord &lt;- <span class="kw">ordinate</span>(Bushman, <span class="dt">met
 <h1>Validation</h1>
 <p>In this section, we will look at examples for using R to validate/test hypotheses we may have generated through some of the previous exploration.</p>
 <h2 id="multiple-testing">Multiple Testing</h2>
-<p>In this example we will perform testing on fractional abundances to remove effect of differences in total sequencing across samples for same taxa. For the sake of time, let's subset our testing to the first 200 most abundant OTUs, and transform these counts to their relative abundance in their source sample (note that this introduce bias in real-life scenarios).</p>
+<p>In this example we will perform testing on fractional abundances to remove effect of differences in total sequencing across samples for same taxa. For the sake of time, let's subset our testing to the first 200 most abundant OTUs, and transform these counts to their relative abundance in their source sample (note that this introduce bias in real-life scenarios). In practice, these OTU abundances need to be preprocessed prior to testing, and many good methods in microarray analysis and differential expression sequencing could probably apply to this data (but are not directly implemented/supported in phyloseq, yet). Otherwise, beware that the old motto &quot;garbage-in, garbage-out&quot; can definitely apply to your data if you are not careful.</p>
 <pre class="sourceCode r"><code class="sourceCode r">topsp &lt;- <span class="kw">names</span>(<span class="kw">sort</span>(<span class="kw">speciesSums</span>(GP), <span class="ot">TRUE</span>)[<span class="dv">1</span>:<span class="dv">200</span>])
 GP3f &lt;- <span class="kw">transformSampleCounts</span>(GP, function(x) {
     x/<span class="kw">sum</span>(x)
@@ -942,12 +939,12 @@ gskmn</code></pre>
 ## B=50 simulated reference sets, k = 1..6
 ##  --&gt; Number of clusters (method &#39;firstSEmax&#39;, SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.743 1.198 0.02592
-## [2,] 3.720  5.191 1.471 0.02211
-## [3,] 3.428  4.929 1.502 0.02300
-## [4,] 3.301  4.780 1.479 0.02235
-## [5,] 3.100  4.680 1.580 0.02474
-## [6,] 2.957  4.595 1.638 0.02381</code></pre>
+## [1,] 4.544  5.749 1.205 0.02332
+## [2,] 3.720  5.191 1.471 0.02280
+## [3,] 3.428  4.929 1.501 0.01892
+## [4,] 3.301  4.781 1.480 0.02129
+## [5,] 3.100  4.682 1.582 0.02586
+## [6,] 2.957  4.598 1.641 0.02167</code></pre>
 <p>That's nice. Just in case it is useful, let's look at what the wrapper-function might look like.</p>
 <pre class="sourceCode r"><code class="sourceCode r">gap_statistic_ordination &lt;- function(ord, FUNcluster, <span class="dt">type =</span> <span class="st">&quot;sites&quot;</span>, 
     <span class="dt">K.max =</span> <span class="dv">6</span>, <span class="dt">axes =</span> <span class="kw">c</span>(<span class="dv">1</span>:<span class="dv">2</span>), <span class="dt">B =</span> <span class="dv">500</span>, <span class="dt">verbose =</span> <span class="kw">interactive</span>(), ...) {
@@ -983,12 +980,12 @@ plot_clusgap &lt;- function(clusgap, <span class="dt">title =</span> <span class
 ## B=50 simulated reference sets, k = 1..6
 ##  --&gt; Number of clusters (method &#39;Tibs2001SEmax&#39;, SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.748 1.204 0.02153
-## [2,] 3.720  5.188 1.468 0.01848
-## [3,] 3.428  4.924 1.496 0.02099
-## [4,] 3.301  4.783 1.481 0.02035
-## [5,] 3.100  4.684 1.584 0.02246
-## [6,] 2.957  4.598 1.641 0.02421</code></pre>
+## [1,] 4.544  5.747 1.203 0.02913
+## [2,] 3.720  5.190 1.470 0.02020
+## [3,] 3.428  4.928 1.500 0.02126
+## [4,] 3.301  4.779 1.478 0.02058
+## [5,] 3.100  4.680 1.580 0.02306
+## [6,] 2.957  4.596 1.639 0.02123</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_clusgap</span>(gs)</code></pre>
 <div class="figure">
 <img src="figure/gapstat-inphyloseq-example.png" alt="plot of chunk gapstat-inphyloseq-example" /><p class="caption">plot of chunk gapstat-inphyloseq-example</p>
@@ -999,6 +996,27 @@ plot_clusgap &lt;- function(clusgap, <span class="dt">title =</span> <span class
 <div class="figure">
 <img src="figure/unnamed-chunk-58.png" alt="plot of chunk unnamed-chunk-58" /><p class="caption">plot of chunk unnamed-chunk-58</p>
 </div>
+</div>
+<div class="section slide level1" id="future-directions-for-phyloseq">
+<h1>Future Directions for phyloseq</h1>
+<h2 id="suggestions-from-attendeesdevelopers">Suggestions from Attendees/Developers</h2>
+<p>Don't be afraid to post feedback / needs on <a href="https://github.com/joey711/phyloseq/issues">the phyloseq issues tracker</a>:</p>
+<p>https://github.com/joey711/phyloseq/issues</p>
+<h2 id="bigger-data">Big(ger) Data</h2>
+<p>The firehose of new-gen sequencing data is making possible &quot;big&quot; datasets in this realm. We are considering some of the best approaches to help a tool like phyloseq address computational issues that are arising from dealing with this data, without compromising some of the other features (interactivity, reproducibility, connection with existing R tools). Some promising tools already available for R that might help include:</p>
+<h3 id="sparse-matrix-classes">Sparse matrix classes</h3>
+<p>Like in <a href="http://cran.r-project.org/web/packages/Matrix/index.html">the Matrix package</a>. This mainly applies to in-ram computations, especially when the full matrix is actually needed. In principle, this might only apply be required to represent the preprocessed data, which could still be sparse.</p>
+<h3 id="store-full-dataset-in-a-database">Store full dataset in a database</h3>
+<p>Some suggested packages at this conference so far, obviousl not-yet implemented in phyloseq, are:</p>
+<ul>
+<li><p><a href="http://cran.r-project.org/web/packages/hdf5/index.html">the hdf5 package</a></p></li>
+<li><p><a href="http://cran.r-project.org/web/packages/ff/index.html">the ff package</a></p></li>
+</ul>
+<h3 id="use-bioconductor-tools-for-representing-data">Use BioConductor tools for representing data</h3>
+<ul>
+<li><p>Alternative ways of representing the related data</p></li>
+<li><p>Adding at least a representative sequence for each OTU. Using <code>DNAStringSet</code> class?</p></li>
+</ul>
 </div>
 </body>
 </html>
