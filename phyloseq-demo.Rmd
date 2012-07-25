@@ -31,8 +31,8 @@ This document supports a live demonstration of tools in [the phyloseq package](h
 As mentioned, vignettes are included in phyloseq. A quick way to load them from within `R` is:
 
 ```{r vignettes, eval=FALSE}
-vignette("phyloseqbasics")
-vignette("phyloseqanalysis")
+vignette("phyloseq_basics")
+vignette("phyloseq_analysis")
 ```
 
 ### [The phyloseq Wiki](https://github.com/joey711/phyloseq/wiki)
