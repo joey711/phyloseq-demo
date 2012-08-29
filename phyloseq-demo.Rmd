@@ -556,7 +556,7 @@ p + geom_point(size=5) + geom_polygon(aes(fill=SampleType))
 ```
 
 Get the names of the most-abundant phyla, and use for subsetting.
-```{r GPabundsortphylum}
+```{r GPabundsortphylum, cache=FALSE}
 top.phyla <- sort(tapply(taxa_sums(GP), tax_table(GP)[, "Phylum"], sum), TRUE)
 top.phyla <- top.phyla[1:5]
 # Prune to just the most-abundant 5 phyla
@@ -596,7 +596,7 @@ In a [2010 article in BMC Genomics](http://www.biomedcentral.com/1471-2105/11/45
 
 Further examples are provided at [the plot_heatmap wiki page](https://github.com/joey711/phyloseq/wiki/plot_heatmap)
 
-```{r plot-heatmap-NMDS-bray}
+```{r plot-heatmap-NMDS-bray, cache=FALSE}
 plot_heatmap(GP2, "NMDS", "bray", "SampleType", "Family")
 ```
 
