@@ -5,13 +5,13 @@ phyloseq-demo
 
 This repository hosts **extended examples** of [the phyloseq package](http://joey711.github.com/phyloseq/), created by [the phyloseq author](https://people.stanford.edu/mcmurdie/), but with a size and/or scope that makes them unsuitable for including among the core tutorials on [the phyloseq main page](http://joey711.github.com/phyloseq/).
 
-**This repository is also intended to host user-provided tutorials of their new/interesting datasets and analysis**. Contributions should be in the form of a standard [GitHub Pull Request](https://help.github.com/articles/using-pull-requests), preferably created using [R markdown](http://www.rstudio.com/ide/docs/r_markdown) with the `.rmd` source and the `.md` and `.html` output already built, as well as any necessary input data that is not otherwise open and web-facing. The pull requests can be made to either the master or [gh-pages branch](https://help.github.com/articles/creating-pages-with-the-automatic-generator), but anything to the master branch will basically be migrated to gh-pages by me so that it can be directly accessed by users as web content.
+**This repository is also intended to host user-provided tutorials of their new/interesting datasets and analysis**. Contributions should be in the form of a standard [GitHub Pull Request](https://help.github.com/articles/using-pull-requests), preferably created using [R markdown](http://www.rstudio.com/ide/docs/r_markdown) with the `.rmd` source and the `.md` and `.html` output already built, as well as any necessary input data that is not otherwise open and web-facing. The pull requests can be made to either the master or [gh-pages branch](https://help.github.com/articles/creating-pages-with-the-automatic-generator), but most things added to the master branch will be migrated to the gh-pages by me so that it can be directly accessed by users as web content, so please consider just directing your pull requests toward the gh-pages branch. Also, I will decline or omit examples that are not reproducible. The `.rmd` source should be able to completely rebuild the examples you've shown by anyone that has downloaded the repo to their machine, with any tweaks or data-access being as transparent as possible.
 
 ## Demo Index
 
 An index of the currently available demos can be found at
 
-### [the phyloseq demonstration index](demo-index.html).
+### [the phyloseq demonstration index](demo-index.html)
 
 ## Overview and Slides
 
