@@ -1,17 +1,28 @@
 phyloseq-demo
 =============
 
-Sweave and other files for use in a 75 - 120 minute demonstration.
+## Extended Documentation
 
-See the [Official phyloseq development site](http://joey711.github.com/phyloseq/) for further details about the package, as well as to make suggestions, raise issues, or contribute code.
+This repository hosts extended examples of [the phyloseq package](http://joey711.github.com/phyloseq/), created by [the phyloseq author](https://people.stanford.edu/mcmurdie/), but with a size and/or scope that makes them unsuitable for including among the core tutorials on [the phyloseq main page](http://joey711.github.com/phyloseq/).
 
-Also, check-out alternate documentation in the form of a [phyloseq wiki](https://github.com/joey711/phyloseq/wiki).
+**This repository is also intended to host user-provided tutorials of their new/interesting datasets and analysis**. Contributions should be in the form of a standard [GitHub Pull Request](https://help.github.com/articles/using-pull-requests), preferably created using [R markdown](http://www.rstudio.com/ide/docs/r_markdown) with the `.rmd` source and the `.md` and `.html` output already built, as well as any necessary input data that is not otherwise open and web-facing. The pull requests can be made to either the master or [gh-pages branch](https://help.github.com/articles/creating-pages-with-the-automatic-generator), but anything to the master branch will basically be migrated to gh-pages by me so that it can be directly accessed by users as web content.
 
-[A workshop session](https://secure.bioconductor.org/BioC2012/labs.php) regarding the use of [the phyloseq package](http://joey711.github.com/phyloseq/) in amplicon sequencing analysis will be provided at the
 
-[Bioconductor Workshop (BioC 2012)](https://secure.bioconductor.org/BioC2012/)
+## Core Examples, Main Page
 
-on July 24-25, 2012 
+See the [Official phyloseq package home page](http://joey711.github.com/phyloseq/) for key details and key tutorials, as well as to make suggestions, raise issues, or contribute code.
 
-At the Fred Hutchinson Cancer Research Center - Seattle, WA
+
+
+---
+## Demo Materials
+
+This repository originally hosted material for [a workshop session](https://secure.bioconductor.org/BioC2012/labs.php) regarding the use of [the phyloseq package](http://joey711.github.com/phyloseq/) for microbiome census data in R. The original materials were expected to support a a 75 - 120 minute interactive workshop demonstration.
+
+The [Bioconductor Conference (BioC 2012)](https://secure.bioconductor.org/BioC2012/) was held on July 24-25, 2012, at the Fred Hutchinson Cancer Research Center - Seattle, WA
+
+
+
+
+
 
