@@ -1,0 +1,34 @@
+`r opts_chunk$set(cache=TRUE, fig.width=8)`
+<link href="http://joey711.github.com/phyloseq/markdown.css" rel="stylesheet"></link>
+
+The phyloseq Demo Index
+========================================================
+
+This page is automagically updated when I do a periodic full rebuild of the phyloseq demo pages. The date of this particular re-build is `r date()`.
+
+Don't forget to checkout [the phyloseq main page](joey711.github.com/phyloseq) for core tutorials.
+
+---
+## Available demos
+
+```{r find-parse-demos, echo=FALSE, include=FALSE}
+files = list.files(pattern=".rmd")
+length(files)
+names(files) = unlist(strsplit(files, ".rmd", TRUE))
+links = paste(names(files), ".html", sep="")
+mdlines = paste("### [", names(files), "](", links, ")", sep="")
+```
+
+```{r write-links, results='asis', echo=FALSE}
+cat(mdlines, sep="\n\n")
+```
+
+
+---
+## The R Markdown Source Code
+For more advanced users interested in seeing and/or modifying the [R markdown](http://www.rstudio.com/ide/docs/r_markdown) source code from which these reproducible, web browser-friendly demos were created.
+
+```{r rmd-links, results='asis', echo=FALSE}
+rmdlines = paste("### [", names(files), "](", files, ")", sep="")
+cat(rmdlines, sep="\n\n")
+```
