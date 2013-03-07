@@ -1,4 +1,5 @@
-<link href="http://kevinburke.bitbucket.org/markdowncss/markdown.css" rel="stylesheet"></link>
+`r opts_chunk$set(cache=TRUE, fig.width=8)`
+<link href="http://joey711.github.com/phyloseq/markdown.css" rel="stylesheet"></link>
 
 Import biom and sample data
 ========================================================
@@ -13,7 +14,7 @@ We will import this data to illustrate a more complicated situation in which we 
 For convenience and stability, these "Bushman" data files were saved locally and imported from their local system location. An even more complicated "direct import" example is provided in the last section ("Extra Example") below, but produces the same result and is not run by the embedded code.
 
 ```{r loadphyseq, warning=FALSE, message=FALSE}
-library(phyloseq)
+library("phyloseq"); packageVersion("phyloseq")
 ```
 Import Bushman data, already downloaded.
 ```{r BushmanLocal}

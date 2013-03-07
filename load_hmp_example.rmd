@@ -1,8 +1,9 @@
-<link href="http://kevinburke.bitbucket.org/markdowncss/markdown.css" rel="stylesheet"></link>
+`r opts_chunk$set(cache=TRUE, fig.width=8)`
+<link href="http://joey711.github.com/phyloseq/markdown.css" rel="stylesheet"></link>
 
 ## Load the pre-imported HMPv35 data from the RData file
 ```{r, message=FALSE}
-library("phyloseq")
+library("phyloseq"); packageVersion("phyloseq")
 ```
 ```{r}
 temp_hmp_file <- tempfile()

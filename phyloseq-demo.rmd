@@ -1,7 +1,7 @@
-`r opts_chunk$set(cache=TRUE, fig.width=6)`
-<link href="http://kevinburke.bitbucket.org/markdowncss/markdown.css" rel="stylesheet"></link>
+`r opts_chunk$set(cache=TRUE, fig.width=8)`
+<link href="http://joey711.github.com/phyloseq/markdown.css" rel="stylesheet"></link>
 
-Demo: phyloseq – A package for handling and analysis of high-throughput phylogenetic sequence data 
+Demo: phyloseq – An R package for microbiome census data 
 ========================================================
 
 ## Paul J. McMurdie and Susan Holmes
@@ -24,45 +24,45 @@ http://www-stat.stanford.edu/~susan/
 
 # Summary and Other Documentation Resources
 
-This document supports a live demonstration of tools in [the phyloseq package](http://joey711.github.com/phyloseq/), and supplements other documentation resources available for [the phyloseq package](https://github.com/joey711/phyloseq) (e.g. wiki, vignettes, publications, function-level documentation, etc.). It is built automatically from its [R-markdown source file](http://www.r-bloggers.com/announcing-the-r-markdown-package/) with example [code-chunks](http://rstudio.org/docs/authoring/using_markdown) that can be reused if you have phyloseq installed. The R-markdown file and other related materials are publicly available, and hosted on GitHub with an explicit open-access license/ copyright statement:
+## [Download all demo materials](https://github.com/joey711/phyloseq-demo/zipball/master)
 
-## [Demo Materials Available Here](https://github.com/joey711/phyloseq-demo/zipball/master)
+## [The phyloseq main page](joey711.github.com/phyloseq)
+This is the official starting point for phyloseq-related documentation, including links to the key tutorials for phyloseq functionality, installation, and extension.
 
-## Other Package-Level Documentation
+### [The phyloseq Issue Tracker](https://github.com/joey711/phyloseq/issues)
+There is a GitHub-hosted [issue-tracker for phyloseq](https://github.com/joey711/phyloseq/issues), currently describing over 100 feature requests, bug reports, documentation revisions, help requests, and other openly-documented development communication. Only a small fraction of these issues are still outstanding, but the descriptions remain available for anyone to view and add comments/code. If you have a problem with phyloseq that isn't already mentioned on the issue tracker, please contribute to phyloseq by posting the issue! These issues can be about anything related to using the phyloseq package, and help encourage development and generally solve problems. Solutions are often posted with code or the version number of phyloseq that includes a fix (if it is a bug), and these "threads" sit around for others to benefit from as well.
 
-As mentioned, vignettes are included in phyloseq. A quick way to load them from within `R` is:
+
+## In-package documentation
+The phyloseq package includes extensive documentation of all functions, data, and classes; usually with example code that you can run yourself. For example, here are two different R commands for accessing documentation (**man**ual) pages for phyloseq
+```{r, eval=FALSE}
+?"phyloseq-package"
+?phyloseq
+```
+The latter loads instead the documentation for the constructor function named `phyloseq()`
+
+
+## In-package vignettes
+vignettes are included in phyloseq. A quick way to load them from within `R` is:
 
 ```{r vignettes, eval=FALSE}
 vignette("phyloseq_basics")
 vignette("phyloseq_analysis")
 ```
 
-### [The phyloseq Wiki](https://github.com/joey711/phyloseq/wiki)
-There is also a [GitHub-hosted wiki for phyloseq](https://github.com/joey711/phyloseq/wiki). Some of these pages contain more detailed examples of the topics/tasks covered in this demonstration.
-
-### [The phyloseq Issue Tracker](https://github.com/joey711/phyloseq/issues)
-There is also a GitHub-hosted [issue-tracker for phyloseq](https://github.com/joey711/phyloseq/issues), currently describing over 100 feature requests, bug reports, documentation revisions, help requests, and other suggestions. Only a small fraction of these issues are still outstanding, but the descriptions remain available for anyone to view and add comments/code.
-
 
 # [Installation](https://github.com/joey711/phyloseq/wiki/Installation)
-The phyloseq package is under active development. Users are encouraged to consistently update their version from [the phyloseq development website on GitHub](http://joey711.github.com/phyloseq/). The most stable releases and development versions of phyloseq are hosted by Bioconductor. For installing from Bioconductor, and alternatives to "the bleeding edge", as well as the most updated installation news and instructions, please see [the installation wiki page](https://github.com/joey711/phyloseq/wiki/Installation).
+The phyloseq package is under active development. Users are encouraged to update their version [to the latest phyloseq development release on GitHub](joey711.github.com/phyloseq) for the access to the latest fixes/features. The most stable releases and development versions of phyloseq are hosted by Bioconductor. Please see [the official installation tutorial](http://joey711.github.com/phyloseq/install) for further details.
 
 
-# Load phyloseq, and Import Data.
+# Load phyloseq
 Of course we need to start this tutorial by loading [the phyloseq package](http://joey711.github.com/phyloseq/). This assumes you have already [installed phyloseq](https://github.com/joey711/phyloseq/wiki/Installation).
 ```{r loadpkg, warning=FALSE, message=FALSE}
-library("phyloseq")
+library("phyloseq"); packageVersion("phyloseq")
 ```
 
-There is package-level documentation available. Note the following difference:
-```{r, eval=FALSE}
-help("phyloseq-package")
-help("phyloseq")
-```
-The latter loads instead the documentation for the constructor function named `phyloseq()`
 
-
-## Basic Data Import
+# Basic Data Import
 
 
 ### Importing the Output from [QIIME](http://qiime.org/)

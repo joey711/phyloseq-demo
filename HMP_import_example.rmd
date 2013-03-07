@@ -1,4 +1,5 @@
-<link href="http://kevinburke.bitbucket.org/markdowncss/markdown.css" rel="stylesheet"></link>
+`r opts_chunk$set(cache=TRUE, fig.width=8)`
+<link href="http://joey711.github.com/phyloseq/markdown.css" rel="stylesheet"></link>
 
 Example importing into [phyloseq](http://joey711.github.com/phyloseq/) the files produced by [Qiime](http://qiime.org/) run on [the HMPv35 dataset](http://hmpdacc.org/micro_analysis/microbiome_analyses.php), which is avilable from [HMP-DACC](http://hmpdacc.org/).
 ========================================================
@@ -7,7 +8,7 @@ Note that this is a document produced by [the markdown package](http://cran.r-pr
 
 ## Load [the phyloseq package](http://joey711.github.com/phyloseq/)
 ```{r load_phyloseq, message=FALSE}
-library("phyloseq")
+library("phyloseq"); packageVersion("phyloseq")
 ```
 
 ## Download the Files to a Temporary Location 
