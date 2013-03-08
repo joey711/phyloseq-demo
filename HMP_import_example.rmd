@@ -11,6 +11,17 @@ Note that this is a document produced by [the markdown package](http://cran.r-pr
 ```{r load_phyloseq, message=FALSE}
 library("phyloseq"); packageVersion("phyloseq")
 ```
+Because this demo includes an example of manually importing a Fasta-formatted DNA sequence file using a function from [the Biostrings package](), we will need to load that as well (it is already a phyloseq dependency, so nothing exotic here)
+```{r load_Biostrings}
+library("Biostrings"); packageVersion("Biostrings")
+```
+
+As data sources could be updated (or their links removed), and the phyloseq package is itself under active development, I am posting here the date/time stamp that this demo was built, as extra compatibility metadata to supplement the package version numbers shown above
+
+```{r timestamp}
+date()
+```
+
 
 ## Download the files to a temporary location 
 Note that R's file handling is sophisticated enough that you do not need to unpack/unzip the `.gz`- or `.bz2`-compressed files. They are understood automatically.
@@ -43,6 +54,7 @@ It turns out that the tree has weird quotes added around tip names, for example.
 tree = read_tree(temp_tree) 
 head(taxa_names(tree))
 ```
+
 These extra quotes ( `"'"` ) must be removed/replaced. This can be accomplished using the following line
 ```{r}
 tree$tip.label = substr(taxa_names(tree), 2, nchar(taxa_names(tree))-1)
@@ -52,21 +64,26 @@ tree$tip.label = substr(taxa_names(tree), 2, nchar(taxa_names(tree))-1)
 Unfortunately, the `readDNAStringSet` function for importing the representative sequences -- which we will call `refseq` (for "reference sequences") -- does not accept standard R file connections for reading files, possibly because it is performing the parsing at a very low level? In any case, unlike the other files we are importing, this must be unzipped first to an uncompressed `.fna` file, before we read and parse.
 ```{r download-refseq}
 zipped_refseq   = tempfile()
-unzipped_rsfile = tempfile()
 refseq_url = "http://downloads.hmpdacc.org/data/HMQCP/rep_set_v35.fna.gz"
 download.file(refseq_url, zipped_refseq)
 ```
+
 I use the `gzfile` function to open an R connection to the `.gz` compressed representative sequence file that we just downloaded. Then, use `readLines` and `writeLines` to essentially "pipe" this uncompressed to our second temporary file, called `unzipped_rsfile`.
 ```{r decompress-refseq}
-uzrefseqfile = gzfile(zipped_refseq)
-writeLines(readLines(uzrefseqfile), unzipped_rsfile)
+unzipped_rsfile = tempfile()
+refseqgzcon = gzfile(zipped_refseq)
+writeLines(readLines(refseqgzcon), unzipped_rsfile)
 ```
 
-Now that I have an uncompressed version of the file saved in as temporary (but known) file, I can use the `readDNAStringSet` function without error, and store the initial import result as the object, `refseq`.
+Now that I have an uncompressed version of the file saved in as temporary (but known) file, I can use the `readDNAStringSet` function without error and store the initial import result as the object, `refseq`.
 ```{r decompress}
-library("Biostrings")
-refseq = readDNAStringSet(unzipped_rsfile)
-refseq
+refseqs = readDNAStringSet(unzipped_rsfile)
+refseqs
+```
+
+We need to parse the "names" of each sequence entry in `refseq` such that they match the format of the OTU names in the other files. In this case, that means removing everything from the first space on. There are multiple ways to do this using R, and in the following code we use regular-expression pattern matching and substitution available in the `gsub` function.
+```{r}
+names(refseqs) = gsub("(^[[:digit:]]{1,5})([[:space:]]{1,})([[:print:]]{0,}$)", "\\1", names(refseqs))
 ```
 
 
