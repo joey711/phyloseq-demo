@@ -4,7 +4,7 @@
 The phyloseq Demo Index
 ========================================================
 
-This page is automagically updated when I do a periodic full rebuild of the phyloseq demo pages. The date of this particular re-build is Thu Mar  7 16:22:33 2013.
+This page is automagically updated when I do a periodic full rebuild of the phyloseq demo pages. The date of this particular re-build is Thu Mar  7 23:01:23 2013.
 
 Don't forget to checkout [the phyloseq main page](joey711.github.com/phyloseq) for core tutorials.
 
