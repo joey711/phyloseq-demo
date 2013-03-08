@@ -12,6 +12,15 @@ download.file(hmp_url, temp_hmp_file)
 load(temp_hmp_file)
 ```
 
+```{r}
+# Convert
+OTU = HMPv35@otuTable
+OTU = as(OTU, "matrix")
+phyloseq:::splat.phyloseq.objects
+phyloseq:::get.component.classes()
+```
+
+
 ### Clean up.
 ```{r}
 unlink(temp_hmp_file)
