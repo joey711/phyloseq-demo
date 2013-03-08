@@ -8,11 +8,11 @@ Example importing into [phyloseq](http://joey711.github.com/phyloseq/) the files
 Note that this is a document produced by [the markdown package](http://cran.r-project.org/web/packages/markdown/index.html) from an [R Markdown file](http://rstudio.org/docs/authoring/using_markdown). Markdown is a simple formatting syntax for authoring web pages, and in this case the structure includes reproducible code.
 
 ## Load [the phyloseq package](http://joey711.github.com/phyloseq/)
-```{r load_phyloseq, message=FALSE}
+```{r load_phyloseq, message=FALSE, warning=FALSE}
 library("phyloseq"); packageVersion("phyloseq")
 ```
 Because this demo includes an example of manually importing a Fasta-formatted DNA sequence file using a function from [the Biostrings package](), we will need to load that as well (it is already a phyloseq dependency, so nothing exotic here)
-```{r load_Biostrings}
+```{r load_Biostrings, message=FALSE, warning=FALSE}
 library("Biostrings"); packageVersion("Biostrings")
 ```
 
@@ -40,6 +40,7 @@ download.file(otu_url, temp_otutax)
 temp_map = tempfile()
 map_url  = "http://downloads.hmpdacc.org/data/HMQCP/v35_map_uniquebyPSN.txt.bz2"
 download.file(map_url, temp_map)
+temp_map = bzfile(temp_map)
 ```
 
 ### Download the phylogenetic tree
@@ -58,6 +59,7 @@ head(taxa_names(tree))
 These extra quotes ( `"'"` ) must be removed/replaced. This can be accomplished using the following line
 ```{r}
 tree$tip.label = substr(taxa_names(tree), 2, nchar(taxa_names(tree))-1)
+head(tree$tip.label)
 ```
 
 ### Download the representative sequences
@@ -79,19 +81,23 @@ Now that I have an uncompressed version of the file saved in as temporary (but k
 ```{r decompress}
 refseqs = readDNAStringSet(unzipped_rsfile)
 refseqs
+head(names(refseqs))
 ```
 
 We need to parse the "names" of each sequence entry in `refseq` such that they match the format of the OTU names in the other files. In this case, that means removing everything from the first space on. There are multiple ways to do this using R, and in the following code we use regular-expression pattern matching and substitution available in the `gsub` function.
 ```{r}
-names(refseqs) = gsub("(^[[:digit:]]{1,5})([[:space:]]{1,})([[:print:]]{0,}$)", "\\1", names(refseqs))
+names(refseqs) = gsub("(^[[:print:]]{7,13})([[:space:]]{1,})([[:print:]]{0,}$)", "\\1", names(refseqs))
+head(names(refseqs))
 ```
 
 
 ## Import the Data and Create phyloseq Object.
 I have included a timing function call so that you can see how long this large file took to import using my laptop. Also, the number of "chunks" is shown by the number of "dots" printed after the function call. Note that the phylogenetic tree was already imported, slightly modified in the previous code chunk, and we want this to provide this `tree` as the tree argument, rather than the raw tree file, which won't exactly match the `taxa_names` in the OTU-Tax file.
 
+We have actually already imported the tree and reference sequences as `tree` and `refseqs`, respectively; and we are merely passing them along to be included in the object that is output by `import_qiime`. The hard work and the bulk of the processing time for `import_qiime` will be parsing the OTU-abundance/taxonomy text file in RAM-manageable chunks, prior to combining with the other data components and storing as the phyloseq object, `HMPv35`.
+
 ```{r import-HMPv35}
-system.time(HMPv35 = import_qiime(temp_otutax, temp_map, tree, refseqs, chunk.size=2000L))
+system.time(HMPv35 <- import_qiime(temp_otutax, temp_map, tree, refseqs, chunk.size=2000L))
 ```
 
 ## Investigate Some Basic Features of HMPv35
@@ -107,9 +113,9 @@ sample_variables(HMPv35)
 Save `HMPv35` to an `".RData"`" file so that you don't have to run this import ever again. In the following example, I'm saving it to a particular directory I have synced with DropBox. Your preferred file path for saving R data may (and probably should) vary.
 
 ```{r}
-save(HMPv35, file="~/Dropbox/R/import_HMP_examples/HMPv35.RData")
+save(HMPv35, file="HMPv35.RData")
 ```
 
 ## Alternatively, Download the Processed File from Us
-We have already run this import code several times during testing and timing. This [already-imported `HMPv35` from QIIME output dataset](http://cloud.github.com/downloads/joey711/phyloseq/HMPv35.RData) is available from [the phyloseq downloads page](https://github.com/joey711/phyloseq/downloads). Happily, this file will load in very quickly compared with importing it again from the data files.
+We have already run this import code several times during testing and timing. This [already-imported `HMPv35` from QIIME output dataset](HMPv35.RData) is available from [the phyloseq downloads page](https://github.com/joey711/phyloseq/downloads). Happily, this file will load in very quickly compared with importing it again from the data files.
 

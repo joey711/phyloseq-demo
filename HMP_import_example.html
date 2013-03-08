@@ -1,13 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <!-- saved from url=(0014)about:internet -->
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<title>Example importing into <a href="http://joey711.github.com/phyloseq/">phyloseq</a> the files produced by <a href="http://qiime.org/">Qiime</a> run on <a href="http://hmpdacc.org/micro_analysis/microbiome_analyses.php">the HMPv35 dataset</a>, which is avilable from <a href="http://hmpdacc.org/">HMP-DACC</a>.</title>
-
-<base target="_blank"/>
+<title>Human Microbiome Project</title>
 
 <style type="text/css">
 body, td {
@@ -53,13 +50,14 @@ pre {
    margin-top: 0;
    max-width: 95%;
    border: 1px solid #ccc;
+   white-space: pre-wrap;
 }
 
 pre code {
    display: block; padding: 0.5em;
 }
 
-code.r {
+code.r, code.cpp {
    background-color: #F8F8F8;
 }
 
@@ -133,6 +131,7 @@ hr {
       page-break-after: avoid; 
    }
 }
+
 </style>
 
 <!-- Styles for R syntax highlighter -->
@@ -169,61 +168,82 @@ hr {
 
 <!-- R syntax highlighter -->
 <script type="text/javascript">
-var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
 hljs.initHighlightingOnLoad();
 </script>
 
-<!-- MathJax scripts -->
-<script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
+
 
 
 </head>
 
 <body>
-<p><link href="http://kevinburke.bitbucket.org/markdowncss/markdown.css" rel="stylesheet"></link></p>
+<p><link href="http://joey711.github.com/phyloseq/markdown.css" rel="stylesheet"></link></p>
 
-<h1>Example importing into <a href="http://joey711.github.com/phyloseq/">phyloseq</a> the files produced by <a href="http://qiime.org/">Qiime</a> run on <a href="http://hmpdacc.org/micro_analysis/microbiome_analyses.php">the HMPv35 dataset</a>, which is avilable from <a href="http://hmpdacc.org/">HMP-DACC</a>.</h1>
+<h1>Human Microbiome Project</h1>
+
+<p>Example importing into <a href="http://joey711.github.com/phyloseq/">phyloseq</a> the files produced by <a href="http://qiime.org/">Qiime</a> run on <a href="http://hmpdacc.org/micro_analysis/microbiome_analyses.php">the HMPv35 dataset</a>, which is avilable from <a href="http://hmpdacc.org/">HMP-DACC</a>. Even more specifically this data is from <a href="http://hmpdacc.org/HMQCP/">the HMP QIIME Community Profiling data page</a>. This is important to note because there are also &ldquo;parallel versions&rdquo; of this data <a href="http://hmpdacc.org/HMMCP/">generated by mothur</a> which could also be imported by phyloseq; and there are also a growing number of data links and displays added to the main HMP-DACC page that might otherwise obfuscate where this data came from. However, the precise links are shown in the code below. In this way we are demonstrating both the <code>import_qiime</code> function in phyloseq, as well as the import of web-facing data in general using R.</p>
 
 <p>Note that this is a document produced by <a href="http://cran.r-project.org/web/packages/markdown/index.html">the markdown package</a> from an <a href="http://rstudio.org/docs/authoring/using_markdown">R Markdown file</a>. Markdown is a simple formatting syntax for authoring web pages, and in this case the structure includes reproducible code.</p>
 
 <h2>Load <a href="http://joey711.github.com/phyloseq/">the phyloseq package</a></h2>
 
 <pre><code class="r">library(&quot;phyloseq&quot;)
+packageVersion(&quot;phyloseq&quot;)
 </code></pre>
 
-<h2>Download the Files to a Temporary Location</h2>
+<pre><code>## [1] &#39;1.3.20&#39;
+</code></pre>
 
-<p>Note that <code>R</code>&#39;s file handling is sophisticated enough that you do not need to unpack/unzip the <code>gz</code>- or <code>bz2</code>-compressed files. They are understood automatically.</p>
+<p>Because this demo includes an example of manually importing a Fasta-formatted DNA sequence file using a function from <a href="">the Biostrings package</a>, we will need to load that as well (it is already a phyloseq dependency, so nothing exotic here)</p>
 
-<h3>Download the OTU Abundance File.</h3>
+<pre><code class="r">library(&quot;Biostrings&quot;)
+packageVersion(&quot;Biostrings&quot;)
+</code></pre>
+
+<pre><code>## [1] &#39;2.26.3&#39;
+</code></pre>
+
+<p>As data sources could be updated (or their links removed), and the phyloseq package is itself under active development, I am posting here the date/time stamp that this demo was built, as extra compatibility metadata to supplement the package version numbers shown above</p>
+
+<pre><code class="r">date()
+</code></pre>
+
+<pre><code>## [1] &quot;Fri Mar  8 00:03:37 2013&quot;
+</code></pre>
+
+<h2>Download the files to a temporary location</h2>
+
+<p>Note that R&#39;s file handling is sophisticated enough that you do not need to unpack/unzip the <code>.gz</code>- or <code>.bz2</code>-compressed files. They are understood automatically.</p>
+
+<h3>Download the OTU abundance file</h3>
 
 <p>Create a temporary local file where there large otu-tax file will be downloaded and read-from.</p>
 
-<pre><code class="r">temp_otutax &lt;- tempfile()
-otu_url &lt;- &quot;http://downloads.hmpdacc.org/data/HMQCP/otu_table_psn_v35.txt.gz&quot;
+<pre><code class="r">temp_otutax = tempfile()
+otu_url = &quot;http://downloads.hmpdacc.org/data/HMQCP/otu_table_psn_v35.txt.gz&quot;
 download.file(otu_url, temp_otutax)
 </code></pre>
 
 <h3>Download the Sample Map File</h3>
 
-<pre><code class="r">temp_map &lt;- tempfile()
-map_url &lt;- &quot;http://downloads.hmpdacc.org/data/HMQCP/v35_map_uniquebyPSN.txt.bz2&quot;
+<pre><code class="r">temp_map = tempfile()
+map_url = &quot;http://downloads.hmpdacc.org/data/HMQCP/v35_map_uniquebyPSN.txt.bz2&quot;
 download.file(map_url, temp_map)
+temp_map = bzfile(temp_map)
 </code></pre>
 
-<h3>Download the Temporary Tree.</h3>
+<h3>Download the phylogenetic tree</h3>
 
-<pre><code class="r">temp_tree &lt;- tempfile()
-tree_url &lt;- &quot;http://downloads.hmpdacc.org/data/HMQCP/rep_set_v35.tre.gz&quot;
+<pre><code class="r">temp_tree = tempfile()
+tree_url = &quot;http://downloads.hmpdacc.org/data/HMQCP/rep_set_v35.tre.gz&quot;
 download.file(tree_url, temp_tree)
 </code></pre>
 
-<p>It turns out that the tree has weird quotes added around tip names, for example</p>
+<p>It turns out that the tree has weird quotes added around tip names, for example. The following will read the <code>.gz</code> tree directly (no extra uncompression step needed).</p>
 
-<pre><code class="r"># Read .gz tree directly (no extra uncompression step needed)
-HMPv35.tree &lt;- readTree(temp_tree)
-head(species.names(HMPv35.tree))
+<pre><code class="r">tree = read_tree(temp_tree)
+head(taxa_names(tree))
 </code></pre>
 
 <pre><code>## [1] &quot;&#39;OTU_97.15099&#39;&quot; &quot;&#39;OTU_97.13686&#39;&quot; &quot;&#39;OTU_97.30326&#39;&quot; &quot;&#39;OTU_97.26112&#39;&quot;
@@ -232,16 +252,88 @@ head(species.names(HMPv35.tree))
 
 <p>These extra quotes ( <code>&quot;&#39;&quot;</code> ) must be removed/replaced. This can be accomplished using the following line</p>
 
-<pre><code class="r">HMPv35.tree$tip.label &lt;- substr(species.names(HMPv35.tree), 2, nchar(species.names(HMPv35.tree)) - 
-    1)
+<pre><code class="r">tree$tip.label = substr(taxa_names(tree), 2, nchar(taxa_names(tree)) - 1)
+head(tree$tip.label)
+</code></pre>
+
+<pre><code>## [1] &quot;OTU_97.15099&quot; &quot;OTU_97.13686&quot; &quot;OTU_97.30326&quot; &quot;OTU_97.26112&quot;
+## [5] &quot;OTU_97.34719&quot; &quot;OTU_97.12776&quot;
+</code></pre>
+
+<h3>Download the representative sequences</h3>
+
+<p>Unfortunately, the <code>readDNAStringSet</code> function for importing the representative sequences &ndash; which we will call <code>refseq</code> (for &ldquo;reference sequences&rdquo;) &ndash; does not accept standard R file connections for reading files, possibly because it is performing the parsing at a very low level? In any case, unlike the other files we are importing, this must be unzipped first to an uncompressed <code>.fna</code> file, before we read and parse.</p>
+
+<pre><code class="r">zipped_refseq = tempfile()
+refseq_url = &quot;http://downloads.hmpdacc.org/data/HMQCP/rep_set_v35.fna.gz&quot;
+download.file(refseq_url, zipped_refseq)
+</code></pre>
+
+<p>I use the <code>gzfile</code> function to open an R connection to the <code>.gz</code> compressed representative sequence file that we just downloaded. Then, use <code>readLines</code> and <code>writeLines</code> to essentially &ldquo;pipe&rdquo; this uncompressed to our second temporary file, called <code>unzipped_rsfile</code>.</p>
+
+<pre><code class="r">unzipped_rsfile = tempfile()
+refseqgzcon = gzfile(zipped_refseq)
+writeLines(readLines(refseqgzcon), unzipped_rsfile)
+</code></pre>
+
+<p>Now that I have an uncompressed version of the file saved in as temporary (but known) file, I can use the <code>readDNAStringSet</code> function without error and store the initial import result as the object, <code>refseq</code>.</p>
+
+<pre><code class="r">refseqs = readDNAStringSet(unzipped_rsfile)
+refseqs
+</code></pre>
+
+<pre><code>##   A DNAStringSet instance of length 45411
+##         width seq                                      names               
+##     [1]   529 TTCAACCCTGCGGTCGTAC...TCGGTCGAGGTTGCCCCC OTU_97.1 SRS01635...
+##     [2]   523 TTTAATTCTTGCGACCGTA...GACACGCGGCATGGCTGG OTU_97.10 SRS0174...
+##     [3]   525 TTCACCGTTGCCGGCGTAC...TGGTTCAGACTCTCGTCC OTU_97.100 SRS020...
+##     [4]   530 TTTAATCTTGCGACCGTAC...ATCAGGGTTCCCCCCTAC OTU_97.1000 SRS01...
+##     [5]   552 TTCACACTTGCGTGCGTAC...ACTTCCCCTACTCGTCCG OTU_97.10000 SRS0...
+##     [6]   549 TTTAGCCTTGCGGCCGTAC...AATATTCCCCACTGCTCG OTU_97.10001 SRS0...
+##     [7]   516 TTTAATCTTGCGACCGTAC...CGACACGACGCGACTGCG OTU_97.10002 SRS0...
+##     [8]   507 TTCACCGTTGCCGGCGTAC...AGTCACTCCTTCACGACG OTU_97.10003 SRS0...
+##     [9]   508 TTCTAACCTTGCGGTCGTA...AAACCTTCTTCACTCACG OTU_97.10004 SRS0...
+##     ...   ... ...
+## [45403]   535 TTTAGCCTTGCGGCCGTAC...TCGTGCAATATTCCCCAC OTU_97.9991 SRS01...
+## [45404]   532 TTCAACCTTGCGGTCGTAC...CGCGCAATACTTCCCTAC OTU_97.9992 SRS01...
+## [45405]   536 TTCAACCTTGCGGCCGTAC...CCCAATATTCCCCACTGC OTU_97.9993 SRS01...
+## [45406]   529 TTCATTCTTGCGAACGTAC...CATTGTGCATACTTCCCC OTU_97.9994 SRS05...
+## [45407]   500 TTCAGCCTTGCGGCCGTAC...ACACAGAATTTGCTGGAC OTU_97.9995 SRS01...
+## [45408]   512 TTCACCGTTGCCGGCGTAC...CGCTACTTGGCTGGTTAC OTU_97.9996 SRS01...
+## [45409]   518 TTCACCGTTGCCGGCGTAC...TACTTGGCTGGTCAGTAC OTU_97.9997 SRS02...
+## [45410]   513 TTCACCGTTGCCGGCGTAC...GCTACTTGGCTGGTTCAG OTU_97.9998 SRS01...
+## [45411]   521 TTTAGTCTTGCGACCGTAC...TTCTACACCACGCGGTAC OTU_97.9999 SRS01...
+</code></pre>
+
+<pre><code class="r">head(names(refseqs))
+</code></pre>
+
+<pre><code>## [1] &quot;OTU_97.1 SRS016352.SRX019682_1573637534&quot;    
+## [2] &quot;OTU_97.10 SRS017406.SRX019635_1429133723&quot;   
+## [3] &quot;OTU_97.100 SRS020032.SRX019636_433516183&quot;   
+## [4] &quot;OTU_97.1000 SRS016352.SRX019682_1573635514&quot; 
+## [5] &quot;OTU_97.10000 SRS013510.SRX019689_872338221&quot; 
+## [6] &quot;OTU_97.10001 SRS024422.SRX019635_1668339487&quot;
+</code></pre>
+
+<p>We need to parse the &ldquo;names&rdquo; of each sequence entry in <code>refseq</code> such that they match the format of the OTU names in the other files. In this case, that means removing everything from the first space on. There are multiple ways to do this using R, and in the following code we use regular-expression pattern matching and substitution available in the <code>gsub</code> function.</p>
+
+<pre><code class="r">names(refseqs) = gsub(&quot;(^[[:print:]]{7,13})([[:space:]]{1,})([[:print:]]{0,}$)&quot;, 
+    &quot;\\1&quot;, names(refseqs))
+head(names(refseqs))
+</code></pre>
+
+<pre><code>## [1] &quot;OTU_97.1&quot;     &quot;OTU_97.10&quot;    &quot;OTU_97.100&quot;   &quot;OTU_97.1000&quot; 
+## [5] &quot;OTU_97.10000&quot; &quot;OTU_97.10001&quot;
 </code></pre>
 
 <h2>Import the Data and Create phyloseq Object.</h2>
 
-<p>I have included a timing function call so that you can see how long this large file took to import using my laptop. Also, the number of &ldquo;chunks&rdquo; is shown by the number of &ldquo;dots&rdquo; printed after the function call. Note that the phylogenetic tree was already imported, slightly modified in the previous code chunk, and we want this to provide this <code>HMPv35.tree</code> as the tree argument, rather than the raw tree file, which won&#39;t exactly match the <code>species.names</code> in the OTU-Tax file.</p>
+<p>I have included a timing function call so that you can see how long this large file took to import using my laptop. Also, the number of &ldquo;chunks&rdquo; is shown by the number of &ldquo;dots&rdquo; printed after the function call. Note that the phylogenetic tree was already imported, slightly modified in the previous code chunk, and we want this to provide this <code>tree</code> as the tree argument, rather than the raw tree file, which won&#39;t exactly match the <code>taxa_names</code> in the OTU-Tax file.</p>
 
-<pre><code class="r">system.time(HMPv35 &lt;- import_qiime(temp_otutax, temp_map, HMPv35.tree, 
-    chunk.size = 2000L))
+<p>We have actually already imported the tree and reference sequences as <code>tree</code> and <code>refseqs</code>, respectively; and we are merely passing them along to be included in the object that is output by <code>import_qiime</code>. The hard work and the bulk of the processing time for <code>import_qiime</code> will be parsing the OTU-abundance/taxonomy text file in RAM-manageable chunks, prior to combining with the other data components and storing as the phyloseq object, <code>HMPv35</code>.</p>
+
+<pre><code class="r">system.time(HMPv35 &lt;- import_qiime(temp_otutax, temp_map, tree, refseqs, chunk.size = 2000L))
 </code></pre>
 
 <pre><code>## Processing map file...
@@ -251,18 +343,1001 @@ head(species.names(HMPv35.tree))
 ## 
 ## Building OTU Table in chunks. Each chunk is one dot.
 ## .......................Building Taxonomy Table...
-## Processing phylogenetic tree file...
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Warning: No greengenes prefixes were found.  Consider using
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
+</code></pre>
+
+<pre><code>## Processing phylogenetic tree...
+## Processing Reference Sequences...
 </code></pre>
 
 <pre><code>##    user  system elapsed 
-##   663.4   311.6  2139.8 
+##   669.0   383.9  2174.1
 </code></pre>
 
 <h2>Investigate Some Basic Features of HMPv35</h2>
 
 <p>For more advanced tools for exploring the data, see <a href="http://joey711.github.com/phyloseq/">additional phyloseq documentation</a></p>
 
-<pre><code class="r">nspecies(HMPv35)
+<pre><code class="r">ntaxa(HMPv35)
 </code></pre>
 
 <pre><code>## [1] 45336
@@ -274,25 +1349,26 @@ head(species.names(HMPv35.tree))
 <pre><code>## [1] 4743
 </code></pre>
 
-<pre><code class="r">sample.variables(HMPv35)
+<pre><code class="r">sample_variables(HMPv35)
 </code></pre>
 
 <pre><code>## [1] &quot;X.SampleID&quot;     &quot;RSID&quot;           &quot;visitno&quot;        &quot;sex&quot;           
 ## [5] &quot;RUNCENTER&quot;      &quot;HMPbodysubsite&quot; &quot;Mislabeled&quot;     &quot;Contaminated&quot;  
-## [9] &quot;Description&quot;   
+## [9] &quot;Description&quot;
 </code></pre>
 
 <h2>Save HMPv35 to an RData File</h2>
 
-<p>Save <code>HMPv35</code> to an <code>&quot;.RData&quot;</code>&ldquo; file so that you don&#39;t have to run this import ever again.</p>
+<p>Save <code>HMPv35</code> to an <code>&quot;.RData&quot;</code>&ldquo; file so that you don&#39;t have to run this import ever again. In the following example, I&#39;m saving it to a particular directory I have synced with DropBox. Your preferred file path for saving R data may (and probably should) vary.</p>
 
-<pre><code class="r">save(HMPv35, file = &quot;~/Dropbox/R/import_HMP_examples/HMPv35.RData&quot;)
+<pre><code class="r">save(HMPv35, file = &quot;HMPv35.RData&quot;)
 </code></pre>
 
 <h2>Alternatively, Download the Processed File from Us</h2>
 
-<p>We have already run this import code several times during testing and timing. This <a href="http://cloud.github.com/downloads/joey711/phyloseq/HMPv35.RData">already-imported <code>HMPv35</code> from QIIME output dataset</a> is available from <a href="https://github.com/joey711/phyloseq/downloads">the phyloseq downloads page</a>.  Happily, this file will load in very quickly compared with importing it again from the data files.</p>
+<p>We have already run this import code several times during testing and timing. This <a href="http://cloud.github.com/downloads/joey711/phyloseq/HMPv35.RData">already-imported <code>HMPv35</code> from QIIME output dataset</a> is available from <a href="https://github.com/joey711/phyloseq/downloads">the phyloseq downloads page</a>. Happily, this file will load in very quickly compared with importing it again from the data files.</p>
 
 </body>
 
 </html>
+
