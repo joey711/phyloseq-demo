@@ -2,17 +2,22 @@
 <link href="http://joey711.github.com/phyloseq/markdown.css" rel="stylesheet"></link>
 
 ## Load phyloseq package
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library("phyloseq"); packageVersion("phyloseq")
+date()
 ```
 
 ## Load pre-imported HMPv35 data
 The data was previously imported when [the HMP import demo](HMP_import_example.html) was interpreted and built. At the end of that demo is a `save` command that stores the `HMPv35` R data object in a compact R binary form that is easy to re-load back into R. That same data file is posted on [the phyloseq downloads page]("http://cloud.github.com/downloads/joey711/phyloseq/").
 ```{r}
 temp_hmp_file <- tempfile()
-hmp_url <- "http://cloud.github.com/downloads/joey711/phyloseq/HMPv35.RData"
+hmp_url <- "HMPv35.RData"
 download.file(hmp_url, temp_hmp_file)
-load(temp_hmp_file)
+system.time(load(temp_hmp_file))
+```
+If the file is stored locally
+```{r}
+system.time(load("HMPv35.RData"))
 ```
 
 ### Clean up.
@@ -35,17 +40,17 @@ rank.names(HMPv35)
 
 Here is a way to check for the presence of particular taxonomic elements in the dataset.
 ```{r}
-all(as(taxTab(HMPv35), "matrix")[1:1000, 1] == "Root")
-any( "p__Crenarchaeota" %in% as(taxTab(HMPv35), "matrix")[1:1000, 2] )
-any( "p__Bacteroidetes" %in% as(taxTab(HMPv35), "matrix")[1:1000, 2] )
+all(as(tax_table(HMPv35), "matrix")[1:1000, 1] == "Root")
+any( "p__Crenarchaeota" %in% as(tax_table(HMPv35), "matrix")[1:1000, 2] )
+any( "p__Bacteroidetes" %in% as(tax_table(HMPv35), "matrix")[1:1000, 2] )
 ```
 
 Is the tree rooted?
 ```{r}
-is.rooted(tre(HMPv35))
+is.rooted(phy_tree(HMPv35))
 ```
 
 This is how you would randomly select an OTU as outgroup to root the tree:
 ```{r}
-root(tre(HMPv35), sample(species.names(HMPv35), 1), resolve.root=TRUE)
+root(phy_tree(HMPv35), sample(taxa_names(HMPv35), 1), resolve.root=TRUE)
 ```
