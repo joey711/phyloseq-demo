@@ -4,7 +4,7 @@
 The phyloseq Demo Index
 ========================================================
 
-This page is automagically updated when I do a periodic full rebuild of the phyloseq demo pages. The date of this particular re-build is Thu Mar  7 23:01:23 2013.
+This page is automagically updated when I do a periodic full rebuild of the phyloseq demo pages. The date of this particular re-build is Thu Mar  7 23:19:25 2013.
 
 Don't forget to checkout [the phyloseq main page](joey711.github.com/phyloseq) for core tutorials.
 
@@ -24,6 +24,8 @@ Don't forget to checkout [the phyloseq main page](joey711.github.com/phyloseq) f
 
 ### [phyloseq-demo](phyloseq-demo.html)
 
+### [unifrac](unifrac.html)
+
 
 
 ---
@@ -39,4 +41,6 @@ For more advanced users interested in seeing and/or modifying the [R markdown](h
 ### [load_hmp_example](load_hmp_example.rmd)
 
 ### [phyloseq-demo](phyloseq-demo.rmd)
+
+### [unifrac](unifrac.rmd)
 
