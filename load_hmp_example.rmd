@@ -9,48 +9,49 @@ date()
 
 ## Load pre-imported HMPv35 data
 The data was previously imported when [the HMP import demo](HMP_import_example.html) was interpreted and built. At the end of that demo is a `save` command that stores the `HMPv35` R data object in a compact R binary form that is easy to re-load back into R. That same data file is posted on [the phyloseq downloads page]("http://cloud.github.com/downloads/joey711/phyloseq/").
-```{r}
-temp_hmp_file <- tempfile()
-hmp_url <- "HMPv35.RData"
-download.file(hmp_url, temp_hmp_file)
-system.time(load(temp_hmp_file))
-```
-If the file is stored locally
+
+If you've already downloaded [the HMPv35.RData binary file](https://raw.github.com/joey711/phyloseq-demo/gh-pages/HMPv35.RData) to the working directory of your current R session, then you can easily `load` the `HMPv35` data into your workspace roughly 100X faster than to re-import the data from the raw files:
 ```{r}
 system.time(load("HMPv35.RData"))
 ```
 
-### Clean up.
-```{r}
-unlink(temp_hmp_file)
-rm("hmp_url", "temp_hmp_file")
-```
 
 ### Investigate the phyloseq-class representation of the data
 ```{r}
-show(HMPv35)
+HMPv35
 ```
-
-### For example, what if we wanted to root the tree?
-These rank names need to be fixed. Must not have been clear during the import. This will be updated soon. The result is the default generic names added when none are provided during the import. In this case, they should be a character vector with elements like "Root", "Phylum", "Class", etc.
-
 ```{r}
-rank.names(HMPv35)
+rank_names(HMPv35)
 ```
 
 Here is a way to check for the presence of particular taxonomic elements in the dataset.
 ```{r}
-all(as(tax_table(HMPv35), "matrix")[1:1000, 1] == "Root")
-any( "p__Crenarchaeota" %in% as(tax_table(HMPv35), "matrix")[1:1000, 2] )
-any( "p__Bacteroidetes" %in% as(tax_table(HMPv35), "matrix")[1:1000, 2] )
+all( tax_table(HMPv35)[, "Rank1"] == "Root" )
+any( "Crenarchaeota" %in% tax_table(HMPv35)[, "Phylum"] )
+any( "Bacteroidetes" %in% tax_table(HMPv35)[, "Phylum"] )
+any( "Firmicutes" %in% tax_table(HMPv35)[, "Phylum"] )
 ```
 
+
+### Root the tree
 Is the tree rooted?
 ```{r}
 is.rooted(phy_tree(HMPv35))
 ```
 
-This is how you would randomly select an OTU as outgroup to root the tree:
+This is how you could root (verb) the tree in `HMPv35` by randomly selecting an OTU as outgroup to root the tree
 ```{r}
-root(phy_tree(HMPv35), sample(taxa_names(HMPv35), 1), resolve.root=TRUE)
+phy_tree(HMPv35) = root(phy_tree(HMPv35), sample(taxa_names(HMPv35), 1), resolve.root=TRUE)
+phy_tree(HMPv35)
 ```
+
+
+### Richness
+```{r HMPv35-richness-plot, fig.width=16}
+sample_variables(HMPv35)
+levels(sample_data(HMPv35)$HMPbodysubsite)
+HMPv35saliva = subset_samples(HMPv35, HMPbodysubsite=="Saliva")
+HMPv35saliva
+# plot_richness(HMPv35, x="HMPbodysubsite", color="sex")
+```
+
