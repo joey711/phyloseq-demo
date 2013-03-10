@@ -195,7 +195,7 @@ for( N in Ntaxa ){
 
 That part takes a long time. Save the data before plotting. Plotting is quick
 ```{r middle-save}
-save.image(save.data.name)
+save.image(save.data.name, compress="bzip2")
 ```
 
 #### Now build final data.frame of results
@@ -245,6 +245,6 @@ p
 
 Save the workspace for later.
 ```{r}
-save.image(save.data.name)
+save.image(save.data.name, compress="bzip2")
 ```
 
