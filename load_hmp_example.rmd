@@ -1,13 +1,15 @@
 `r opts_chunk$set(cache=TRUE, fig.width=8)`
 <link href="http://joey711.github.com/phyloseq/markdown.css" rel="stylesheet"></link>
 
+# Load pre-imported HMPv35 data
+
 ## Load phyloseq package
 ```{r, message=FALSE, warning=FALSE}
 library("phyloseq"); packageVersion("phyloseq")
 date()
 ```
 
-## Load pre-imported HMPv35 data
+## Load HMP data
 The data was previously imported when [the HMP import demo](HMP_import_example.html) was interpreted and built. At the end of that demo is a `save` command that stores the `HMPv35` R data object in a compact R binary form that is easy to re-load back into R. That same data file is posted on [the phyloseq downloads page]("http://cloud.github.com/downloads/joey711/phyloseq/").
 
 If you've already downloaded [the HMPv35.RData binary file](https://raw.github.com/joey711/phyloseq-demo/gh-pages/HMPv35.RData) to the working directory of your current R session, then you can easily `load` the `HMPv35` data into your workspace roughly 100X faster than to re-import the data from the raw files:
