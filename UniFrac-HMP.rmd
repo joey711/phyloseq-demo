@@ -3,19 +3,90 @@
 
 # Fast Parallel UniFrac on HMP data
 
-This is not yet built. Will be pretty straightforward. Want to show speed gains of parallelization as samples increase (as opposed to OTUs). 
+Demonstrate speed gains of parallelization as samples increase, as a complement to the computation-time versus number of OTUs taht was investigated in [the main fast parallel UniFrac demo](unifrac).
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring web pages (click the **MD** toolbar button for help on Markdown).
+Date this demo was built: `r date()`.
 
-When you click the **Knit HTML** button a web page will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r}
-summary(cars)
+## Load phyloseq and other packages
+Check your version number.
+```{r loadpkg, warning=FALSE, message=FALSE}
+library("phyloseq"); packageVersion("phyloseq")
+library("ggplot2"); packageVersion("ggplot2")
+library("doParallel"); packageVersion("doParallel")
+library("foreach"); packageVersion("foreach")
 ```
 
-You can also embed plots, for example:
+Define a default theme for ggplot graphics.
+```{r gplot-theme}
+theme_set(theme_bw())
+fontsize = 18L
+theme_update(axis.title.x = element_text(size=fontsize))
+theme_update(axis.title.y = element_text(size=fontsize))
+theme_update(plot.title = element_text(size=fontsize+2))
+```
 
-```{r fig.width=7, fig.height=6}
-plot(cars)
+## Load HMP data
+The data was previously imported when [the HMP import demo](HMP_import_example.html) was interpreted and built. At the end of that demo is a `save` command that stores the `HMPv35` R data object in a compact R binary form that is easy to re-load back into R. That same data file is saved in the phyloseq-demo repository [here](https://raw.github.com/joey711/phyloseq-demo/gh-pages/HMPv35.RData).
+
+If you've already downloaded [the HMPv35.RData binary file](https://raw.github.com/joey711/phyloseq-demo/gh-pages/HMPv35.RData) to the working directory of your current R session, then you can easily `load` the `HMPv35` data into your workspace more than 100X faster than to re-import the data from the raw files:
+```{r}
+system.time(load("HMPv35.RData"))
+```
+
+## Computing Time Example #2
+Compute-time versus number of samples. We will start by setting the number of OTUs to something more manageable than `r ntaxa(HMPv35)`, as well as some other parameters for this trial.
+
+#### Parameters
+Set parameteres for the time trial.
+
+The number of OTUs to include in the time-trial dataset
+```{r params-ntaxa}
+ntaxa = 500L
+```
+
+The minimum number of reads required of a sample in order to keep it in the dataset.
+```{r params-minreads}
+minreads = 100L
+```
+
+The file to save R workspace to at the end of this demo.
+```{r params-savename}
+save.data.name = "UniFrac-HMP.RData"
+```
+Threshold, in seconds. The maximum allowed time for one trial. Trials will not be conducted for that argument combination after this amount of time...
+```{r params-threshold}
+threshold = 30
+```
+Number of cores to use for parallel trials
+```{r params-ncores}
+Ncores = 3
+```
+
+#### Prune to top taxa
+
+Prune `HMPv35` to just the top `r ntaxa` most abundant OTUs in the dataset. In practice, it would make sense to transform the abundance table to even sampling depth prior to doing this so that the taxa included among the top `r ntaxa` are not skewed by gross over-sequencing of a subset of samples. In this demo, however, we are not so concerned with the results of the UniFrac calculation, but rather the time that the computation requires.
+```{r prune-HMPv35}
+hmp = prune_taxa(names(sort(taxa_sums(HMPv35), decreasing=TRUE)[1:ntaxa]), HMPv35)
+```
+
+If there are any samples that have very few OTUs, less than the `minreads` parameter above (`r minreads`), remove those samples.
+```{r hmp-rm-empty-samples}
+hmp = prune_samples(sample_sums(hmp) < minreads, hmp)
+```
+
+Now that we've created a smaller "slice" of `HMPv35`, we can remove it from our workspace to conserve RAM. 
+```{r rm-HMPv35}
+rm(HMPv35)
+```
+
+
+#### Sampling Steps
+
+Create a vector of the numbers of samples, `Nsamples`, and then create a list of phyloseq objects for each one. Will loop on the list. Defines a vector of the number of **samples** to include at each calculation step.
+```{r params-Nsamples}
+Nsamples <- c(seq(100, 500, 100), seq(600, samples(hmp), 500), nsamples(hmp))
+Nsamples
+physeq_list <- vector("list", length(Nsamples))
+names(physeq_list) <- as.character(Nsamples)
 ```
 

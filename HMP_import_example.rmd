@@ -56,9 +56,9 @@ tree = read_tree(temp_tree)
 head(taxa_names(tree))
 ```
 
-These extra quotes ( `"'"` ) must be removed/replaced. This can be accomplished using the following line
+These extra quotes ( `"'"` ) must be removed/replaced. This can be accomplished using the following `gsub` command. Even for `r ntaxa(tree)` OTUs this is very fast.
 ```{r}
-tree$tip.label = substr(taxa_names(tree), 2, nchar(taxa_names(tree))-1)
+tree$tip.label <- gsub("\'", "", tree$tip.label, fixed=TRUE)
 head(tree$tip.label)
 ```
 
