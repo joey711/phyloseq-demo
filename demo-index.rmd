@@ -12,7 +12,7 @@ Don't forget to checkout [the phyloseq main page](joey711.github.com/phyloseq) f
 ## Available demos
 
 ```{r find-parse-demos, echo=FALSE, include=FALSE}
-files = list.files(pattern=".rmd")
+files = list.files(pattern=".[Rr]md")
 length(files)
 names(files) = unlist(strsplit(files, ".rmd", TRUE))
 links = paste(names(files), ".html", sep="")
