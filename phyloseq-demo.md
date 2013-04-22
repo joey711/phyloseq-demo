@@ -37,7 +37,7 @@ There is a GitHub-hosted [issue-tracker for phyloseq](https://github.com/joey711
 ---
 
 # [Installation](http://joey711.github.io/phyloseq/install)
-The phyloseq package is under active development. Users are encouraged to update their version [to the latest phyloseq development release on GitHub](joey711.github.com/phyloseq) for the access to the latest fixes/features. The most stable releases and development versions of phyloseq are hosted by Bioconductor. Please see [the official installation tutorial](http://joey711.github.com/phyloseq/install) for further details.
+The phyloseq package is under active development. Users are encouraged to update their version [to the latest phyloseq development release on GitHub](https://github.com/joey711/phyloseq) for the access to the latest fixes/features. The most stable releases and development versions of phyloseq are hosted by Bioconductor. Please see [the official installation tutorial](http://joey711.github.com/phyloseq/install) for further details.
 
 
 ---
@@ -712,8 +712,8 @@ UniFrac(eso)
 
 ```
 ##        B      C
-## C 0.4969       
-## D 0.6255 0.6624
+## C 0.5877       
+## D 0.5796 0.6188
 ```
 
 ```r
@@ -847,7 +847,7 @@ topp(0.1)
 ## 		if(na.rm){x = x[!is.na(x)]}
 ## 		x >= sort(x, decreasing=TRUE)[ceiling(length(x)*p)]
 ##     }
-## <environment: 0x10edba580>
+## <environment: 0x10edbc920>
 ```
 
 ```r
@@ -865,7 +865,7 @@ print(f1)
 ##     }
 ##     return(fval)
 ## }
-## <environment: 0x10e9c3fc0>
+## <environment: 0x10e9c7308>
 ## attr(,"class")
 ## [1] "filterfun"
 ```
@@ -1154,7 +1154,7 @@ plot_ordination(GP2, ordinate(GP2, "CCA"), type = "split", color = "SampleType",
 p4title = "Bushman dataset, PCoA/MDS ordination on Bray-Curtis distance"
 Bushman.ord = ordinate(Bushman, method = "MDS", distance = "bray")
 plot_ordination(Bushman, Bushman.ord, "samples", color = "OMEGA3_FATTY_ACIDS_G_AVE", 
-    title = p4title)
+    title = p4title) + geom_point(size = 4)
 ```
 
 ![plot of chunk Bushman-MDS-bray](figure/Bushman-MDS-bray.png) 
@@ -1484,12 +1484,12 @@ gskmn
 ## B=50 simulated reference sets, k = 1..6
 ##  --> Number of clusters (method 'firstSEmax', SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.751 1.206 0.02203
-## [2,] 3.720  5.196 1.476 0.02094
-## [3,] 3.428  4.934 1.506 0.01894
-## [4,] 3.301  4.781 1.480 0.01896
-## [5,] 3.100  4.683 1.583 0.02096
-## [6,] 2.957  4.600 1.643 0.02057
+## [1,] 4.544  5.746 1.201 0.02036
+## [2,] 3.720  5.187 1.467 0.02021
+## [3,] 3.428  4.926 1.498 0.02091
+## [4,] 3.301  4.779 1.478 0.02173
+## [5,] 3.100  4.678 1.578 0.02015
+## [6,] 2.957  4.591 1.634 0.01934
 ```
 
 
@@ -1544,12 +1544,12 @@ print(gs, method = "Tibs2001SEmax")
 ## B=50 simulated reference sets, k = 1..6
 ##  --> Number of clusters (method 'Tibs2001SEmax', SE.factor=1): 3
 ##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.747 1.203 0.02177
-## [2,] 3.720  5.191 1.472 0.02060
-## [3,] 3.428  4.925 1.497 0.02116
-## [4,] 3.301  4.785 1.484 0.02350
-## [5,] 3.100  4.686 1.585 0.02351
-## [6,] 2.957  4.599 1.642 0.02191
+## [1,] 4.544  5.740 1.196 0.02158
+## [2,] 3.720  5.190 1.470 0.02006
+## [3,] 3.428  4.929 1.502 0.01740
+## [4,] 3.301  4.781 1.480 0.02215
+## [5,] 3.100  4.684 1.584 0.02258
+## [6,] 2.957  4.597 1.639 0.02189
 ```
 
 ```r

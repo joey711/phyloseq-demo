@@ -37,7 +37,7 @@ There is a GitHub-hosted [issue-tracker for phyloseq](https://github.com/joey711
 ---
 
 # [Installation](http://joey711.github.io/phyloseq/install)
-The phyloseq package is under active development. Users are encouraged to update their version [to the latest phyloseq development release on GitHub](joey711.github.com/phyloseq) for the access to the latest fixes/features. The most stable releases and development versions of phyloseq are hosted by Bioconductor. Please see [the official installation tutorial](http://joey711.github.com/phyloseq/install) for further details.
+The phyloseq package is under active development. Users are encouraged to update their version [to the latest phyloseq development release on GitHub](https://github.com/joey711/phyloseq) for the access to the latest fixes/features. The most stable releases and development versions of phyloseq are hosted by Bioconductor. Please see [the official installation tutorial](http://joey711.github.com/phyloseq/install) for further details.
 
 
 ---
@@ -653,11 +653,9 @@ We are going to use the multtest wrapper included in phyloseq, `mt`. Try `?mt` f
 GP.fwer.table = mt(GP3f, "human")
 ```
 
-No add some taxonomic columns to the result for interpretation (rows are OTUs)
+Let's presume you are interested in those OTUs with an adjusted P-value below `r alpha=0.05`.
 ```{r}
-jranks = c("Phylum", "Family", "Genus")
-GP.fwer.table = data.frame(GP.fwer.table, tax_table(GP3f)[rownames(GP.fwer.table), jranks])
-subset(GP.fwer.table, adjp < 0.05)
+subset(GP.fwer.table, adjp < alpha)
 ```
 
 
@@ -677,10 +675,9 @@ p.mtm = mt.rawp2adjp(mtm[order(mtm[,"index"]), "rawp"], procedure)
 # Re-order so that you can return original table
 # (ordered p-value table)
 p.adjp.ord = p.mtm$adjp[order(p.mtm$index), ]
-# Give it the original row names from m
-rownames(p.adjp.ord) = taxa_names(GP3f)
+
 # Return the table of adjusted p-values for each hypothesis.
-GP3f.mt.table = data.frame(p.adjp.ord, tax_table(GP3f)[rownames(p.adjp.ord), jranks])
+GP3f.mt.table = data.frame(p.adjp.ord, ])
 # Re-rorder based on BH
 GP3f.mt.table = GP3f.mt.table[order(GP3f.mt.table[, "BH"]), ]
 subset(GP3f.mt.table, BH < 0.05)
