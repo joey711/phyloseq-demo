@@ -14,14 +14,14 @@ date()
 ```
 
 ```
-## [1] "Tue Apr 30 17:42:09 2013"
+## [1] "Tue Apr 30 23:36:31 2013"
 ```
 
 
 <img src="http://www.plosone.org/article/info:doi/10.1371/journal.pone.0028132.g003/largerimage" width="750px" />
 
-**(Figure 3 in orig Tue Apr 30 17:47:45 2013
-Light blue indicates low abundance while dark blue indicates high abundance of taxa. **Panel A** Although skin-associated taxa (Propionibacteriaceae, Corynebacteriaceae, Staphylococcaceae and Streptococcaceae) were abundant on all surfaces, they were relatively more abundant on surfaces routinely touched with hands. **Panel B** Gut-associated taxa (Clostridiales, Clostridiales group XI, Ruminococcaceae, Lachnospiraceae, Prevotellaceae and Bacteroidaceae) were most abundant on toilet surfaces. **Panel C** Although soil-associated taxa (Rhodobacteraceae, Rhizobiales, Microbacteriaceae and Nocardioidaceae) were in low abundance on all restroom surfaces, they were relatively more abundant on the floor of the restrooms we surveyed. Figure not drawn to scale.
+**(Figure 3 in orig Tue Apr 30 23:36:31 2013
+surfaces, they were relatively more abundant on surfaces routinely touched with hands. **Panel B** Gut-associated taxa (Clostridiales, Clostridiales group XI, Ruminococcaceae, Lachnospiraceae, Prevotellaceae and Bacteroidaceae) were most abundant on toilet surfaces. **Panel C** Although soil-associated taxa (Rhodobacteraceae, Rhizobiales, Microbacteriaceae and Nocardioidaceae) were in low abundance on all restroom surfaces, they were relatively more abundant on the floor of the restrooms we surveyed. Figure not drawn to scale.
 You can also check out [this image at the original article](http://www.ncbi.nlm.nih.gov/core/lw/2.0/html/tileshop_pmc/tileshop_pmc_inline.html?title=Click%20on%20image%20to%20zoom&p=PMC3&id=3223236_pone.0028132.g003.jpg).
 
 
@@ -167,31 +167,7 @@ sum(taxa_sums(restroom) == 0)
 ## [1] 1040
 ```
 
-So of the 
-
-```
-
-Error in eval(expr, envir, enclos) : could not find function "ntaxa"
-
-```
-
- OTUs in the dataset, there were 
-
-```
-
-Error in eval(expr, envir, enclos) : could not find function "taxa_sums"
-
-```
-
- OTUs that were apparently not observed even once in any of the samples (
-
-```
-
-Error in eval(expr, envir, enclos) : could not find function "taxa_sums"
-
-```
-
-%). This sounds very odd, but more likely this is evidence of some data "massaging" that removed the abundance values of those taxa, but their entries in the `.biom` file are inexplicably included.
+So of the 4467 OTUs in the dataset, there were 1040 OTUs that were apparently not observed even once in any of the samples (20%). This sounds very odd, but more likely this is evidence of some data "massaging" that removed the abundance values of those taxa, but their entries in the `.biom` file are inexplicably included.
 
 Here I remove those "unobserved" OTUs. Note how I first save the originally-imported data as `restroom0` in case I want to go back to it after modifying/preprocessing `restroom`.
 
@@ -245,15 +221,7 @@ restroom = prune_samples(sample_sums(restroom) > 500, restroom)
 ```
 
 
-This resulted in the removal of 
-
-```
-
-Error in eval(expr, envir, enclos) : could not find function "nsamples"
-
-```
-
- sample(s) from the dataset.
+This resulted in the removal of 1 sample(s) from the dataset.
 
 ### Transform to equal sample sum
 
@@ -387,18 +355,22 @@ restroomRgsm = merge_samples(restroomR, "gensurf")
 
 ```r
 # repair factors
-
+sample_data(restroomRgsm)$SURFACE <- levels(sample_data(restroomR)$SURFACE)[get_variable(restroomRgsm, 
+    "SURFACE")]
+sample_data(restroomRgsm)$GENDER <- levels(sample_data(restroomR)$GENDER)[get_variable(restroomRgsm, 
+    "GENDER")]
 # transform to proportions
+restroomRgsmp = transform_sample_counts(restroomRgsm, function(x) 100 * x/sum(x))
 ```
 
 
-Now add 
+Now plot with panelling by surface for an easier gender-wise comparison than in the original figure.
 
 
 ```r
-
-restroomRgsm19 = prune_taxa(top19otus, restroomRgsm)
-p = plot_bar(restroomR, "GENDER", fill = "family19", title = title) + coord_flip() + 
+restroomRgsm19 = prune_taxa(top19otus, restroomRgsmp)
+title = "Figure 1 Part B, Restroom Surface and Gender"
+p = plot_bar(restroomRgsm19, "GENDER", fill = "family19", title = title) + coord_flip() + 
     labs(colour = "family")
 p + facet_wrap(~SURFACE)
 ```
@@ -411,22 +383,124 @@ p + facet_wrap(~SURFACE)
 
 ---
 
-## Figure 2
+## Figure 2 - Dimensional Reduction
+The original authors use [Multidimensional Scaling]() (also called Principle Coordinates Analysis) to decompose a pairwise distance matrix between all the microbial samples. The original distances are calculated by what microbial ecologists call the ["unweighted UniFrac" distance](). This approach is useful for graphically displaying high-level trends across all the samples in the dataset, usually by overlaying additional information about each sample, for instance, where it came from.
+
+Unfortunately, calculating the UniFrac distance between each sample requires having an evolutionary (phylogenetic) tree of the bacterial species in the dataset, and this wasn't provided. We will instead attempt to create an equally-illuminating scatterplot using a different distance matrix.
 
 ### Figure 2 - Original Article
 
+<img src="http://www.plosone.org/article/info:doi/10.1371/journal.pone.0028132.g002/largerimage" width="700px" />
+**Figure 2. Relationship between bacterial communities associated with ten public restroom surfaces.**
+Communities were clustered using PCoA of the unweighted UniFrac distance matrix. Each point represents a single sample. Note that the floor (triangles) and toilet (asterisks) surfaces form clusters distinct from surfaces touched with hands.
+
 ### Figure 2 - Reproduced
+
+The multidimensional scaling of a UniFrac distance matrix is one instance of a larger category of what we call *ordination methods*. These methods attempt to decompose the variability of higher-dimensional data into a smaller number of orthogonal (perpendicular) axes that turn out to be pretty useful for plotting and certain clustering methods.
+
+
+```r
+title = "Figure 2 remake, PCoA of Bray-Curtis distance"
+restroom_ord = ordinate(restroomR, "PCoA", "bray")
+p = plot_ordination(restroomR, restroom_ord, color = "SURFACE", shape = "GENDER")
+p = p + geom_point(size = 6, alpha = 0.7) + ggtitle(title)
+p
+```
+
+![plot of chunk phyloseq-ordinate-figure02](figure/phyloseq-ordinate-figure021.png) 
+
+```r
+p + facet_wrap(~SURFACE)
+```
+
+![plot of chunk phyloseq-ordinate-figure02](figure/phyloseq-ordinate-figure022.png) 
+
+```r
+p + facet_wrap(~GENDER)  #, nrow=3)
+```
+
+![plot of chunk phyloseq-ordinate-figure02](figure/phyloseq-ordinate-figure023.png) 
+
+
+
+# Table 1
+<img src="http://www.plosone.org/article/info:doi/10.1371/journal.pone.0028132.t001/largerimage" width="700px" />
+**Table 1. ANOSIM test** Results of pairwise comparisons for unweighted UniFrac distances of bacterial communities associated with various surfaces of public restrooms on the University of Colorado campus using the ANOSIM test in Primer v6.
+
+The ANOSIM methods is implemented in [the vegan package](http://cran.r-project.org/web/packages/vegan/index.html), and described nicely in [the anosim documentation](http://www.inside-r.org/packages/cran/vegan/docs/anosim). It is designed to operate directly on a dissimilarity (distance) matrix, so it is unclear why the authors first decomposed their unweighted UniFrac distance matrix with Principle Coordinate Analysis, and then provided those coordinates (presumably from just the first two axes?) to the ANOSIM implementation in *Primer v6*. 
+
+
+```r
+library("vegan")
+packageVersion("vegan")
+```
+
+```
+## [1] '2.0.7'
+```
+
+First look at results for surface types.
+
+```r
+surface_group = get_variable(restroomR, "SURFACE")
+surface_ano = anosim(distance(restroomR, "bray"), surface_group)
+surface_ano$signif
+```
+
+```
+## [1] 0.001
+```
+
+```r
+surface_ano$statistic
+```
+
+```
+## [1] 0.5514
+```
+
+Now test bathroom genders. First remove samples for which there was no gender to make this a pairwise test.
+
+```r
+restroomRg = subset_samples(restroomR, !GENDER == "None")
+gender_group = get_variable(restroomRg, "GENDER")
+gender_ano = anosim(distance(restroomRg, "bray"), gender_group)
+gender_ano$signif
+```
+
+```
+## [1] 0.118
+```
+
+```r
+gender_ano$statistic
+```
+
+```
+## [1] 0.04061
+```
+
+
+**Important note about multiple testing**
+The `anosim` permutation-based, non-parametric test is a test of the significance of the sample-grouping you provide against a permutation-based null generated by randomly permuting the sample labels many times (999 permutations is the default, used here). The table shown in the original article appears to be the result of the 45 two-surface pairwise `anosim` tests, excluding water. The precise details are not explained, and we cannot repeat them here because we (1) we cannot exactly reproduce the randomly subsampled ("rarefied") abundance data from the somewhat raw abundance matrix provided, and more importantly (2) the dataset does not include the phylogenetic tree that is necessary for calculating the unweighted UniFrac distance matrix. Importantly, the authors made **no mention of any correction for having conducted 45 simultaneoustests**. They did take a slightly stricter-than-usual threshold for significance of `P <= 0.01`, but we don't know without a formal correction if the tests with `P` close to `0.01` are actually significant (even at the `0.05` level), and the P-values themselves were not reported, just the statistic with and without asterisk.  
+
+Here we settled for a Bray-Curtis distance matrix for our own version of just two `anosim` calculations, one of which would not be considered significant by most standards (gender). 
+
+### Add a demonstration of a multiple-hypothesis correction?
+
+
+
+---
+
+# Figure 4 -- Microbial Source Tracking
+
+## Figure 4 -- Original Figure
+<img src="http://www.plosone.org/article/info:doi/10.1371/journal.pone.0028132.g004/largerimage" width="700px" />
 
 
 ## Soil source
 
 The soil source data was taken from [this 2009 article by Lauber et al. in AEM](http://aem.asm.org/content/75/15/5111.full)
-
-
-## Supplementary Figure 3. Heatmap in SourceTracker
-Supplementary Figure 3. Heatmap of the 454 OTUs present in at least 20 samples. in the [microbial source tracking article](http://www.nature.com/nmeth/journal/v8/n9/full/nmeth.1650.html)
-
-Heatmap values represent log relative abundance. Hierarchical clustering (Unweighted Pair Group Method with Arithmetic Mean - UPGMA) was performed on the columns (OTUs), and again on the rows within each environment.
 
 
 ---
