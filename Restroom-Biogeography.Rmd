@@ -4,22 +4,34 @@
 
 Microbial biogeography of public restroom surfaces
 ========================================================
-###### This demonstration is an example using [the phyloseq package](http://joey711.github.io/phyloseq/) to (re)investigate a DNA sequencing based census of the microbes on public restroom surfaces. The [original article by Flores et al.](http://dx.plos.org/10.1371/journal.pone.0028132) was published in 2011 under an open access license by [the journal PLoS ONE](http://www.plosone.org/). Here is the official citation: Flores GE, Bates ST, Knights D, Lauber CL, Stombaugh J, et al. (2011) Microbial Biogeography of Public Restroom Surfaces. PLoS ONE 6(11): e28132. [doi:10.1371/journal.pone.0028132](http://dx.plos.org/10.1371/journal.pone.0028132). The data was accessed from Study `1335`, Project Name `Flores_restroom_surface_biogeography` at [microbio.me/qiime](http://www.microbio.me/qiime/). The zipfile of the data is exposed at [this FTP address](ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1335_split_library_seqs_and_mapping.zip). 
 
-This demo was built:
+### Goals of this demonstration
+- Highlight an interesting use of R (analyzing bacteria in restrooms)
+- Demonstrate for R users how to access publicly-available microbiome census data. In this case counts of bacteria from a survey of public restroom sufaces in 2011.
+- Scholarly reproduction / reanalysis of the findings/techniques in the original article, noting places where reproduction is difficult or impossible and where there may be weaknesses in the statistical approach.
+- Demonstrate the use of [phyloseq](http://joey711.github.io/phyloseq/) and R for conducting reproducible statistical analysis of microbiome census data.
+- Demonstrate some of the powerful features of [the ggplot2 package](http://cran.r-project.org/web/packages/ggplot2/index.html) in creating graphics about this data.
 
-```{r time-report}
-date()
-```
+The **[original article by Flores et al.](http://dx.plos.org/10.1371/journal.pone.0028132)** was published in 2011 under an open access license by the journal [PLoS ONE](http://www.plosone.org/). As of the time of this writing, it has been viewed almost 22,000 times.
+Flores GE, Bates ST, Knights D, Lauber CL, Stombaugh J, et al. (2011) Microbial Biogeography of Public Restroom Surfaces. PLoS ONE 6(11): e28132.
+
+**The data** is hosted at [microbio.me/qiime](http://www.microbio.me/qiime/), with Study ID **1335**, Project Name `Flores_restroom_surface_biogeography`. The zipfile of the data is exposed at [this FTP address](ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1335_split_library_seqs_and_mapping.zip). 
+
+This demo was built `r date()`
+
+## Study design and findings
+
+Here is an illustration of the study design (their Figure 3), namely, **where in public restrooms they sampled**; as well as a few overall observations that they included in their caption.
 
 <img src="http://www.plosone.org/article/info:doi/10.1371/journal.pone.0028132.g003/largerimage" width="750px" />
 
-**(Figure 3 in orig `r date()`
-surfaces, they were relatively more abundant on surfaces routinely touched with hands. **Panel B** Gut-associated taxa (Clostridiales, Clostridiales group XI, Ruminococcaceae, Lachnospiraceae, Prevotellaceae and Bacteroidaceae) were most abundant on toilet surfaces. **Panel C** Although soil-associated taxa (Rhodobacteraceae, Rhizobiales, Microbacteriaceae and Nocardioidaceae) were in low abundance on all restroom surfaces, they were relatively more abundant on the floor of the restrooms we surveyed. Figure not drawn to scale.
+###### **Cartoon illustrations of the relative abundance of discriminating taxa on public restroom surfaces.** Light blue indicates low abundance while dark blue indicates high abundance of taxa. (Panel A) Although skin-associated taxa (Propionibacteriaceae, Corynebacteriaceae, Staphylococcaceae and Streptococcaceae) were abundant on all surfaces, they were relatively more abundant on surfaces routinely touched with hands. (Panel B) Gut-associated taxa (Clostridiales, Clostridiales group XI, Ruminococcaceae, Lachnospiraceae, Prevotellaceae and Bacteroidaceae) were most abundant on toilet surfaces. (Panel C) Although soil-associated taxa (Rhodobacteraceae, Rhizobiales, Microbacteriaceae and Nocardioidaceae) were in low abundance on all restroom surfaces, they were relatively more abundant on the floor of the restrooms we surveyed. Figure not drawn to scale.
+
+
 You can also check out [this image at the original article](http://www.ncbi.nlm.nih.gov/core/lw/2.0/html/tileshop_pmc/tileshop_pmc_inline.html?title=Click%20on%20image%20to%20zoom&p=PMC3&id=3223236_pone.0028132.g003.jpg).
 
 
-## Load phyloseq package
+## Load phyloseq and other packages
 
 ```{r load-packages, message=FALSE, warning=FALSE}
 library("phyloseq"); packageVersion("phyloseq")
