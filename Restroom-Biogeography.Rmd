@@ -97,12 +97,22 @@ any(sample_sums(restroom) == 0)
 restroom = prune_samples(sample_sums(restroom) > 0, restroom)
 ```
 
-What about the total reads per sample, and what do the distributions look like?
-```{r}
+What about the total reads per sample, and what does the distribution look like?
+```{r, fig.height=2.5, warning=FALSE}
 title = "Sum of reads for each OTU across all samples"
-plot(log10(sort(taxa_sums(restroom), TRUE)), type="h", main=title, ylab="log10( reads )")
+otusums = data.frame(
+  nreads = sort(taxa_sums(restroom), TRUE),
+  x = 1:ntaxa(restroom)
+)
+p = ggplot(otusums, aes(x=x, y=nreads)) + geom_bar(stat="identity")
+p + ggtitle(title) + scale_y_log10()
 title = "Sum of reads for each sample"
-plot(sort(sample_sums(restroom), TRUE), type="h", main=title, ylab="reads")
+samsums = data.frame(
+  nreads = sort(sample_sums(restroom), TRUE),
+  x = 1:nsamples(restroom)
+)
+p = ggplot(samsums, aes(x=x, y=nreads)) + geom_bar(stat="identity")
+p + ggtitle(title)
 ```
 
 This looks pretty typical for the distribution of reads from an amplicon-based microbiome census, if not even surprisingly evenly distributed across most samples... I've seen much, much worse. In any case, one of the main preprocessing steps we will do is to transform the abundances of each sample in a way that will make the represented "sequencing effort", AKA the sum of the counts, the same across all samples. As mentioned earlier, I will redo a random subsampling ("rarefying") to 500 reads as the original authors did; and, separately, I will also simply transform the abundance vectors of each sample by multiplying the OTU proportion within each sample by the arbitrary value, `500` used in the random subsampling. We can later compare the how the two datasets perform.
@@ -131,14 +141,17 @@ And now an alternative to random subsampling, a simple proportional transformati
 restroomP = transform_sample_counts(restroom, function(x) 500*x/sum(x) )
 ```
 
-Just for fun, let's replot the sample sums of each of these new data objects, to convince ourselves that all of the samples now sum to 500.
-```{r sample-sums-transformed}
+For sanity-check, let's replot the sample sums of each of these new data objects, to convince ourselves that all of the samples now sum to 500.
+```{r sample-sums-transformed, fig.height=3}
+par(mfrow=c(1, 2))
 title = "Sum of reads for each sample, restroomR"
 plot(sort(sample_sums(restroomR), TRUE), type="h", main=title, ylab="reads")
 title = "Sum of reads for each sample, restroomP"
 plot(sort(sample_sums(restroomP), TRUE), type="h", main=title, ylab="reads")
 ```
 
+
+---
 
 ## Figure 1
 ### Original Figure
@@ -176,7 +189,7 @@ Repair the merged values associated with each surface after merge.
 sample_data(restroomRm)$SURFACE <- levels(sample_data(restroomR)$SURFACE)
 ```
 
-Transform to percentages of total available in the 19 OTUs
+Transform to percentages of total available.
 ```{r transform-surface-merge}
 restroomRm = transform_sample_counts(restroomRm, function(x) 100*x/sum(x))
 ```
@@ -194,8 +207,12 @@ restroomRm19 = prune_taxa(top19otus, restroomRm)
 title = "Figure 1 Part A (remake), attempt 3"
 plot_bar(restroomRm19, "SURFACE", fill="family19", title=title) + coord_flip() + ylab("Percentage of Sequences") + ylim(0, 100)
 ```
+###### Re-plot of Figure 1A from original article using phyloseq. Each rectangle is a different OTU. Since these are multi-sample categories, rather than simply samples, the length of each bar represents the mean fraction abundance of that OTU among the normalized samples in that category. Multiple rectangles with the same color and category represent relative abundances of different OTUs in the same taxonomic family. Gray boxes are OTUs that were among the top 19 most abundant, but did not have a taxonomic family classification in the taxonomy table.
 
-**Figure 1, Panel B -- Gender**
+
+---
+
+### Figure 1, Panel B -- Gender
 What about separating by gender? 
 
 First, we will merge samples by a dummy variable representing both `GENDER` and `SURFACES`, repair flattened factors, and transform to proportional abundances.
@@ -251,9 +268,16 @@ p + facet_wrap(~GENDER)#, nrow=3)
 
 # Table 1
 <img src="http://www.plosone.org/article/info:doi/10.1371/journal.pone.0028132.t001/largerimage" width="700px" />
-**Table 1. ANOSIM test** Results of pairwise comparisons for unweighted UniFrac distances of bacterial communities associated with various surfaces of public restrooms on the University of Colorado campus using the ANOSIM test in Primer v6.
+###### Table 1 original article. ANOSIM test. Results of pairwise comparisons for unweighted UniFrac distances of bacterial communities associated with various surfaces of public restrooms on the University of Colorado campus using the ANOSIM test in Primer v6.
 
-The ANOSIM methods is implemented in [the vegan package](http://cran.r-project.org/web/packages/vegan/index.html), and described nicely in [the anosim documentation](http://www.inside-r.org/packages/cran/vegan/docs/anosim). It is designed to operate directly on a dissimilarity (distance) matrix, so it is unclear why the authors first decomposed their unweighted UniFrac distance matrix with Principle Coordinate Analysis, and then provided those coordinates (presumably from just the first two axes?) to the ANOSIM implementation in *Primer v6*. 
+In addition to `Primer v6`, the ANOSIM method is implemented in [the vegan package](http://cran.r-project.org/web/packages/vegan/index.html) in R, and described nicely in [the anosim documentation](http://www.inside-r.org/packages/cran/vegan/docs/anosim). It is designed to operate directly on a dissimilarity (distance) matrix, so it is unclear why the authors first decomposed their unweighted UniFrac distance matrix with Principle Coordinate Analysis, and then provided those coordinates (presumably from just the first two axes?) to the ANOSIM implementation in *Primer v6*. 
+
+**Important note about multiple testing**
+The `anosim` function performs a non-parametric test of the significance of the sample-grouping you provide against a permutation-based null distribution, generated by randomly permuting the sample labels many times (999 permutations is the default, used here). The table shown in the original article appears to be the result of the `r choose(10, 2)` two-surface (pairwise) `anosim` tests, excluding water. The precise details are not explained, and we cannot repeat them here because **(1)** we cannot exactly reproduce the randomly subsampled ("rarefied") abundance data from the somewhat raw abundance matrix that is hosted on `microbio.me`, and more importantly **(2)** the dataset does not include the phylogenetic tree that is necessary for calculating the unweighted UniFrac distance matrix. Critically, the authors made **no mention of any correction for having conducted `r choose(10, 2)` simultaneous tests**. They did take a slightly stricter-than-usual threshold for significance of `P <= 0.01`, but we don't know without a formal correction if the tests with `P` close to `0.01` are actually significant (even at the more common `0.05` level), and the P-values themselves were not reported, just the statistic with and without asterisk. 
+
+In the following section we will re-perform their
+
+## anosim in R with multiple-testing correction
 
 ```{r vegan}
 library("vegan"); packageVersion("vegan")
@@ -273,9 +297,6 @@ gender_ano = anosim(distance(restroomRg, "bray"), gender_group)
 gender_ano$signif
 gender_ano$statistic
 ```
-
-**Important note about multiple testing**
-The `anosim` permutation-based, non-parametric test is a test of the significance of the sample-grouping you provide against a permutation-based null generated by randomly permuting the sample labels many times (999 permutations is the default, used here). The table shown in the original article appears to be the result of the `r choose(10, 2)` two-surface pairwise `anosim` tests, excluding water. The precise details are not explained, and we cannot repeat them here because we (1) we cannot exactly reproduce the randomly subsampled ("rarefied") abundance data from the somewhat raw abundance matrix provided, and more importantly (2) the dataset does not include the phylogenetic tree that is necessary for calculating the unweighted UniFrac distance matrix. Importantly, the authors made **no mention of any correction for having conducted `r choose(10, 2)` simultaneoustests**. They did take a slightly stricter-than-usual threshold for significance of `P <= 0.01`, but we don't know without a formal correction if the tests with `P` close to `0.01` are actually significant (even at the `0.05` level), and the P-values themselves were not reported, just the statistic with and without asterisk.  
 
 Here we settled for a Bray-Curtis distance matrix for our own version of just two `anosim` calculations, one of which would not be considered significant by most standards (gender). 
 

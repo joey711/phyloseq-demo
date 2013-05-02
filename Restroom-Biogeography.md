@@ -17,7 +17,7 @@ Flores GE, Bates ST, Knights D, Lauber CL, Stombaugh J, et al. (2011) Microbial 
 
 **The data** is hosted at [microbio.me/qiime](http://www.microbio.me/qiime/), with Study ID **1335**, Project Name `Flores_restroom_surface_biogeography`. The zipfile of the data is exposed at [this FTP address](ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1335_split_library_seqs_and_mapping.zip). 
 
-This demo was built Wed May  1 09:47:31 2013
+This demo was built Thu May  2 15:23:56 2013
 
 ## Study design and findings
 
@@ -224,18 +224,22 @@ restroom = prune_samples(sample_sums(restroom) > 0, restroom)
 ```
 
 
-What about the total reads per sample, and what do the distributions look like?
+What about the total reads per sample, and what does the distribution look like?
 
 ```r
 title = "Sum of reads for each OTU across all samples"
-plot(log10(sort(taxa_sums(restroom), TRUE)), type = "h", main = title, ylab = "log10( reads )")
+otusums = data.frame(nreads = sort(taxa_sums(restroom), TRUE), x = 1:ntaxa(restroom))
+p = ggplot(otusums, aes(x = x, y = nreads)) + geom_bar(stat = "identity")
+p + ggtitle(title) + scale_y_log10()
 ```
 
 ![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-11.png) 
 
 ```r
 title = "Sum of reads for each sample"
-plot(sort(sample_sums(restroom), TRUE), type = "h", main = title, ylab = "reads")
+samsums = data.frame(nreads = sort(sample_sums(restroom), TRUE), x = 1:nsamples(restroom))
+p = ggplot(samsums, aes(x = x, y = nreads)) + geom_bar(stat = "identity")
+p + ggtitle(title)
 ```
 
 ![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-12.png) 
@@ -281,23 +285,21 @@ restroomP = transform_sample_counts(restroom, function(x) 500 * x/sum(x))
 ```
 
 
-Just for fun, let's replot the sample sums of each of these new data objects, to convince ourselves that all of the samples now sum to 500.
+For sanity-check, let's replot the sample sums of each of these new data objects, to convince ourselves that all of the samples now sum to 500.
 
 ```r
+par(mfrow = c(1, 2))
 title = "Sum of reads for each sample, restroomR"
 plot(sort(sample_sums(restroomR), TRUE), type = "h", main = title, ylab = "reads")
-```
-
-![plot of chunk sample-sums-transformed](figure/sample-sums-transformed1.png) 
-
-```r
 title = "Sum of reads for each sample, restroomP"
 plot(sort(sample_sums(restroomP), TRUE), type = "h", main = title, ylab = "reads")
 ```
 
-![plot of chunk sample-sums-transformed](figure/sample-sums-transformed2.png) 
+![plot of chunk sample-sums-transformed](figure/sample-sums-transformed.png) 
 
 
+
+---
 
 ## Figure 1
 ### Original Figure
@@ -346,7 +348,7 @@ sample_data(restroomRm)$SURFACE <- levels(sample_data(restroomR)$SURFACE)
 ```
 
 
-Transform to percentages of total available in the 19 OTUs
+Transform to percentages of total available.
 
 ```r
 restroomRm = transform_sample_counts(restroomRm, function(x) 100 * x/sum(x))
@@ -376,8 +378,12 @@ plot_bar(restroomRm19, "SURFACE", fill = "family19", title = title) + coord_flip
 
 ![plot of chunk prune-non-19](figure/prune-non-19.png) 
 
+###### Re-plot of Figure 1A from original article using phyloseq. Each rectangle is a different OTU. Since these are multi-sample categories, rather than simply samples, the length of each bar represents the mean fraction abundance of that OTU among the normalized samples in that category. Multiple rectangles with the same color and category represent relative abundances of different OTUs in the same taxonomic family. Gray boxes are OTUs that were among the top 19 most abundant, but did not have a taxonomic family classification in the taxonomy table.
 
-**Figure 1, Panel B -- Gender**
+
+---
+
+### Figure 1, Panel B -- Gender
 What about separating by gender? 
 
 First, we will merge samples by a dummy variable representing both `GENDER` and `SURFACES`, repair flattened factors, and transform to proportional abundances.
@@ -463,7 +469,7 @@ p + facet_wrap(~GENDER)  #, nrow=3)
 
 # Table 1
 <img src="http://www.plosone.org/article/info:doi/10.1371/journal.pone.0028132.t001/largerimage" width="700px" />
-**Table 1. ANOSIM test** Results of pairwise comparisons for unweighted UniFrac distances of bacterial communities associated with various surfaces of public restrooms on the University of Colorado campus using the ANOSIM test in Primer v6.
+###### **Table 1. ANOSIM test** Results of pairwise comparisons for unweighted UniFrac distances of bacterial communities associated with various surfaces of public restrooms on the University of Colorado campus using the ANOSIM test in Primer v6.
 
 The ANOSIM methods is implemented in [the vegan package](http://cran.r-project.org/web/packages/vegan/index.html), and described nicely in [the anosim documentation](http://www.inside-r.org/packages/cran/vegan/docs/anosim). It is designed to operate directly on a dissimilarity (distance) matrix, so it is unclear why the authors first decomposed their unweighted UniFrac distance matrix with Principle Coordinate Analysis, and then provided those coordinates (presumably from just the first two axes?) to the ANOSIM implementation in *Primer v6*. 
 
