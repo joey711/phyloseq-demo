@@ -1,0 +1,131 @@
+
+
+<h1>DIY: public restroom bacteria</h1>
+
+<p><a href="https://github.com/joey711/phyloseq-demo/Restroom-Biogeography">Originally hosted here</a></p>
+
+<h3>Goals of this demonstration</h3>
+
+<ul>
+<li>Highlight an interesting use of R (analyzing bacteria in restrooms)</li>
+<li>Demonstrate for R users how to access publicly-available microbiome census data. In this case counts of bacteria from a survey of public restroom sufaces in 2011.</li>
+<li>Scholarly reproduction / reanalysis of the findings/techniques in the original article, noting places where reproduction is difficult or impossible and where there may be weaknesses in the statistical approach.</li>
+<li>Demonstrate the use of <a href="http://joey711.github.io/phyloseq/">phyloseq</a> and R for conducting reproducible statistical analysis of microbiome census data.</li>
+<li>Demonstrate some of the powerful features of <a href="http://cran.r-project.org/web/packages/ggplot2/index.html">the ggplot2 package</a> in creating graphics about this data.</li>
+</ul>
+
+<p>The <strong><a href="http://dx.plos.org/10.1371/journal.pone.0028132">original article by Flores et al.</a></strong> was published in 2011 under an open access license by the journal <a href="http://www.plosone.org/">PLoS ONE</a>. As of the time of this writing, it has been viewed almost 22,000 times.
+Flores GE, Bates ST, Knights D, Lauber CL, Stombaugh J, et al. (2011) <strong>Microbial Biogeography of Public Restroom Surfaces</strong>. PLoS ONE 6(11): e28132.</p>
+
+<p><strong>The data</strong> is hosted at <a href="http://www.microbio.me/qiime/">microbio.me/qiime</a>, with Study ID <strong>1335</strong>, Project Name <code>Flores_restroom_surface_biogeography</code>. The zipfile of the data is exposed at <a href="ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1335_split_library_seqs_and_mapping.zip">this FTP address</a> &ndash; note that you may have to create an account and login to access the <code>.zip</code> file. Otherwise I would include downloading and unzipping as part of the R source code in this demo.</p>
+
+<p>The time that this demo was built: Fri May  3 17:44:40 2013</p>
+
+<h2>Study design and findings</h2>
+
+<p>Here is an illustration of the study design (their Figure 3), namely, <strong>where in public restrooms they sampled</strong>; as well as a few overall observations that they included in their caption.</p>
+
+<p><img src="http://www.plosone.org/article/info:doi/10.1371/journal.pone.0028132.g003/largerimage" width="750px" /></p>
+
+<h6><strong>Cartoon illustrations of the relative abundance of discriminating taxa on public restroom surfaces.</strong> Light blue indicates low abundance while dark blue indicates high abundance of taxa. (Panel A) Although skin-associated taxa (Propionibacteriaceae, Corynebacteriaceae, Staphylococcaceae and Streptococcaceae) were abundant on all surfaces, they were relatively more abundant on surfaces routinely touched with hands. (Panel B) Gut-associated taxa (Clostridiales, Clostridiales group XI, Ruminococcaceae, Lachnospiraceae, Prevotellaceae and Bacteroidaceae) were most abundant on toilet surfaces. (Panel C) Although soil-associated taxa (Rhodobacteraceae, Rhizobiales, Microbacteriaceae and Nocardioidaceae) were in low abundance on all restroom surfaces, they were relatively more abundant on the floor of the restrooms we surveyed. Figure not drawn to scale.</h6>
+
+<p>You can also check out <a href="http://www.ncbi.nlm.nih.gov/core/lw/2.0/html/tileshop_pmc/tileshop_pmc_inline.html?title=Click%20on%20image%20to%20zoom&amp;p=PMC3&amp;id=3223236_pone.0028132.g003.jpg">this image at the original article</a>.</p>
+
+<h2>Load phyloseq and other packages</h2>
+
+<pre><code class="r">library(&quot;phyloseq&quot;)
+packageVersion(&quot;phyloseq&quot;)
+</code></pre>
+
+<pre><code>## [1] &#39;1.5.8&#39;
+</code></pre>
+
+<p>I also want to make some nice graphics using the ggplot2 package, so I will also load that and adjust its default theme</p>
+
+<pre><code class="r">library(&quot;ggplot2&quot;)
+packageVersion(&quot;ggplot2&quot;)
+</code></pre>
+
+<pre><code>## [1] &#39;0.9.3.1&#39;
+</code></pre>
+
+<pre><code class="r">theme_set(theme_bw())
+</code></pre>
+
+<h2>Import data</h2>
+
+<p>The microbio.me/qiime site has provided a zip file with two key data files. Namely, a file with the abundance data and some metadata, and a tab delimited text file with sample meta data. This following code chunk imports both files, and then combines them in one integrated phyloseq object that we will use in the remaining (re)analysis.</p>
+
+<pre><code class="r">import_dir = &quot;~/Downloads/study_1335_split_library_seqs_and_mapping&quot;
+# Import from the .biom file
+biomfile = paste0(import_dir, &quot;/study_1335_closed_reference_otu_table.biom&quot;)
+biom = import_biom(biomfile, parseFunction = parse_taxonomy_greengenes)
+# Import from the sample data file
+sdfile = paste0(import_dir, &quot;/study_1335_mapping_file.txt&quot;)
+sample_metadata = import_qiime_sample_data(sdfile)
+# Combine the two data objects
+restroom = merge_phyloseq(biom, sample_metadata)
+</code></pre>
+
+<p>Now we have available a new combined data object, called <code>restroom</code>, that contains all the data we should need for this tutorial. We can query different features of <code>restroom</code> using the phyloseq API in the form of accessor functions/methods. We can also just print it to standard out and we get some summary information.</p>
+
+<pre><code class="r">restroom
+</code></pre>
+
+<pre><code>## phyloseq-class experiment-level object
+## otu_table()   OTU Table:         [ 4467 taxa and 56 samples ]
+## sample_data() Sample Data:       [ 56 samples by 42 sample variables ]
+## tax_table()   Taxonomy Table:    [ 4467 taxa by 7 taxonomic ranks ]
+</code></pre>
+
+<pre><code class="r">rank_names(restroom)
+</code></pre>
+
+<pre><code>## [1] &quot;Kingdom&quot; &quot;Phylum&quot;  &quot;Class&quot;   &quot;Order&quot;   &quot;Family&quot;  &quot;Genus&quot;   &quot;Species&quot;
+</code></pre>
+
+<pre><code class="r">sample_variables(restroom)
+</code></pre>
+
+<pre><code>##  [1] &quot;X.SampleID&quot;                    &quot;BarcodeSequence&quot;              
+##  [3] &quot;LinkerPrimerSequence&quot;          &quot;TARGET_SUBFRAGMENT&quot;           
+##  [5] &quot;ASSIGNED_FROM_GEO&quot;             &quot;EXPERIMENT_CENTER&quot;            
+##  [7] &quot;TITLE&quot;                         &quot;RUN_PREFIX&quot;                   
+##  [9] &quot;TAXON_ID&quot;                      &quot;DEPTH&quot;                        
+## [11] &quot;COMMON_NAME&quot;                   &quot;ELEVATION&quot;                    
+## [13] &quot;RUN_DATE&quot;                      &quot;COLLECTION_DATE&quot;              
+## [15] &quot;GENDER&quot;                        &quot;ALTITUDE&quot;                     
+## [17] &quot;LEVEL&quot;                         &quot;ENV_BIOME&quot;                    
+## [19] &quot;PLATFORM&quot;                      &quot;COUNTRY&quot;                      
+## [21] &quot;SAMPLE_CENTER&quot;                 &quot;SAMP_SIZE&quot;                    
+## [23] &quot;FLOOR&quot;                         &quot;LONGITUDE&quot;                    
+## [25] &quot;STUDY_ID&quot;                      &quot;EXPERIMENT_DESIGN_DESCRIPTION&quot;
+## [27] &quot;Description_duplicate&quot;         &quot;SEQUENCING_METH&quot;              
+## [29] &quot;ENV_MATTER&quot;                    &quot;TARGET_GENE&quot;                  
+## [31] &quot;BUILDING&quot;                      &quot;ENV_FEATURE&quot;                  
+## [33] &quot;KEY_SEQ&quot;                       &quot;AGE_IN_YEARS&quot;                 
+## [35] &quot;RUN_CENTER&quot;                    &quot;SURFACE&quot;                      
+## [37] &quot;PCR_PRIMERS&quot;                   &quot;LIBRARY_CONSTRUCTION_PROTOCOL&quot;
+## [39] &quot;LATITUDE&quot;                      &quot;REGION&quot;                       
+## [41] &quot;STUDY_CENTER&quot;                  &quot;Description&quot;
+</code></pre>
+
+<pre><code class="r">levels(sample_data(restroom)$BUILDING)
+</code></pre>
+
+<pre><code>## [1] &quot;Ekeley&quot; &quot;Porter&quot;
+</code></pre>
+
+<pre><code class="r">levels(sample_data(restroom)$SURFACE)
+</code></pre>
+
+<pre><code>##  [1] &quot;Door in&quot;             &quot;Door out&quot;            &quot;Faucet handles&quot;     
+##  [4] &quot;Sink floor&quot;          &quot;Soap dispenser&quot;      &quot;Stall in&quot;           
+##  [7] &quot;Stall out&quot;           &quot;Toilet Floor&quot;        &quot;Toilet flush handle&quot;
+## [10] &quot;Toilet seat&quot;         &quot;Water&quot;
+</code></pre>
+
+
+<h1><a href="https://github.com/joey711/phyloseq-demo/Restroom-Biogeography">READ MORE</a></h1>
+
+

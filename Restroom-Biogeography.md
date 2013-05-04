@@ -2,8 +2,9 @@
 <link href="http://joey711.github.com/phyloseq/markdown.css" rel="stylesheet"></link>
 
 
-Microbial biogeography of public restroom surfaces
+DIY: public restroom bacteria
 ========================================================
+[Originally hosted here](https://github.com/joey711/phyloseq-demo/Restroom-Biogeography)
 
 ### Goals of this demonstration
 - Highlight an interesting use of R (analyzing bacteria in restrooms)
@@ -13,11 +14,11 @@ Microbial biogeography of public restroom surfaces
 - Demonstrate some of the powerful features of [the ggplot2 package](http://cran.r-project.org/web/packages/ggplot2/index.html) in creating graphics about this data.
 
 The **[original article by Flores et al.](http://dx.plos.org/10.1371/journal.pone.0028132)** was published in 2011 under an open access license by the journal [PLoS ONE](http://www.plosone.org/). As of the time of this writing, it has been viewed almost 22,000 times.
-Flores GE, Bates ST, Knights D, Lauber CL, Stombaugh J, et al. (2011) Microbial Biogeography of Public Restroom Surfaces. PLoS ONE 6(11): e28132.
+Flores GE, Bates ST, Knights D, Lauber CL, Stombaugh J, et al. (2011) **Microbial Biogeography of Public Restroom Surfaces**. PLoS ONE 6(11): e28132.
 
-**The data** is hosted at [microbio.me/qiime](http://www.microbio.me/qiime/), with Study ID **1335**, Project Name `Flores_restroom_surface_biogeography`. The zipfile of the data is exposed at [this FTP address](ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1335_split_library_seqs_and_mapping.zip). 
+**The data** is hosted at [microbio.me/qiime](http://www.microbio.me/qiime/), with Study ID **1335**, Project Name `Flores_restroom_surface_biogeography`. The zipfile of the data is exposed at [this FTP address](ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1335_split_library_seqs_and_mapping.zip) -- note that you may have to create an account and login to access the `.zip` file. Otherwise I would include downloading and unzipping as part of the R source code in this demo.
 
-This demo was built Fri May  3 11:51:40 2013
+The time that this demo was built: Fri May  3 17:44:40 2013
 
 ## Study design and findings
 
@@ -173,31 +174,7 @@ sum(taxa_sums(restroom) == 0)
 ## [1] 1040
 ```
 
-So of the 
-
-```
-
-Error in eval(expr, envir, enclos) : could not find function "ntaxa"
-
-```
-
- OTUs in the dataset, there were 
-
-```
-
-Error in eval(expr, envir, enclos) : could not find function "taxa_sums"
-
-```
-
- OTUs that were apparently not observed even once in any of the samples (
-
-```
-
-Error in eval(expr, envir, enclos) : could not find function "taxa_sums"
-
-```
-
-%). This sounds very odd, but more likely this is evidence of some data "massaging" that removed the abundance values of those taxa, but their entries in the `.biom` file are inexplicably included.
+So of the 4467 OTUs in the dataset, there were 1040 OTUs that were apparently not observed even once in any of the samples (20%). This sounds very odd, but more likely this is evidence of some data "massaging" that removed the abundance values of those taxa, but their entries in the `.biom` file are inexplicably included.
 
 Here I remove those "unobserved" OTUs. Note how I first save the originally-imported data as `restroom0` in case I want to go back to it after modifying/preprocessing `restroom`.
 
@@ -227,22 +204,16 @@ restroom = prune_samples(sample_sums(restroom) > 0, restroom)
 What about the total reads per sample, and what does the distribution look like?
 
 ```r
-title = "Sum of reads for each OTU across all samples"
-otusums = data.frame(nreads = sort(taxa_sums(restroom), TRUE), x = 1:ntaxa(restroom))
-p = ggplot(otusums, aes(x = x, y = nreads)) + geom_bar(stat = "identity")
-p + ggtitle(title) + scale_y_log10()
+readsumsdf = data.frame(nreads = sort(taxa_sums(restroom), TRUE), sorted = 1:ntaxa(restroom), 
+    type = "OTUs")
+readsumsdf = rbind(readsumsdf, data.frame(nreads = sort(sample_sums(restroom), 
+    TRUE), sorted = 1:nsamples(restroom), type = "Samples"))
+title = "Total number of reads"
+p = ggplot(readsumsdf, aes(x = sorted, y = nreads)) + geom_bar(stat = "identity")
+p + ggtitle(title) + scale_y_log10() + facet_wrap(~type, 1, scales = "free")
 ```
 
-![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-11.png) 
-
-```r
-title = "Sum of reads for each sample"
-samsums = data.frame(nreads = sort(sample_sums(restroom), TRUE), x = 1:nsamples(restroom))
-p = ggplot(samsums, aes(x = x, y = nreads)) + geom_bar(stat = "identity")
-p + ggtitle(title)
-```
-
-![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-12.png) 
+![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-1.png) 
 
 
 This looks pretty typical for the distribution of reads from an amplicon-based microbiome census, if not even surprisingly evenly distributed across most samples... I've seen much, much worse. In any case, one of the main preprocessing steps we will do is to transform the abundances of each sample in a way that will make the represented "sequencing effort", AKA the sum of the counts, the same across all samples. As mentioned earlier, I will redo a random subsampling ("rarefying") to 500 reads as the original authors did; and, separately, I will also simply transform the abundance vectors of each sample by multiplying the OTU proportion within each sample by the arbitrary value, `500` used in the random subsampling. We can later compare the how the two datasets perform.
@@ -255,20 +226,12 @@ restroom = prune_samples(sample_sums(restroom) > 500, restroom)
 ```
 
 
-This resulted in the removal of 
-
-```
-
-Error in eval(expr, envir, enclos) : could not find function "nsamples"
-
-```
-
- sample(s) from the dataset.
+This resulted in the removal of 1 sample(s) from the dataset.
 
 ### Transform to equal sample sum
 
 **Rarefy**
-We will call this `restroomR`. The way to accomplish this in phyloseq is to **first define a random number seed** so that others can reproduce your subsetted data, and then use the `rarefy_even_depth` function. Here I use the "ePub" number assigned to this article by PLoS ONE as the seed. Seemed appropriate.
+We will call this `restroomR`. The way to accomplish this in phyloseq is to **first define a random number seed** so that others can reproduce your subsetted data, and then use the `rarefy_even_depth` function. Here I use the "ePub" number assigned to this article by PLoS ONE as the seed. Seemed appropriate, but totally arbitrary.
 
 
 ```r
@@ -290,9 +253,11 @@ For sanity-check, let's replot the sample sums of each of these new data objects
 ```r
 par(mfrow = c(1, 2))
 title = "Sum of reads for each sample, restroomR"
-plot(sort(sample_sums(restroomR), TRUE), type = "h", main = title, ylab = "reads")
+plot(sort(sample_sums(restroomR), TRUE), type = "h", main = title, ylab = "reads", 
+    ylim = c(0, 1000))
 title = "Sum of reads for each sample, restroomP"
-plot(sort(sample_sums(restroomP), TRUE), type = "h", main = title, ylab = "reads")
+plot(sort(sample_sums(restroomP), TRUE), type = "h", main = title, ylab = "reads", 
+    ylim = c(0, 1000))
 ```
 
 ![plot of chunk sample-sums-transformed](figure/sample-sums-transformed.png) 
@@ -306,9 +271,7 @@ plot(sort(sample_sums(restroomP), TRUE), type = "h", main = title, ylab = "reads
 
 <img src="http://www.plosone.org/article/info:doi/10.1371/journal.pone.0028132.g001/largerimage" width="750px" />
 
-Original Figure caption, quoted here:
-"Figure 1. Taxonomic composition of bacterial communities associated with public restroom surfaces.
-(A) Average composition of bacterial communities associated with restroom surfaces and potential source environments. (B) Taxonomic differences were observed between some surfaces in male and female restrooms. Only the 19 most abundant taxa are shown. For a more detailed taxonomic breakdown by gender including some of the variation see [Supplemental Table S2](http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0028132#pone.0028132.s002)."
+###### Original Figure caption, quoted here: "Figure 1. Taxonomic composition of bacterial communities associated with public restroom surfaces.(A) Average composition of bacterial communities associated with restroom surfaces and potential source environments. (B) Taxonomic differences were observed between some surfaces in male and female restrooms. Only the 19 most abundant taxa are shown. For a more detailed taxonomic breakdown by gender including some of the variation see [Supplemental Table S2](http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0028132#pone.0028132.s002)."
 
 ### Figure 1 - Reproduced
 I will use the phyloseq plotting function `plot_bar` to reproduce Figure 1. I have taken liberties to improve the representation of the data to make certain features more comparable.
@@ -476,9 +439,7 @@ In addition to `Primer v6`, the ANOSIM method is implemented in [the vegan packa
 **Important note about multiple testing**
 The `anosim` function performs a non-parametric test of the significance of the sample-grouping you provide against a permutation-based null distribution, generated by randomly permuting the sample labels many times (999 permutations is the default, used here). The table shown in the original article appears to be the result of the 45 two-surface (pairwise) `anosim` tests, excluding water. The precise details are not explained, and we cannot repeat them here because **(1)** we cannot exactly reproduce the randomly subsampled ("rarefied") abundance data from the somewhat raw abundance matrix that is hosted on `microbio.me`, and more importantly **(2)** the dataset does not include the phylogenetic tree that is necessary for calculating the unweighted UniFrac distance matrix. Critically, the authors made **no mention of any correction for having conducted 45 simultaneous tests**. They did take a slightly stricter-than-usual threshold for significance of `P <= 0.01`, but we don't know without a formal correction if the tests with `P` close to `0.01` are actually significant (even at the more common `0.05` level), and the P-values themselves were not reported, just the statistic with and without asterisk. 
 
-In the following section we will re-perform their
-
-## anosim in R with multiple-testing correction
+Here is how to re-perform `anosim` using R and the vegan package:
 
 
 ```r
@@ -489,6 +450,7 @@ packageVersion("vegan")
 ```
 ## [1] '2.0.7'
 ```
+
 
 First look at results for surface types.
 
@@ -509,6 +471,7 @@ surface_ano$statistic
 ```
 ## [1] 0.5514
 ```
+
 
 Now test bathroom genders. First remove samples for which there was no gender to make this a pairwise test.
 
@@ -534,7 +497,42 @@ gender_ano$statistic
 
 Here we settled for a Bray-Curtis distance matrix for our own version of just two `anosim` calculations, one of which would not be considered significant by most standards (gender). 
 
+
 ### Add a demonstration of a multiple-hypothesis correction?
+
+I considered adding a demonstration of how to add a multiple correction for the approach the authors took, but I'm not convinced (yet) that this was the optimal statistical approach to arrive at the knowledge that they were seeking. For one thing, it quickly loses power as the number of categories increases because of the larger number of corrections, not to mention it becomes difficult to calculate. Practicality aside, even the documentation for `anosim` in R suggests users use `adonis` (a permutation MANOVA, also in the vegan package) as "a more robust alternative".
+
+
+```r
+df = as(sample_data(restroomR), "data.frame")
+d = distance(restroomR, "bray")
+restroomadonis = adonis(d ~ SURFACE + GENDER + BUILDING + FLOOR, df)
+restroomadonis
+```
+
+```
+## 
+## Call:
+## adonis(formula = d ~ SURFACE + GENDER + BUILDING + FLOOR, data = df) 
+## 
+## Terms added sequentially (first to last)
+## 
+##           Df SumsOfSqs MeanSqs F.Model    R2 Pr(>F)    
+## SURFACE   10      8.19   0.819    4.12 0.470  0.001 ***
+## GENDER     1      0.50   0.504    2.53 0.029  0.007 ** 
+## BUILDING   1      0.31   0.310    1.56 0.018  0.081 .  
+## FLOOR      2      0.47   0.236    1.19 0.027  0.212    
+## Residuals 40      7.96   0.199         0.456           
+## Total     54     17.44                 1.000           
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+```r
+plot(restroomadonis$aov.tab)
+```
+
+![plot of chunk adonis](figure/adonis.png) 
 
 
 
@@ -550,13 +548,16 @@ Here we settled for a Bray-Curtis distance matrix for our own version of just tw
 
 The soil source data was taken from [this 2009 article by Lauber et al. in AEM](http://aem.asm.org/content/75/15/5111.full)
 
+## SourceTracker
 
----
+The authors describe using an algorithm called "SourceTracker", previously described in [Knights et al. (2011) Nature Methods](http://www.nature.com/nmeth/journal/v8/n9/full/nmeth.1650.html), and provided as a [commented R script published at sourceforge/sourcetracker](http://sourceforge.net/projects/sourcetracker/).
 
-# Recapitulating SourceTracker
+In perhaps another post, or a continuation of this one, I will include their code and apply it to the available data here. One additional challenge is the availability of the refernce data, which was not repackaged or republished with this dataset. Hopefully it is all still available.
 
-The authors describe using an algorithm called "SourceTracker", previously described in [Blah et al. (2011) Nature Methods](http://www.nature.com/nmeth/journal/v8/n9/full/nmeth.1650.html), and apparently written as a [commented R script published at sourceforge/sourcetracker](http://sourceforge.net/projects/sourcetracker/).
+# Feedback welcome!
 
-The plan will be to reuse the relevant parts of this code to recapitulate the SourceTracker algorithm that the authors of this restroom survey also used in their analysis.
+Please feel free to post comments, suggestions. Also, ideas for other demos are strongly encouraged. A good place for that is probably [the issue tracker for the phyloseq-demo repository](https://github.com/joey711/phyloseq-demo/issues) where this document is versioned and where many other phyloseq-related demos are hosted.
 
+# Thanks to original authors
+Thanks to original authors for an interesting study and for making (most of) their data so publicly available. I just subjected it to some scholarly scrutiny, which is a good thing (and I hope they agree); and only possible because of what they made available. If you like the idea of being able to re-analyze this and other studies, then clamor for **better reproducible research**, which should hopefully the original *and* intermediate data *as well as* analysis source code ... and strive to do the same in your own publications. We will all do better, faster work because of it :)
 
