@@ -199,7 +199,7 @@ Flores GE, Bates ST, Knights D, Lauber CL, Stombaugh J, et al. (2011) <strong>Mi
 
 <p><strong>The data</strong> is hosted at <a href="http://www.microbio.me/qiime/">microbio.me/qiime</a>, with Study ID <strong>1335</strong>, Project Name <code>Flores_restroom_surface_biogeography</code>. The zipfile of the data is exposed at <a href="ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1335_split_library_seqs_and_mapping.zip">this FTP address</a> &ndash; note that you may have to create an account and login to access the <code>.zip</code> file. Otherwise I would include downloading and unzipping as part of the R source code in this demo.</p>
 
-<p>The time that this demo was built: Fri May  3 17:44:40 2013</p>
+<p>The time that this demo was built: Sun May  5 14:51:33 2013</p>
 
 <h2>Study design and findings</h2>
 
@@ -236,15 +236,43 @@ packageVersion(&quot;ggplot2&quot;)
 
 <p>The microbio.me/qiime site has provided a zip file with two key data files. Namely, a file with the abundance data and some metadata, and a tab delimited text file with sample meta data. This following code chunk imports both files, and then combines them in one integrated phyloseq object that we will use in the remaining (re)analysis.</p>
 
-<pre><code class="r">import_dir = &quot;~/Downloads/study_1335_split_library_seqs_and_mapping&quot;
-# Import from the .biom file
-biomfile = paste0(import_dir, &quot;/study_1335_closed_reference_otu_table.biom&quot;)
+<p>First you need to download the file directly from the link provided above, or use the zipfile we have mirrored in our phyloseq-demo GitHub repository.</p>
+
+<p>Here is how you would download it from the FTP address to a random temporary file defined by your operating system. We will call this file <code>zipfile</code>.</p>
+
+<pre><code class="r">zipftp = &quot;ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1335_split_library_seqs_and_mapping.zip&quot;
+zipfile = tempfile(&quot;RestroomBiogeography&quot;)
+download.file(zipftp, zipfile)
+</code></pre>
+
+<p>Since I have reposted the zipped data file on the phyloseq-demo repository on GitHub &ndash; in the same directory as the original source file for this post &ndash; the <code>zipfile</code> in this example can also be defined locally, as shown here:</p>
+
+<pre><code class="r">zipfile = &quot;study_1335_split_library_seqs_and_mapping.zip&quot;
+</code></pre>
+
+<p>In either case, it is now possible with R to unzip to a randomly labeled temporary diretory created specific to your operating system, which we will name with the symbol <code>import_dir</code>. My understanding is that eventually temporary files and directories are deleted at system shutdown or startup. Probably system dependent exactly when they get deleted.</p>
+
+<p>Here is how to create the temporary directory for the unpacked file(s) from the <code>.zip</code> file.</p>
+
+<pre><code class="r">import_dir &lt;- tempdir()
+unzip(zipfile, exdir = import_dir)
+</code></pre>
+
+<p>Import from the <code>.biom</code> file.</p>
+
+<pre><code class="r">biomfile = paste0(import_dir, &quot;/study_1335_closed_reference_otu_table.biom&quot;)
 biom = import_biom(biomfile, parseFunction = parse_taxonomy_greengenes)
-# Import from the sample data file
-sdfile = paste0(import_dir, &quot;/study_1335_mapping_file.txt&quot;)
+</code></pre>
+
+<p>Import from the sample data file.</p>
+
+<pre><code class="r">sdfile = paste0(import_dir, &quot;/study_1335_mapping_file.txt&quot;)
 sample_metadata = import_qiime_sample_data(sdfile)
-# Combine the two data objects
-restroom = merge_phyloseq(biom, sample_metadata)
+</code></pre>
+
+<p>Combine (merge) the two data objects.</p>
+
+<pre><code class="r">restroom = merge_phyloseq(biom, sample_metadata)
 </code></pre>
 
 <p>Now we have available a new combined data object, called <code>restroom</code>, that contains all the data we should need for this tutorial. We can query different features of <code>restroom</code> using the phyloseq API in the form of accessor functions/methods. We can also just print it to standard out and we get some summary information.</p>

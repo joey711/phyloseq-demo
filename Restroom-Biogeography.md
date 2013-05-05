@@ -18,7 +18,7 @@ Flores GE, Bates ST, Knights D, Lauber CL, Stombaugh J, et al. (2011) **Microbia
 
 **The data** is hosted at [microbio.me/qiime](http://www.microbio.me/qiime/), with Study ID **1335**, Project Name `Flores_restroom_surface_biogeography`. The zipfile of the data is exposed at [this FTP address](ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1335_split_library_seqs_and_mapping.zip) -- note that you may have to create an account and login to access the `.zip` file. Otherwise I would include downloading and unzipping as part of the R source code in this demo.
 
-The time that this demo was built: Fri May  3 17:44:40 2013
+The time that this demo was built: Sun May  5 14:51:33 2013
 
 ## Study design and findings
 
@@ -66,16 +66,53 @@ theme_set(theme_bw())
 ## Import data
 The microbio.me/qiime site has provided a zip file with two key data files. Namely, a file with the abundance data and some metadata, and a tab delimited text file with sample meta data. This following code chunk imports both files, and then combines them in one integrated phyloseq object that we will use in the remaining (re)analysis.
 
+First you need to download the file directly from the link provided above, or use the zipfile we have mirrored in our phyloseq-demo GitHub repository.
+
+Here is how you would download it from the FTP address to a random temporary file defined by your operating system. We will call this file `zipfile`.
 
 ```r
-import_dir = "~/Downloads/study_1335_split_library_seqs_and_mapping"
-# Import from the .biom file
+zipftp = "ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1335_split_library_seqs_and_mapping.zip"
+zipfile = tempfile("RestroomBiogeography")
+download.file(zipftp, zipfile)
+```
+
+
+Since I have reposted the zipped data file on the phyloseq-demo repository on GitHub -- in the same directory as the original source file for this post -- the `zipfile` in this example can also be defined locally, as shown here:
+
+```r
+zipfile = "study_1335_split_library_seqs_and_mapping.zip"
+```
+
+
+In either case, it is now possible with R to unzip to a randomly labeled temporary diretory created specific to your operating system, which we will name with the symbol `import_dir`. My understanding is that eventually temporary files and directories are deleted at system shutdown or startup. Probably system dependent exactly when they get deleted.
+
+Here is how to create the temporary directory for the unpacked file(s) from the `.zip` file.
+
+```r
+import_dir <- tempdir()
+unzip(zipfile, exdir = import_dir)
+```
+
+
+Import from the `.biom` file.
+
+```r
 biomfile = paste0(import_dir, "/study_1335_closed_reference_otu_table.biom")
 biom = import_biom(biomfile, parseFunction = parse_taxonomy_greengenes)
-# Import from the sample data file
+```
+
+
+Import from the sample data file.
+
+```r
 sdfile = paste0(import_dir, "/study_1335_mapping_file.txt")
 sample_metadata = import_qiime_sample_data(sdfile)
-# Combine the two data objects
+```
+
+
+Combine (merge) the two data objects.
+
+```r
 restroom = merge_phyloseq(biom, sample_metadata)
 ```
 
