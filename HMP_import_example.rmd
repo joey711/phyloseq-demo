@@ -105,7 +105,7 @@ Note that you will multiple instances of the following warning:
 These arise from OTUs that have only been assigned a "root" taxonomic classification -- which is meaningless -- and no other. In this dataset, the "root" has no greengenes prefix but all the other taxonomic classifications do. When the default greengenes parsing function (`parse_taxonomy_default`) finds these OTUs, it complains that there was not actually a greengenes prefix in any of the taxonomy elements. That's okay, your data (and this data) is fine. It is just a warning, and all the meaningless "root" classification elements are assigned to an equally meaningless dummy taxonomic rank called "Rank1". See for yourself below in the output of `rank_names`.
 
 ```{r import-HMPv35, warning=FALSE}
-system.time(HMPv35 <- import_qiime(temp_otutax, temp_map, tree, refseqs, chunk.size=2000L))
+system.time(HMPv35 <- import_qiime(temp_otutax, temp_map, tree, refseqs))
 ```
 
 ## Investigate Basic Features of HMPv35
@@ -120,12 +120,12 @@ head(tax_table(HMPv35))
 ```
 
 ## Save HMPv35 to an RData File
-Save `HMPv35` to an `".RData"`" file so that you don't have to run this import ever again. In the following example, I'm saving it to a particular directory I have synced with DropBox. Your preferred file path for saving R data may (and probably should) vary.
+Save `HMPv35` to an `".RData"`" file so that you don't have to run this import ever again. In the following example, I'm saving it to the current directory of my process. Your preferred file path for saving R data may (and probably should) vary.
 
 ```{r}
 save(HMPv35, file="HMPv35.RData", compress="bzip2")
 ```
 
 ## Alternatively, Download the Processed File from Us
-We have already run this import code several times during testing and timing. This [already-imported `HMPv35` from QIIME output dataset](HMPv35.RData) is available from [the phyloseq downloads page](https://github.com/joey711/phyloseq/downloads). Happily, this file will load in very quickly compared with importing it again from the data files.
+We re-run this import code each time we update/rebuild these demo vignettes. This [already-imported `HMPv35` dataset](HMPv35.RData) is available by cloning or downloading the phyloseq-demo repository. Typically this `RData` binary file will load into R much, much faster than importing it again from the public HMP data files.
 

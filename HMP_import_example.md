@@ -15,7 +15,7 @@ packageVersion("phyloseq")
 ```
 
 ```
-## [1] '1.3.21'
+## [1] '1.7.21'
 ```
 
 Because this demo includes an example of manually importing a Fasta-formatted DNA sequence file using a function from [the Biostrings package](), we will need to load that as well (it is already a phyloseq dependency, so nothing exotic here)
@@ -26,7 +26,7 @@ packageVersion("Biostrings")
 ```
 
 ```
-## [1] '2.26.3'
+## [1] '2.30.1'
 ```
 
 
@@ -38,7 +38,7 @@ date()
 ```
 
 ```
-## [1] "Sat Mar  9 16:10:49 2013"
+## [1] "Mon Mar  3 20:09:03 2014"
 ```
 
 
@@ -89,10 +89,10 @@ head(taxa_names(tree))
 ```
 
 
-These extra quotes ( `"'"` ) must be removed/replaced. This can be accomplished using the following line
+These extra quotes ( `"'"` ) must be removed/replaced. This can be accomplished using the following `gsub` command. Even for 45364 OTUs this is very fast.
 
 ```r
-tree$tip.label = substr(taxa_names(tree), 2, nchar(taxa_names(tree)) - 1)
+tree$tip.label <- gsub("'", "", tree$tip.label, fixed = TRUE)
 head(tree$tip.label)
 ```
 
@@ -136,15 +136,7 @@ refseqs
 ##     [3]   525 TTCACCGTTGCCGGCGTAC...TGGTTCAGACTCTCGTCC OTU_97.100 SRS020...
 ##     [4]   530 TTTAATCTTGCGACCGTAC...ATCAGGGTTCCCCCCTAC OTU_97.1000 SRS01...
 ##     [5]   552 TTCACACTTGCGTGCGTAC...ACTTCCCCTACTCGTCCG OTU_97.10000 SRS0...
-##     [6]   549 TTTAGCCTTGCGGCCGTAC...AATATTCCCCACTGCTCG OTU_97.10001 SRS0...
-##     [7]   516 TTTAATCTTGCGACCGTAC...CGACACGACGCGACTGCG OTU_97.10002 SRS0...
-##     [8]   507 TTCACCGTTGCCGGCGTAC...AGTCACTCCTTCACGACG OTU_97.10003 SRS0...
-##     [9]   508 TTCTAACCTTGCGGTCGTA...AAACCTTCTTCACTCACG OTU_97.10004 SRS0...
 ##     ...   ... ...
-## [45403]   535 TTTAGCCTTGCGGCCGTAC...TCGTGCAATATTCCCCAC OTU_97.9991 SRS01...
-## [45404]   532 TTCAACCTTGCGGTCGTAC...CGCGCAATACTTCCCTAC OTU_97.9992 SRS01...
-## [45405]   536 TTCAACCTTGCGGCCGTAC...CCCAATATTCCCCACTGC OTU_97.9993 SRS01...
-## [45406]   529 TTCATTCTTGCGAACGTAC...CATTGTGCATACTTCCCC OTU_97.9994 SRS05...
 ## [45407]   500 TTCAGCCTTGCGGCCGTAC...ACACAGAATTTGCTGGAC OTU_97.9995 SRS01...
 ## [45408]   512 TTCACCGTTGCCGGCGTAC...CGCTACTTGGCTGGTTAC OTU_97.9996 SRS01...
 ## [45409]   518 TTCACCGTTGCCGGCGTAC...TACTTGGCTGGTCAGTAC OTU_97.9997 SRS02...
@@ -190,35 +182,33 @@ Note that you will multiple instances of the following warning:
 
 ```r
 ## Warning: No greengenes prefixes were found.  Consider using
-## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may
-## be included among taxonomic ranks now.
+## parse_taxonomy_default() instead if true for all OTUs.  Dummy ranks may be
+## included among taxonomic ranks now.
 ```
 
 These arise from OTUs that have only been assigned a "root" taxonomic classification -- which is meaningless -- and no other. In this dataset, the "root" has no greengenes prefix but all the other taxonomic classifications do. When the default greengenes parsing function (`parse_taxonomy_default`) finds these OTUs, it complains that there was not actually a greengenes prefix in any of the taxonomy elements. That's okay, your data (and this data) is fine. It is just a warning, and all the meaningless "root" classification elements are assigned to an equally meaningless dummy taxonomic rank called "Rank1". See for yourself below in the output of `rank_names`.
 
 
 ```r
-system.time(HMPv35 <- import_qiime(temp_otutax, temp_map, tree, refseqs, chunk.size = 2000L))
+system.time(HMPv35 <- import_qiime(temp_otutax, temp_map, tree, refseqs))
 ```
 
 ```
 ## Processing map file...
 ## Processing otu/tax file...
-## 
-## Reading and parsing file in chunks ... Could take some time. Please be patient...
-## 
-## Building OTU Table in chunks. Each chunk is one dot.
-## .......................Building Taxonomy Table...
-```
-
-```
+## Reading file into memory prior to parsing...
+## Detecting first header line...
+## Header is on line 1  
+## Converting input file to a table...
+## Defining OTU table... 
+## Parsing taxonomy table...
 ## Processing phylogenetic tree...
 ## Processing Reference Sequences...
 ```
 
 ```
 ##    user  system elapsed 
-##   661.8   368.2  2169.9
+##  124.33   42.47  176.87
 ```
 
 
@@ -284,7 +274,7 @@ head(tax_table(HMPv35))
 
 
 ## Save HMPv35 to an RData File
-Save `HMPv35` to an `".RData"`" file so that you don't have to run this import ever again. In the following example, I'm saving it to a particular directory I have synced with DropBox. Your preferred file path for saving R data may (and probably should) vary.
+Save `HMPv35` to an `".RData"`" file so that you don't have to run this import ever again. In the following example, I'm saving it to the current directory of my process. Your preferred file path for saving R data may (and probably should) vary.
 
 
 ```r
@@ -293,5 +283,5 @@ save(HMPv35, file = "HMPv35.RData", compress = "bzip2")
 
 
 ## Alternatively, Download the Processed File from Us
-We have already run this import code several times during testing and timing. This [already-imported `HMPv35` from QIIME output dataset](HMPv35.RData) is available from [the phyloseq downloads page](https://github.com/joey711/phyloseq/downloads). Happily, this file will load in very quickly compared with importing it again from the data files.
+We re-run this import code each time we update/rebuild these demo vignettes. This [already-imported `HMPv35` dataset](HMPv35.RData) is available by cloning or downloading the phyloseq-demo repository. Typically this `RData` binary file will load into R much, much faster than importing it again from the public HMP data files.
 
