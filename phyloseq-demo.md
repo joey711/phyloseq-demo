@@ -51,7 +51,7 @@ packageVersion("phyloseq")
 ```
 
 ```
-## [1] '1.5.4'
+## [1] '1.7.24'
 ```
 
 ```r
@@ -78,7 +78,7 @@ packageVersion("grid")
 ```
 
 ```
-## [1] '3.0.0'
+## [1] '3.0.2'
 ```
 
 
@@ -125,6 +125,26 @@ otufile = system.file("extdata", "GP_otu_table_rand_short.txt.gz", package = "ph
 mapfile = system.file("extdata", "master_map.txt", package = "phyloseq")
 trefile = system.file("extdata", "GP_tree_rand_short.newick.gz", package = "phyloseq")
 qiimex = import_qiime(otufile, mapfile, trefile, showProgress = FALSE)
+```
+
+```
+## Processing map file...
+## Processing otu/tax file...
+## Reading file into memory prior to parsing...
+## Detecting first header line...
+## Header is on line 2  
+## Converting input file to a table...
+## Defining OTU table... 
+## Parsing taxonomy table...
+## Processing phylogenetic tree...
+##  /Library/Frameworks/R.framework/Versions/3.0/Resources/library/phyloseq/extdata/GP_tree_rand_short.newick.gz ...
+```
+
+```
+## Warning: treefilename failed import. It will not be included.
+```
+
+```r
 qiimex
 ```
 
@@ -133,7 +153,6 @@ qiimex
 ## otu_table()   OTU Table:         [ 500 taxa and 26 samples ]
 ## sample_data() Sample Data:       [ 26 samples by 7 sample variables ]
 ## tax_table()   Taxonomy Table:    [ 500 taxa by 7 taxonomic ranks ]
-## phy_tree()    Phylogenetic Tree: [ 500 tips and 499 internal nodes ]
 ```
 
 
@@ -152,8 +171,8 @@ print(esophman)
 
 ```
 ## phyloseq-class experiment-level object
-## otu_table()   OTU Table:         [ 58 taxa and 3 samples ]
-## phy_tree()    Phylogenetic Tree: [ 58 tips and 57 internal nodes ]
+## otu_table()   OTU Table:         [ 591 taxa and 3 samples ]
+## phy_tree()    Phylogenetic Tree: [ 591 tips and 590 internal nodes ]
 ```
 
 ```r
@@ -161,7 +180,7 @@ ntaxa(esophman)
 ```
 
 ```
-## [1] 58
+## [1] 591
 ```
 
 
@@ -173,7 +192,7 @@ identical(esophagus, esophman)
 ```
 
 ```
-## [1] TRUE
+## [1] FALSE
 ```
 
 
@@ -347,8 +366,8 @@ The `.biom` and sample data files are also [provided online (ftp)](ftp://thebeas
 
 ```r
 zipftp = "ftp://thebeast.colorado.edu/pub/QIIME_DB_Public_Studies/study_1011_split_library_seqs_and_mapping.zip"
-# First create a temporary directory in which to store the unpacked
-# file(s) from the .zip
+# First create a temporary directory in which to store the unpacked file(s)
+# from the .zip
 tmpdir = tempdir()
 # Second create a temp file where you will put the .zip-file itself
 temp = tempfile()
@@ -363,8 +382,7 @@ map_file = file.path(tmpdir, list.files(tmpdir, pattern = "mapping"))
 biom_otu_tax = import_biom(biom_file, "greengenes")
 # Add sample data to the dataset using merge
 bmsd = import_qiime_sample_data(map_file)
-# Remove the temperorary file and directory where you unpacked the zip
-# files
+# Remove the temperorary file and directory where you unpacked the zip files
 unlink(temp)
 unlink(tmpdir)
 ```
@@ -564,7 +582,7 @@ Note that we loaded some graphics related packages at the beginning of this demo
 ##  Some examples for plotting richness estimates from un-trimmed data.
 
 ```r
-plot_richness(Bushman)
+plot_richness(Bushman)  #, 'sample_names', 'SampleType')
 ```
 
 ![plot of chunk plot-richness-1](figure/plot-richness-11.png) 
@@ -702,6 +720,21 @@ Test with esophagus dataset
 ```r
 data(esophagus)
 eso = rarefy_even_depth(esophagus)
+```
+
+```
+## You set `rngseed` to FALSE. Make sure you've set & recorded
+##  the random seed of your session for reproducibility.
+## See `?set.seed`
+## 
+## ...
+## 8OTUs were removed because they are no longer 
+## present in any sample after random subsampling
+## 
+## ...
+```
+
+```r
 # plot(as(otu_table(eso), 'vector'), as(otu_table(esophagus), 'vector'))
 ```
 
@@ -712,8 +745,8 @@ UniFrac(eso)
 
 ```
 ##        B      C
-## C 0.5877       
-## D 0.5796 0.6188
+## C 0.5806       
+## D 0.5451 0.6747
 ```
 
 ```r
@@ -737,6 +770,21 @@ GP.chl = prune_samples(names(which(sample_sums(GP.chl) >= 20)), GP.chl)
 # (p = plot_tree(GP.chl, color='SampleType', shape='Family',
 # label.tips='Genus', size='abundance'))
 GP.chl.r = rarefy_even_depth(GP.chl)
+```
+
+```
+## You set `rngseed` to FALSE. Make sure you've set & recorded
+##  the random seed of your session for reproducibility.
+## See `?set.seed`
+## 
+## ...
+## 3OTUs were removed because they are no longer 
+## present in any sample after random subsampling
+## 
+## ...
+```
+
+```r
 # plot(as(otu_table(GP.chl.r), 'vector'), as(otu_table(GP.chl), 'vector'))
 ```
 
@@ -816,8 +864,8 @@ Alternatively, you can subset based on taxonomy expressions, using `subset_taxa`
 
 ```r
 GP.chl = subset_taxa(GP, Phylum == "Chlamydiae")
-# Exploratory tree #2 plot_tree(GP.chl, color='SampleType',
-# shape='Family', label.tips='Genus', size='abundance')
+# Exploratory tree #2 plot_tree(GP.chl, color='SampleType', shape='Family',
+# label.tips='Genus', size='abundance')
 ntaxa(GP.chl)
 ```
 
@@ -843,11 +891,14 @@ topp(0.1)
 ```
 
 ```
-## function(x){
-## 		if(na.rm){x = x[!is.na(x)]}
-## 		x >= sort(x, decreasing=TRUE)[ceiling(length(x)*p)]
+## function (x) 
+## {
+##     if (na.rm) {
+##         x = x[!is.na(x)]
 ##     }
-## <environment: 0x10edbc920>
+##     x >= sort(x, decreasing = TRUE)[ceiling(length(x) * p)]
+## }
+## <environment: 0x1234fbb50>
 ```
 
 ```r
@@ -865,7 +916,7 @@ print(f1)
 ##     }
 ##     return(fval)
 ## }
-## <environment: 0x10e9c7308>
+## <environment: 0x11f82d350>
 ## attr(,"class")
 ## [1] "filterfun"
 ```
@@ -963,7 +1014,7 @@ Before we get to network plots, let's discuss distances. Many tools use distance
 
 
 ```r
-help("distance")
+help("distance")  # Same as '?distance'
 `?`(distance)
 ```
 
@@ -997,8 +1048,8 @@ Here are some other examples. There are some 45 or so methods.
 ```r
 distance(esophagus, "jaccard")  # vegdist jaccard
 distance(esophagus, "bray")  # vegdist bray-curtis
-distance(esophagus, "gower")
-distance(esophagus, "g")
+distance(esophagus, "gower")  # vegdist option 'gower'
+distance(esophagus, "g")  # designdist method option 'g'
 distance(esophagus, "minkowski")  # invokes a method from the base dist() function.
 distance(esophagus, "(A+B-2*J)/(A+B)")  # designdist custom distance
 distance("help")
@@ -1077,11 +1128,11 @@ GP.MDS = ordinate(GP100, method = "MDS", distance = "unifrac")
 Here are just a few examples of other supported combinations.
 
 ```r
-# GP.NMDS = ordinate(GP, 'NMDS', 'gower') GP.NMDS = ordinate(GP, 'NMDS',
-# 'bray') # perform NMDS on bray-curtis distance GP.NMDS.UF.ord =
-# ordinate(GP, 'NMDS') # UniFrac. Takes a while. GP.NMDS.wUF.ord =
-# ordinate(GP, 'NMDS', 'unifrac', weighted=TRUE) # weighted-UniFrac
-# GP.NMDS.gower = ordinate(GP, 'NMDS', 'gower')
+GP.NMDS = ordinate(GP, "NMDS", "gower")
+GP.NMDS = ordinate(GP, "NMDS", "bray")  # perform NMDS on bray-curtis distance
+GP.NMDS.UF.ord = ordinate(GP, "NMDS")  # UniFrac. Takes a while.
+GP.NMDS.wUF.ord = ordinate(GP, "NMDS", "unifrac", weighted = TRUE)  # weighted-UniFrac
+GP.NMDS.gower = ordinate(GP, "NMDS", "gower")
 ```
 
 
@@ -1238,13 +1289,10 @@ GP.fwer.table = mt(GP3f, "human")
 ```
 
 
-No add some taxonomic columns to the result for interpretation (rows are OTUs)
+Let's presume you are interested in those OTUs with an adjusted P-value below .
 
 ```r
-jranks = c("Phylum", "Family", "Genus")
-GP.fwer.table = data.frame(GP.fwer.table, tax_table(GP3f)[rownames(GP.fwer.table), 
-    jranks])
-subset(GP.fwer.table, adjp < 0.05)
+subset(GP.fwer.table, adjp < alpha)
 ```
 
 ```
@@ -1256,24 +1304,17 @@ subset(GP.fwer.table, adjp < 0.05)
 ## 108747     Bacilli Lactobacillales Streptococcaceae Streptococcus
 ## 348374 Bacteroidia   Bacteroidales   Bacteroidaceae   Bacteroides
 ## 158660 Bacteroidia   Bacteroidales   Bacteroidaceae   Bacteroides
-##                          Species      Phylum.1         Family.1
-## 108747 Streptococcusthermophilus    Firmicutes Streptococcaceae
-## 348374                      <NA> Bacteroidetes   Bacteroidaceae
-## 158660                      <NA> Bacteroidetes   Bacteroidaceae
-##              Genus.1
-## 108747 Streptococcus
-## 348374   Bacteroides
-## 158660   Bacteroides
+##                          Species
+## 108747 Streptococcusthermophilus
+## 348374                      <NA>
+## 158660                      <NA>
 ```
 
 
 
 ##  What if we want FDR instead of FWER?
-Or to use other tools in multtest-package?
 
-```r
-library("multtest")
-```
+The easiest thing to do is use the `stats::p.adjust` function.
 
 
 ```r
@@ -1314,42 +1355,42 @@ mtm = mt(GP3f, "human")
 ```
 
 
-Re-order to original, and use raw p-values for adjustment via `mt.rawp2adjp()`
+Add the FDR correction based on the unadjusted ("raw") P-values...
+
 
 ```r
-procedure = c("Bonferroni", "Hochberg", "BH")
-p.mtm = mt.rawp2adjp(mtm[order(mtm[, "index"]), "rawp"], procedure)
-# Re-order so that you can return original table (ordered p-value table)
-p.adjp.ord = p.mtm$adjp[order(p.mtm$index), ]
-# Give it the original row names from m
-rownames(p.adjp.ord) = taxa_names(GP3f)
-# Return the table of adjusted p-values for each hypothesis.
-GP3f.mt.table = data.frame(p.adjp.ord, tax_table(GP3f)[rownames(p.adjp.ord), 
-    jranks])
-# Re-rorder based on BH
-GP3f.mt.table = GP3f.mt.table[order(GP3f.mt.table[, "BH"]), ]
-subset(GP3f.mt.table, BH < 0.05)
+mtm$FDR <- p.adjust(c(mtm[, "rawp"]), method = c("fdr"))
+subset(mtm, FDR < 0.05)
 ```
 
 ```
-##          rawp Bonferroni Hochberg      BH        Phylum             Family
-## 158660 0.0005     0.0885   0.0875 0.02950 Bacteroidetes     Bacteroidaceae
-## 348374 0.0004     0.0708   0.0704 0.02950 Bacteroidetes     Bacteroidaceae
-## 108747 0.0004     0.0708   0.0704 0.02950    Firmicutes   Streptococcaceae
-## 561077 0.0019     0.3363   0.3249 0.04646 Cyanobacteria               <NA>
-## 322235 0.0017     0.3009   0.2941 0.04646 Bacteroidetes     Bacteroidaceae
-## 331820 0.0021     0.3717   0.3570 0.04646 Bacteroidetes     Bacteroidaceae
-## 291090 0.0018     0.3186   0.3096 0.04646 Bacteroidetes Porphyromonadaceae
-## 259569 0.0017     0.3009   0.2941 0.04646 Bacteroidetes      Rikenellaceae
-##                  Genus
-## 158660     Bacteroides
-## 348374     Bacteroides
-## 108747   Streptococcus
-## 561077            <NA>
-## 322235     Bacteroides
-## 331820     Bacteroides
-## 291090 Parabacteroides
-## 259569       Alistipes
+##        index teststat   rawp   adjp plower  Kingdom        Phylum
+## 108747   173    2.574 0.0004 0.0300 0.0233 Bacteria    Firmicutes
+## 348374   122    1.263 0.0004 0.0300 0.0233 Bacteria Bacteroidetes
+## 158660   110    2.313 0.0005 0.0356 0.0296 Bacteria Bacteroidetes
+## 259569   125    2.311 0.0017 0.0972 0.0928 Bacteria Bacteroidetes
+## 322235   108    1.686 0.0017 0.0972 0.0928 Bacteria Bacteroidetes
+## 291090   123    1.520 0.0018 0.1006 0.0964 Bacteria Bacteroidetes
+## 561077    32   -2.066 0.0019 0.1049 0.0994 Bacteria Cyanobacteria
+## 331820   111    2.152 0.0021 0.1130 0.1094 Bacteria Bacteroidetes
+##              Class           Order             Family           Genus
+## 108747     Bacilli Lactobacillales   Streptococcaceae   Streptococcus
+## 348374 Bacteroidia   Bacteroidales     Bacteroidaceae     Bacteroides
+## 158660 Bacteroidia   Bacteroidales     Bacteroidaceae     Bacteroides
+## 259569 Bacteroidia   Bacteroidales      Rikenellaceae       Alistipes
+## 322235 Bacteroidia   Bacteroidales     Bacteroidaceae     Bacteroides
+## 291090 Bacteroidia   Bacteroidales Porphyromonadaceae Parabacteroides
+## 561077 Chloroplast   Stramenopiles               <NA>            <NA>
+## 331820 Bacteroidia   Bacteroidales     Bacteroidaceae     Bacteroides
+##                          Species     FDR
+## 108747 Streptococcusthermophilus 0.02950
+## 348374                      <NA> 0.02950
+## 158660                      <NA> 0.02950
+## 259569       Alistipesputredinis 0.04646
+## 322235      Bacteroidesuniformis 0.04646
+## 291090 Parabacteroidesdistasonis 0.04646
+## 561077                      <NA> 0.04646
+## 331820                      <NA> 0.04646
 ```
 
 
@@ -1424,18 +1465,7 @@ bioenv(veganotu(Bushman) ~ DEPTH + AGE + TOTAL_FAT_G_AVE + INSOLUBLE_DIETARY_FIB
 ```
 
 ```
-## 
-## Call:
-## bioenv(formula = veganotu(Bushman) ~ DEPTH + AGE + TOTAL_FAT_G_AVE +      INSOLUBLE_DIETARY_FIBER_G_AVE, data = bushsd) 
-## 
-## Subset of environmental variables with best correlation to community data.
-## 
-## Correlations:      spearman 
-## Dissimilarities:   bray 
-## 
-## Best model has 2 parameters (max. 4 allowed):
-## AGE INSOLUBLE_DIETARY_FIBER_G_AVE
-## with correlation  0.1537
+## Error: could not find function "bioenv"
 ```
 
 
@@ -1474,22 +1504,27 @@ ent.ca = ordinate(enterotype, method = "CCA", distance = NULL)
 ```r
 pam1 = function(x, k) list(cluster = pam(x, k, cluster.only = TRUE))
 x = scores(ent.ca, display = "sites")
+```
+
+```
+## Error: could not find function "scores"
+```
+
+```r
 # gskmn = clusGap(x[, 1:2], FUN=kmeans, nstart=20, K.max = 6, B = 500)
 gskmn = clusGap(x[, 1:2], FUN = pam1, K.max = 6, B = 50)
+```
+
+```
+## Error: object 'x' not found
+```
+
+```r
 gskmn
 ```
 
 ```
-## Clustering Gap statistic ["clusGap"].
-## B=50 simulated reference sets, k = 1..6
-##  --> Number of clusters (method 'firstSEmax', SE.factor=1): 3
-##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.746 1.201 0.02036
-## [2,] 3.720  5.187 1.467 0.02021
-## [3,] 3.428  4.926 1.498 0.02091
-## [4,] 3.301  4.779 1.478 0.02173
-## [5,] 3.100  4.678 1.578 0.02015
-## [6,] 2.957  4.591 1.634 0.01934
+## Error: object 'gskmn' not found
 ```
 
 
@@ -1536,27 +1571,27 @@ Now try out this function. Should work on ordination classes recognized by `scor
 
 ```r
 gs = gap_statistic_ordination(ent.ca, "pam1", B = 50, verbose = FALSE)
+```
+
+```
+## Error: could not find function "scores"
+```
+
+```r
 print(gs, method = "Tibs2001SEmax")
 ```
 
 ```
-## Clustering Gap statistic ["clusGap"].
-## B=50 simulated reference sets, k = 1..6
-##  --> Number of clusters (method 'Tibs2001SEmax', SE.factor=1): 3
-##       logW E.logW   gap  SE.sim
-## [1,] 4.544  5.740 1.196 0.02158
-## [2,] 3.720  5.190 1.470 0.02006
-## [3,] 3.428  4.929 1.502 0.01740
-## [4,] 3.301  4.781 1.480 0.02215
-## [5,] 3.100  4.684 1.584 0.02258
-## [6,] 2.957  4.597 1.639 0.02189
+## Error: object 'gs' not found
 ```
 
 ```r
 plot_clusgap(gs)
 ```
 
-![plot of chunk gapstat-inphyloseq-example](figure/gapstat-inphyloseq-example.png) 
+```
+## Error: object 'gs' not found
+```
 
 
 Base graphics plotting, for comparison.
@@ -1564,10 +1599,19 @@ Base graphics plotting, for comparison.
 
 ```r
 plot(gs, main = "Gap statistic for the 'Enterotypes' data")
+```
+
+```
+## Error: object 'gs' not found
+```
+
+```r
 mtext("k = 2 is best ... but  k = 3  pretty close")
 ```
 
-![plot of chunk unnamed-chunk-35](figure/unnamed-chunk-35.png) 
+```
+## Error: plot.new has not been called yet
+```
 
 
 

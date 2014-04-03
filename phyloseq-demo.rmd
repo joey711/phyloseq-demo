@@ -562,11 +562,11 @@ GP.MDS = ordinate(GP100, method="MDS", distance="unifrac")
 ```
 Here are just a few examples of other supported combinations.
 ```{r, eval=FALSE}
-#GP.NMDS = ordinate(GP, "NMDS", "gower")
-#GP.NMDS = ordinate(GP, "NMDS", "bray") # perform NMDS on bray-curtis distance
-#GP.NMDS.UF.ord   = ordinate(GP, "NMDS") # UniFrac. Takes a while.
-#GP.NMDS.wUF.ord  = ordinate(GP, "NMDS", "unifrac", weighted=TRUE) # weighted-UniFrac
-#GP.NMDS.gower = ordinate(GP, "NMDS", "gower")
+GP.NMDS = ordinate(GP, "NMDS", "gower")
+GP.NMDS = ordinate(GP, "NMDS", "bray") # perform NMDS on bray-curtis distance
+GP.NMDS.UF.ord   = ordinate(GP, "NMDS") # UniFrac. Takes a while.
+GP.NMDS.wUF.ord  = ordinate(GP, "NMDS", "unifrac", weighted=TRUE) # weighted-UniFrac
+GP.NMDS.gower = ordinate(GP, "NMDS", "gower")
 ```
 
 
@@ -660,27 +660,18 @@ subset(GP.fwer.table, adjp < alpha)
 
 
 ##  What if we want FDR instead of FWER?
-Or to use other tools in multtest-package?
-```{r load-multtest, warning=FALSE, message=FALSE}
-library("multtest")
-```
+
+The easiest thing to do is use the `stats::p.adjust` function.
+
 ```{r run-mt, message=FALSE}
-mtm   = mt(GP3f, "human")
+mtm = mt(GP3f, "human")
 ```
 
-Re-order to original, and use raw p-values for adjustment via `mt.rawp2adjp()`
-```{r mt-reorder}
-procedure = c("Bonferroni", "Hochberg", "BH")
-p.mtm = mt.rawp2adjp(mtm[order(mtm[,"index"]), "rawp"], procedure) 
-# Re-order so that you can return original table
-# (ordered p-value table)
-p.adjp.ord = p.mtm$adjp[order(p.mtm$index), ]
+Add the FDR correction based on the unadjusted ("raw") P-values...
 
-# Return the table of adjusted p-values for each hypothesis.
-GP3f.mt.table = data.frame(p.adjp.ord, ])
-# Re-rorder based on BH
-GP3f.mt.table = GP3f.mt.table[order(GP3f.mt.table[, "BH"]), ]
-subset(GP3f.mt.table, BH < 0.05)
+```{r mt-add-fdr}  
+mtm$FDR <- p.adjust(c(mtm[, "rawp"]), method=c("fdr"))
+subset(mtm, FDR < 0.05)
 ```
 
 Some alternative packages for multiple inference correction: [the qvalue package](http://www.bioconductor.org/packages/release/bioc/html/qvalue.html), [the multcomp package](http://cran.r-project.org/web/packages/multcomp/index.html)
