@@ -1,4 +1,4 @@
-`r opts_chunk$set(cache=TRUE, fig.width=10)`
+`r opts_chunk$set(cache=FALSE, fig.width=10)`
 <link href="http://joey711.github.com/phyloseq/markdown.css" rel="stylesheet"></link>
 
 Demo: phyloseq – An R package for microbiome census data 
@@ -690,6 +690,11 @@ A common question from many users related to how they can easily get phyloseq-fo
 For OTU abundance tables, [vegan](http://cran.r-project.org/web/packages/vegan//index.html) expects samples as rows, and OTUs/species/taxa as columns (so does the picante package). The following is an example function, called `veganotu`, for extracting the OTU table from a phyloseq data object, and converting it to a properly oriented standard matrix recognized by the [vegan](http://cran.r-project.org/web/packages/vegan//index.html) package.
 
 We will use the `bioenv` function from [vegan](http://cran.r-project.org/web/packages/vegan//index.html) to test for sample variables that correlate well with the microbial community distances.
+
+```{r load-vegan-package, message=FALSE}
+library("vegan"); packageVersion("vegan")
+```
+
 
 ```{r veganotu}
 veganotu = function(physeq){

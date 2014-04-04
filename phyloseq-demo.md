@@ -728,7 +728,7 @@ eso = rarefy_even_depth(esophagus)
 ## See `?set.seed`
 ## 
 ## ...
-## 8OTUs were removed because they are no longer 
+## 14OTUs were removed because they are no longer 
 ## present in any sample after random subsampling
 ## 
 ## ...
@@ -745,8 +745,8 @@ UniFrac(eso)
 
 ```
 ##        B      C
-## C 0.5806       
-## D 0.5451 0.6747
+## C 0.4981       
+## D 0.4802 0.5288
 ```
 
 ```r
@@ -778,7 +778,7 @@ GP.chl.r = rarefy_even_depth(GP.chl)
 ## See `?set.seed`
 ## 
 ## ...
-## 3OTUs were removed because they are no longer 
+## 1OTUs were removed because they are no longer 
 ## present in any sample after random subsampling
 ## 
 ## ...
@@ -898,7 +898,7 @@ topp(0.1)
 ##     }
 ##     x >= sort(x, decreasing = TRUE)[ceiling(length(x) * p)]
 ## }
-## <environment: 0x1234fbb50>
+## <environment: 0x12a067d40>
 ```
 
 ```r
@@ -916,7 +916,7 @@ print(f1)
 ##     }
 ##     return(fval)
 ## }
-## <environment: 0x11f82d350>
+## <environment: 0x124ec25b8>
 ## attr(,"class")
 ## [1] "filterfun"
 ```
@@ -1413,6 +1413,18 @@ We will use the `bioenv` function from [vegan](http://cran.r-project.org/web/pac
 
 
 ```r
+library("vegan")
+packageVersion("vegan")
+```
+
+```
+## [1] '2.0.10'
+```
+
+
+
+
+```r
 veganotu = function(physeq) {
     require("vegan")
     OTU = otu_table(physeq)
@@ -1465,7 +1477,18 @@ bioenv(veganotu(Bushman) ~ DEPTH + AGE + TOTAL_FAT_G_AVE + INSOLUBLE_DIETARY_FIB
 ```
 
 ```
-## Error: could not find function "bioenv"
+## 
+## Call:
+## bioenv(formula = veganotu(Bushman) ~ DEPTH + AGE + TOTAL_FAT_G_AVE +      INSOLUBLE_DIETARY_FIBER_G_AVE, data = bushsd) 
+## 
+## Subset of environmental variables with best correlation to community data.
+## 
+## Correlations:      spearman 
+## Dissimilarities:   bray 
+## 
+## Best model has 2 parameters (max. 4 allowed):
+## AGE INSOLUBLE_DIETARY_FIBER_G_AVE
+## with correlation  0.1537
 ```
 
 
@@ -1504,27 +1527,22 @@ ent.ca = ordinate(enterotype, method = "CCA", distance = NULL)
 ```r
 pam1 = function(x, k) list(cluster = pam(x, k, cluster.only = TRUE))
 x = scores(ent.ca, display = "sites")
-```
-
-```
-## Error: could not find function "scores"
-```
-
-```r
 # gskmn = clusGap(x[, 1:2], FUN=kmeans, nstart=20, K.max = 6, B = 500)
 gskmn = clusGap(x[, 1:2], FUN = pam1, K.max = 6, B = 50)
-```
-
-```
-## Error: object 'x' not found
-```
-
-```r
 gskmn
 ```
 
 ```
-## Error: object 'gskmn' not found
+## Clustering Gap statistic ["clusGap"].
+## B=50 simulated reference sets, k = 1..6
+##  --> Number of clusters (method 'firstSEmax', SE.factor=1): 3
+##       logW E.logW   gap  SE.sim
+## [1,] 4.544  5.745 1.201 0.02475
+## [2,] 3.720  5.191 1.471 0.01952
+## [3,] 3.428  4.929 1.501 0.01947
+## [4,] 3.301  4.782 1.481 0.02457
+## [5,] 3.100  4.678 1.578 0.02304
+## [6,] 2.957  4.595 1.638 0.02331
 ```
 
 
@@ -1571,27 +1589,27 @@ Now try out this function. Should work on ordination classes recognized by `scor
 
 ```r
 gs = gap_statistic_ordination(ent.ca, "pam1", B = 50, verbose = FALSE)
-```
-
-```
-## Error: could not find function "scores"
-```
-
-```r
 print(gs, method = "Tibs2001SEmax")
 ```
 
 ```
-## Error: object 'gs' not found
+## Clustering Gap statistic ["clusGap"].
+## B=50 simulated reference sets, k = 1..6
+##  --> Number of clusters (method 'Tibs2001SEmax', SE.factor=1): 3
+##       logW E.logW   gap  SE.sim
+## [1,] 4.544  5.748 1.204 0.02396
+## [2,] 3.720  5.187 1.467 0.02069
+## [3,] 3.428  4.926 1.498 0.01844
+## [4,] 3.301  4.776 1.474 0.02203
+## [5,] 3.100  4.677 1.576 0.02160
+## [6,] 2.957  4.594 1.637 0.02040
 ```
 
 ```r
 plot_clusgap(gs)
 ```
 
-```
-## Error: object 'gs' not found
-```
+![plot of chunk gapstat-inphyloseq-example](figure/gapstat-inphyloseq-example.png) 
 
 
 Base graphics plotting, for comparison.
@@ -1599,19 +1617,10 @@ Base graphics plotting, for comparison.
 
 ```r
 plot(gs, main = "Gap statistic for the 'Enterotypes' data")
-```
-
-```
-## Error: object 'gs' not found
-```
-
-```r
 mtext("k = 2 is best ... but  k = 3  pretty close")
 ```
 
-```
-## Error: plot.new has not been called yet
-```
+![plot of chunk unnamed-chunk-35](figure/unnamed-chunk-35.png) 
 
 
 
