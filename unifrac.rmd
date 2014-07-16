@@ -1,20 +1,29 @@
-`r opts_chunk$set(cache=TRUE, fig.width=10)`
-<link href="http://joey711.github.com/phyloseq/markdown.css" rel="stylesheet"></link>
+`r knitr::opts_chunk$set(fig.width=10)`
 
 # Fast Parallel UniFrac (in R)
 
 ## Background
 A common tool in microbial ecology studies involving many samples is to calculate the "UniFrac" distance between all pairs of samples, and then perform various analyses on the resulting distance matrix.
 
-[The phyloseq package](http://joey711.github.com/phyloseq/) includes a native `R` implementation of the better, faster, cleaner [Fast UniFrac algorithm](http://www.nature.com/ismej/journal/v4/n1/abs/ismej200997a.html). For legacy reasons and comparison, it also includes the original UniFrac algorithm, although there is unlikely to be a reason to use the original implementation because it is slower, and both approaches arrive at the same result. There are also two very different types of the standard UniFrac calculation: 
+[The phyloseq package](http://joey711.github.com/phyloseq/) includes a native `R` implementation of the better, faster, cleaner [Fast UniFrac algorithm](http://www.nature.com/ismej/journal/v4/n1/abs/ismej200997a.html). 
+
+There are also two very different types of the standard UniFrac calculation: 
 
 [Weighted UniFrac](http://aem.asm.org/content/73/5/1576.abstract) - which does take into account differences in abundance of taxa between samples, but takes longer to calculate; and
 
 [Unweighted UniFrac](http://aem.asm.org/content/71/12/8228.short) - which only considers the presence/absence of taxa between sample pairs. 
 
-Both can be useful, and share slightly different insight. Both weighted and unweighted UniFrac are included, and all UniFrac calculations have the option of running "in parallel" for faster results on computers that have multiple cores/processors available.
+Both weighted and unweighted UniFrac are included in phyloseq, 
+and all UniFrac calculations have the option of running "in parallel"]
+for faster results on computers that have multiple cores/processors available.
 
-Parallelization in [the phyloseq package] is achieved using [foreach](http://cran.r-project.org/web/packages/foreach/vignettes/foreach.pdf) loops, which flexibly support a large variety of "parallel backends" -- from dual-core CPUs to large computing clusters. See foreach description in [the high performance computing task view](http://cran.r-project.org/web/views/HighPerformanceComputing.html) for further details, and supported architectures.
+Parallelization in [the phyloseq package] is achieved
+using [foreach](http://cran.r-project.org/web/packages/foreach/vignettes/foreach.pdf) loops, 
+which flexibly support a large variety of "parallel backends" -- 
+from dual-core CPUs to large computing clusters. 
+See foreach description in 
+[the high performance computing task view](http://cran.r-project.org/web/views/HighPerformanceComputing.html) 
+for further details, and supported architectures.
 
 ## Load phyloseq
 Check your version number.
@@ -24,6 +33,13 @@ library("ggplot2"); packageVersion("ggplot2")
 library("doParallel"); packageVersion("doParallel")
 library("foreach"); packageVersion("foreach")
 ```
+
+Set random number generator (RNG) seed, for perfect reproducibility.
+
+```{r}
+set.seed(711)
+```
+
 
 Define a default theme for ggplot graphics.
 ```{r gplot-theme}
@@ -87,16 +103,16 @@ save.data.name = "unifrac.RData"
 ```
 Threshold, in seconds. The maximum allowed time for one trial. Trials will not be conducted for that argument combination after this amount of time...
 ```{r params-threshold}
-threshold = 100
+threshold = 15
 ```
 Number of cores to use for parallel trials
 ```{r params-ncores}
-Ncores = 3
+Ncores = 7
 ```
 
 Create a vector of the numbers of taxa, `Ntaxa`, and then create a list of phyloseq objects for each one. Will loop on the list. Define vector of the number of OTUs to include.
 ```{r params-Ntaxa}
-Ntaxa <- c(seq(100, 500, 100), seq(600, ntaxa(GP), 1000), ntaxa(GP) )
+Ntaxa <- c(100L, 500L, seq(1000L, 10000, 4000))
 Ntaxa
 physeq_list <- vector("list", length(Ntaxa))
 names(physeq_list) <- as.character(Ntaxa)
@@ -108,7 +124,7 @@ for( N in Ntaxa ){
 	# Randomly subset N taxa from the original
 	ex   <- prune_taxa(sample(taxa_names(GP), N), GP)
 	# Assign a random root from the sub-sampled dataset
-	phy_tree(ex) <- root(phy_tree(ex), sample(taxa_names(ex), 1), resolve.root=TRUE)
+	phy_tree(ex) <- ape::root(phy_tree(ex), sample(taxa_names(ex), 1), resolve.root=TRUE)
 	# Add to the list of physeq objects
 	physeq_list[[as(N, "character")]] <- phyloseq(otu_table(ex), phy_tree(ex))
 }
@@ -117,10 +133,9 @@ for( N in Ntaxa ){
 Create table of combinations of function calls
 ```{r}
 UFcalls <- expand.grid(
-	parallel=c(TRUE, FALSE),
-	weighted=c(TRUE, FALSE),
-	fast=c(TRUE, FALSE),
-KEEP.OUT.ATTRS=FALSE)
+  parallel=c(TRUE, FALSE),
+  weighted=c(TRUE, FALSE),
+  KEEP.OUT.ATTRS=FALSE)
 ```
 The following creates a list appropriate for `do.call()`: `UFcalls[1, , drop=TRUE]`
 
@@ -202,18 +217,17 @@ save.image(save.data.name, compress="bzip2")
 Modify logical parameter values to informative text factor
 ```{r}
 time.frame[,"weighted"] <- factor(ifelse(time.frame[,"weighted"], "weighted", "unweighted"))
-time.frame[,"fast"] <- factor(ifelse(time.frame[,"fast"], "fast", "orig"))
 time.frame[,"parallel"] <- factor(ifelse(time.frame[,"parallel"], "parallel", "sequential"))
 ```
 
 Add an "Algorithm" column that summarizes the algorithm approach.
 ```{r}
-time.frame.plot <- data.frame(time.frame, algorithm=paste(time.frame[, "fast"], time.frame[, "weighted"]) )
+time.frame.plot <- data.frame(time.frame, algorithm=time.frame[, "weighted"] )
 ```
 
 Add `picante.frame` to `time.frame`
 ```{r}
-picante.frame.plot <- data.frame(picante.frame, parallel="sequential", weighted="unweighted", fast="orig", algorithm="picante::unifrac")
+picante.frame.plot <- data.frame(picante.frame, parallel="sequential", weighted="unweighted", algorithm="picante::unifrac")
 ```
 
 Finally, create a new separate, everything-combined data.frame for plotting
@@ -240,7 +254,8 @@ Now actually "print" the graphic
 ```{r render-time-plot, fig.width=12}
 p
 ```
-**Legend** Computation time required to calculate the distance matrix for a 21-sample experiment at varying numbers of taxa. For comparison, the performance of the original unweighted UniFrac algorithm as implemented in the "picante" package is also included.
+**Legend** Computation time required to calculate the distance matrix for a `r nsamples(GlobalPatterns)`-sample experiment at varying numbers of taxa.
+For comparison, the performance of the original unweighted UniFrac algorithm as implemented in the "picante" package is also included.
 
 
 Save the workspace for later.
@@ -248,3 +263,12 @@ Save the workspace for later.
 save.image(save.data.name, compress="bzip2")
 ```
 
+
+---
+
+# Old-Version Time Trial Results
+
+In case you are curious, phyloseq `1.9.11+` switched to using low-level C code for certain "botteleneck" steps in the Fast UniFrac algorithm. The old time trial is shown here for comparison. 
+
+![Old Time Trial](old-unifrac-time-trial.png)
+**Legend** Previous time trial comparison results. Note how much faster the new version is, and in the newer case, how much larger the dataset is needed for the overhead cost of initializing parallelization becomes worthwhile.
